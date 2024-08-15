@@ -1,7 +1,0 @@
-# Wokwi Library List
-# See https://docs.wokwi.com/guides/libraries
-
-MQTT
-Nusabot Simple Timer
-DHT sensor library for ESPx
-ESP32Servo
