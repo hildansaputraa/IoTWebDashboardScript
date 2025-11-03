@@ -215,7 +215,7 @@ $result = mysqli_query($connection, $sql);
                         <tr>
                           <td><?php echo $row['serial_number'] ?></td>
                           <td><?php echo $row['location'] ?></td>
-                          <td style="color:red" id="kelasiottt/status/<?php echo $row['serial_number']?>">offline</td>
+                          <td style="color:red" id="SmIr/status/<?php echo $row['serial_number']?>">offline</td>
                         </tr>
                       <?php } ?>
                     </tbody>
