@@ -67,19 +67,7 @@ $result = mysqli_query($connection, $sql);
                 </div>
               </div>
             </div>
-            <div class="col-lg-6">
-              <div class="card card-lightblue">
-                <div class="card-header">
-                  <h3 class="card-title">Servo</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body ">
-                  <div class="col-sm-12">
-                    <input id="servo" onchange="publishServo()" type="text">
-                  </div>
-                </div>
-              </div>
-            </div>
+          
             <div class="col-lg-6">
               <div class="card card-lightblue">
                 <div class="card-header">
@@ -183,11 +171,6 @@ $result = mysqli_query($connection, $sql);
         document.getElementById("humidity").innerHTML = payload;
       } else if (topic === "kelasiottt/12345678/potentiometer") {
         document.getElementById("potentiometer").innerHTML = payload;
-      } else if (topic === "kelasiottt/12345678/servo") {
-        let servoValue = $("#servo").data("ionRangeSlider")
-        servoValue.update({
-          from: payload.toString()
-        });
       } else if (topic === "kelasiottt/12345678/lampu") {
         if (payload == "nyala") {
           document.getElementById("label-lampu1-nyala").classList.add("active");
@@ -208,14 +191,6 @@ $result = mysqli_query($connection, $sql);
       }
 
     });
-
-    function publishServo(value) {
-      data = document.getElementById("servo").value;
-      client.publish("kelasiottt/12345678/servo", data, {
-        qos: 1,
-        retain: true
-      });
-    };
 
     function publishLamp(value) {
       if (document.getElementById("lampu1nyala").checked) {
