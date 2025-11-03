@@ -175,24 +175,6 @@ $result = mysqli_query($connection, $sql);
               </div>
             </div>
           </div>
-
-          <!-- Duplikasi Gambar Monitoring Dashboard -->
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="card card-default">
-                <div class="card-header bg-gray">
-                  <h3 class="card-title">Monitoring Dashboard - Additional View</h3>
-                </div>
-                <div class="card-body text-center">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 300px;">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           
           <div class="row">
             <div class="col-12">
