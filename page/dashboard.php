@@ -20,7 +20,7 @@ $result = mysqli_query($connection, $sql);
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
-        </div><!-- /.container-fluid"-->
+        </div><!-- /.container-fluid -->
       </div>
       <!-- /.content-header -->
 
@@ -61,7 +61,9 @@ $result = mysqli_query($connection, $sql);
                 </div>
               </div>
             </div>
-          
+          </div> <!-- Tutup row pertama -->
+
+          <div class="row">
             <div class="col-lg-12">
               <div class="card card-lightblue">
                 <div class="card-header">
@@ -77,119 +79,120 @@ $result = mysqli_query($connection, $sql);
                     </label>
                   </div>
                 </div>
-              </div>
-            </div>
-          
-          <!-- Bagian Sensor Data (Node 1-4) -->
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="card card-success">
-                  <div class="card-header">
-                    <h3 class="card-title">Monitoring Sensor</h3>
-                  </div>
-                  <div class="card-body">
-                    <div class="row">
-                      <!-- Node 1 -->
-                      <div class="col-md-3">
-                        <div class="card card-primary">
-                          <div class="card-header">
-                            <h3 class="card-title">Node 1</h3>
-                          </div>
-                          <div class="card-body">
-                            <p>Tegangan: <span id="node1-tegangan">-</span> V</p>
-                            <p>Arus: <span id="node1-arus">-</span> A</p>
-                            <p>Sensor 1: <span id="node1-sensor1">-</span></p>
-                            <p>Sensor 2: <span id="node1-sensor2">-</span></p>
-                            <p>Sensor 3: <span id="node1-sensor3">-</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Node 2 -->
-                      <div class="col-md-3">
-                        <div class="card card-success">
-                          <div class="card-header">
-                            <h3 class="card-title">Node 2</h3>
-                          </div>
-                          <div class="card-body">
-                            <p>Tegangan: <span id="node2-tegangan">-</span> V</p>
-                            <p>Arus: <span id="node2-arus">-</span> A</p>
-                            <p>Sensor 1: <span id="node2-sensor1">-</span></p>
-                            <p>Sensor 2: <span id="node2-sensor2">-</span></p>
-                            <p>Sensor 3: <span id="node2-sensor3">-</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Node 3 -->
-                      <div class="col-md-3">
-                        <div class="card card-warning">
-                          <div class="card-header">
-                            <h3 class="card-title">Node 3</h3>
-                          </div>
-                          <div class="card-body">
-                            <p>Tegangan: <span id="node3-tegangan">-</span> V</p>
-                            <p>Arus: <span id="node3-arus">-</span> A</p>
-                            <p>Sensor 1: <span id="node3-sensor1">-</span></p>
-                            <p>Sensor 2: <span id="node3-sensor2">-</span></p>
-                            <p>Sensor 3: <span id="node3-sensor3">-</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Node 4 -->
-                      <div class="col-md-3">
-                        <div class="card card-danger">
-                          <div class="card-header">
-                            <h3 class="card-title">Node 4</h3>
-                          </div>
-                          <div class="card-body">
-                            <p>Tegangan: <span id="node4-tegangan">-</span> V</p>
-                            <p>Arus: <span id="node4-arus">-</span> A</p>
-                            <p>Sensor 1: <span id="node4-sensor1">-</span></p>
-                            <p>Sensor 2: <span id="node4-sensor2">-</span></p>
-                            <p>Sensor 3: <span id="node4-sensor3">-</span></p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Tambahkan gambar di bawah Sensor Data -->
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="card card-default">
-                  <div class="card-header bg-gray">
-                    <h3 class="card-title">Monitoring Dashboard</h3>
-                  </div>
-                  <div class="card-body text-center">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 300px;">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </div> <!-- Tutup card card-lightblue -->
+            </div> <!-- Tutup col-lg-12 -->
+          </div> <!-- Tutup row untuk Lamp Button -->
 
-            <!-- TAMBAHAN: Duplikasi Gambar Monitoring Dashboard -->
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="card card-default">
-                  <div class="card-header bg-gray">
-                    <h3 class="card-title">Monitoring Dashboard - Additional View</h3>
-                  </div>
-                  <div class="card-body text-center">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 300px;">
+          <!-- Bagian Sensor Data (Node 1-4) -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card card-success">
+                <div class="card-header">
+                  <h3 class="card-title">Monitoring Sensor</h3>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <!-- Node 1 -->
+                    <div class="col-md-3">
+                      <div class="card card-primary">
+                        <div class="card-header">
+                          <h3 class="card-title">Node 1</h3>
+                        </div>
+                        <div class="card-body">
+                          <p>Tegangan: <span id="node1-tegangan">-</span> V</p>
+                          <p>Arus: <span id="node1-arus">-</span> A</p>
+                          <p>Sensor 1: <span id="node1-sensor1">-</span></p>
+                          <p>Sensor 2: <span id="node1-sensor2">-</span></p>
+                          <p>Sensor 3: <span id="node1-sensor3">-</span></p>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Node 2 -->
+                    <div class="col-md-3">
+                      <div class="card card-success">
+                        <div class="card-header">
+                          <h3 class="card-title">Node 2</h3>
+                        </div>
+                        <div class="card-body">
+                          <p>Tegangan: <span id="node2-tegangan">-</span> V</p>
+                          <p>Arus: <span id="node2-arus">-</span> A</p>
+                          <p>Sensor 1: <span id="node2-sensor1">-</span></p>
+                          <p>Sensor 2: <span id="node2-sensor2">-</span></p>
+                          <p>Sensor 3: <span id="node2-sensor3">-</span></p>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Node 3 -->
+                    <div class="col-md-3">
+                      <div class="card card-warning">
+                        <div class="card-header">
+                          <h3 class="card-title">Node 3</h3>
+                        </div>
+                        <div class="card-body">
+                          <p>Tegangan: <span id="node3-tegangan">-</span> V</p>
+                          <p>Arus: <span id="node3-arus">-</span> A</p>
+                          <p>Sensor 1: <span id="node3-sensor1">-</span></p>
+                          <p>Sensor 2: <span id="node3-sensor2">-</span></p>
+                          <p>Sensor 3: <span id="node3-sensor3">-</span></p>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Node 4 -->
+                    <div class="col-md-3">
+                      <div class="card card-danger">
+                        <div class="card-header">
+                          <h3 class="card-title">Node 4</h3>
+                        </div>
+                        <div class="card-body">
+                          <p>Tegangan: <span id="node4-tegangan">-</span> V</p>
+                          <p>Arus: <span id="node4-arus">-</span> A</p>
+                          <p>Sensor 1: <span id="node4-sensor1">-</span></p>
+                          <p>Sensor 2: <span id="node4-sensor2">-</span></p>
+                          <p>Sensor 3: <span id="node4-sensor3">-</span></p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+          
+          <!-- Gambar Monitoring Dashboard -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card card-default">
+                <div class="card-header bg-gray">
+                  <h3 class="card-title">Monitoring Dashboard</h3>
+                </div>
+                <div class="card-body text-center">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 300px;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Duplikasi Gambar Monitoring Dashboard -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card card-default">
+                <div class="card-header bg-gray">
+                  <h3 class="card-title">Monitoring Dashboard - Additional View</h3>
+                </div>
+                <div class="card-body text-center">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 300px;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           
           <div class="row">
             <div class="col-12">
@@ -209,9 +212,10 @@ $result = mysqli_query($connection, $sql);
                     </thead>
                     <tbody>
                       <?php
-                      while ($row = mysqli_fetch_assoc($result)) { ?> <tr>
-                          <td><?php echo $row['serial_number'] ?> </td>
-                          <td><?php echo $row['location'] ?> </td>
+                      while ($row = mysqli_fetch_assoc($result)) { ?>
+                        <tr>
+                          <td><?php echo $row['serial_number'] ?></td>
+                          <td><?php echo $row['location'] ?></td>
                           <td style="color:red" id="kelasiottt/status/<?php echo $row['serial_number']?>">offline</td>
                         </tr>
                       <?php } ?>
@@ -260,7 +264,6 @@ $result = mysqli_query($connection, $sql);
 
       client.subscribe("kelasiottt/#", { qos: 1 });
       client.subscribe("SmIr/data", { qos: 1 }); // Subscribe ke topik baru
-
     });
 
     client.on("message", function(topic, payload) {
