@@ -49,7 +49,7 @@ $result = mysqli_query($connection, $sql);
                   while($row = mysqli_fetch_assoc($result)){ ?>
                     <tr>
                       <td><?php echo $row['id']; ?></td>
-                      <td><?php echo $row['serial_number']; ?></td>
+                      <td><?php echo $row['node']; ?></td>
                       <td>
                         <?php 
                           switch($row['name']){
