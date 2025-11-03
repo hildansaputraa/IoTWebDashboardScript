@@ -118,9 +118,11 @@ $result = mysqli_query($connection, $sql);
                         <div class="card-body">
                           <p>Tegangan: <span id="node1-tegangan">-</span> V</p>
                           <p>Arus: <span id="node1-arus">-</span> A</p>
-                          <p>Sensor 1: <span id="node1-sensor1">-</span></p>
-                          <p>Sensor 2: <span id="node1-sensor2">-</span></p>
-                          <p>Sensor 3: <span id="node1-sensor3">-</span></p>
+                          <p>Water Level A: <span id="node1-waterlvA">-</span> cm</p>
+                          <p>Water Level B: <span id="node1-waterlvB">-</span> cm</p>
+                          <p>Flow Rate: <span id="node1-flowrate">-</span> L/min</p>
+                          <p>Total Water: <span id="node1-totalwater">-</span> L</p>
+                          <p>RSSI: <span id="node1-rssi">-</span> dBm</p>
                         </div>
                       </div>
                     </div>
@@ -133,9 +135,11 @@ $result = mysqli_query($connection, $sql);
                         <div class="card-body">
                           <p>Tegangan: <span id="node2-tegangan">-</span> V</p>
                           <p>Arus: <span id="node2-arus">-</span> A</p>
-                          <p>Sensor 1: <span id="node2-sensor1">-</span></p>
-                          <p>Sensor 2: <span id="node2-sensor2">-</span></p>
-                          <p>Sensor 3: <span id="node2-sensor3">-</span></p>
+                          <p>Water Level A: <span id="node2-waterlvA">-</span> cm</p>
+                          <p>Water Level B: <span id="node2-waterlvB">-</span> cm</p>
+                          <p>Flow Rate: <span id="node2-flowrate">-</span> L/min</p>
+                          <p>Total Water: <span id="node2-totalwater">-</span> L</p>
+                          <p>RSSI: <span id="node2-rssi">-</span> dBm</p>
                         </div>
                       </div>
                     </div>
@@ -148,9 +152,11 @@ $result = mysqli_query($connection, $sql);
                         <div class="card-body">
                           <p>Tegangan: <span id="node3-tegangan">-</span> V</p>
                           <p>Arus: <span id="node3-arus">-</span> A</p>
-                          <p>Sensor 1: <span id="node3-sensor1">-</span></p>
-                          <p>Sensor 2: <span id="node3-sensor2">-</span></p>
-                          <p>Sensor 3: <span id="node3-sensor3">-</span></p>
+                          <p>Water Level A: <span id="node3-waterlvA">-</span> cm</p>
+                          <p>Water Level B: <span id="node3-waterlvB">-</span> cm</p>
+                          <p>Flow Rate: <span id="node3-flowrate">-</span> L/min</p>
+                          <p>Total Water: <span id="node3-totalwater">-</span> L</p>
+                          <p>RSSI: <span id="node3-rssi">-</span> dBm</p>
                         </div>
                       </div>
                     </div>
@@ -163,9 +169,11 @@ $result = mysqli_query($connection, $sql);
                         <div class="card-body">
                           <p>Tegangan: <span id="node4-tegangan">-</span> V</p>
                           <p>Arus: <span id="node4-arus">-</span> A</p>
-                          <p>Sensor 1: <span id="node4-sensor1">-</span></p>
-                          <p>Sensor 2: <span id="node4-sensor2">-</span></p>
-                          <p>Sensor 3: <span id="node4-sensor3">-</span></p>
+                          <p>Water Level A: <span id="node4-waterlvA">-</span> cm</p>
+                          <p>Water Level B: <span id="node4-waterlvB">-</span> cm</p>
+                          <p>Flow Rate: <span id="node4-flowrate">-</span> L/min</p>
+                          <p>Total Water: <span id="node4-totalwater">-</span> L</p>
+                          <p>RSSI: <span id="node4-rssi">-</span> dBm</p>
                         </div>
                       </div>
                     </div>
@@ -292,18 +300,20 @@ $result = mysqli_query($connection, $sql);
         }
       }
 
-      // Tambahkan pemrosesan untuk topik SmIr/data
+      // Pemrosesan untuk topik SmIr/data dengan format baru
       if (topic === "SmIr/data") {
         try {
           const data = JSON.parse(payload.toString());
           const node = data.Node;
           
-          // Update data untuk node yang sesuai
+          // Update data untuk node yang sesuai dengan field baru
           document.getElementById(`node${node}-tegangan`).innerHTML = data.tegangan;
           document.getElementById(`node${node}-arus`).innerHTML = data.arus;
-          document.getElementById(`node${node}-sensor1`).innerHTML = data.sensor1;
-          document.getElementById(`node${node}-sensor2`).innerHTML = data.sensor2;
-          document.getElementById(`node${node}-sensor3`).innerHTML = data.sensor3;
+          document.getElementById(`node${node}-waterlvA`).innerHTML = data.waterlvA;
+          document.getElementById(`node${node}-waterlvB`).innerHTML = data.waterlvB;
+          document.getElementById(`node${node}-flowrate`).innerHTML = data.flowrate;
+          document.getElementById(`node${node}-totalwater`).innerHTML = data.totalwater;
+          document.getElementById(`node${node}-rssi`).innerHTML = data.rssi;
           
           console.log(`Data diterima untuk Node ${node}:`, data);
         } catch (error) {

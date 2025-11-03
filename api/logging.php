@@ -5,10 +5,9 @@ $webhookResponse = json_decode(file_get_contents('php://input'), true);
 $topic = $webhookResponse["topic"];
 $payload = $webhookResponse["payload"];
 
-// Jika topik adalah SmIr/data dan payload berisi JSON
 if ($topic == "SmIr/data") {
     $data = json_decode($payload, true);
-    
+
     if ($data) {
         $node = $data["Node"];
         $tegangan = $data["tegangan"];
@@ -19,7 +18,6 @@ if ($topic == "SmIr/data") {
         $totalwater = $data["totalwater"];
         $rssi = $data["rssi"];
 
-        // Simpan setiap nilai sensor ke tabel data
         $sqls = [
             "INSERT INTO data (serial_number, sensor_actuator, value, name, mqtt_topic)
              VALUES ('Node$node', 'sensor', '$tegangan', 'tegangan', '$topic')",
