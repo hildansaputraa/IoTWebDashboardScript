@@ -1,7 +1,10 @@
 <?php
-include "../config/database.php"; // pastikan file ini mengatur $connection
+include "../config/database.php";
 
-// Ambil payload JSON dari webhook
+// Simpan log mentah (sementara, bisa hapus kalau sudah jalan)
+file_put_contents("webhook_log.txt", date("Y-m-d H:i:s") . " | RAW: " . file_get_contents('php://input') . "\n", FILE_APPEND);
+
+// Decode JSON dari EMQX
 $webhookResponse = json_decode(file_get_contents('php://input'), true);
 
 if (!$webhookResponse) {
@@ -12,10 +15,17 @@ if (!$webhookResponse) {
 $topic = $webhookResponse["topic"] ?? '';
 $payload = $webhookResponse["payload"] ?? '';
 
-if ($topic == "SmIr/data") {
-    $data = json_decode($payload, true);
+if (strpos($topic, "SmIr/data") !== false) {
 
-    if ($data) {
+    // Handle payload sebagai string atau object
+    if (is_string($payload)) {
+        $data = json_decode($payload, true);
+    } else {
+        $data = $payload;
+    }
+
+    if ($data && isset($data["Node"])) {
+
         $node = mysqli_real_escape_string($connection, "Node" . $data["Node"]);
         $tegangan = mysqli_real_escape_string($connection, $data["tegangan"]);
         $arus = mysqli_real_escape_string($connection, $data["arus"]);
@@ -25,7 +35,6 @@ if ($topic == "SmIr/data") {
         $totalwater = mysqli_real_escape_string($connection, $data["totalwater"]);
         $rssi = mysqli_real_escape_string($connection, $data["rssi"]);
 
-        // Buat array query
         $sqls = [
             "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic)
              VALUES ('$node', 'sensor', '$tegangan', 'tegangan', '$topic')",
@@ -43,14 +52,14 @@ if ($topic == "SmIr/data") {
              VALUES ('$node', 'sensor', '$rssi', 'rssi', '$topic')"
         ];
 
-        // Eksekusi query
         foreach ($sqls as $sql) {
             if (!mysqli_query($connection, $sql)) {
                 error_log("MySQL Error: " . mysqli_error($connection) . " | Query: " . $sql);
             }
         }
+
     } else {
-        error_log("Payload JSON tidak valid: " . $payload);
+        error_log("Payload JSON tidak valid: " . json_encode($payload));
     }
 } else {
     error_log("Topik tidak sesuai: $topic");
