@@ -148,7 +148,7 @@ $result = mysqli_query($connection, $sql);
 
   <script>
     const clientId = Math.random().toString(16).substr(2, 8)
-    const host = 'wss://test.mosquitto.org:8081/mqtt'
+    const host = 'wss://mqtt.eclipseprojects.io/mqtt'
 
     const options = {
       keepalive: 30,
