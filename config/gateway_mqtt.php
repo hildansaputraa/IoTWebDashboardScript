@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
-include __DIR__ . '/config/database.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+include __DIR__ . '/database.php';
 
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
