@@ -5,59 +5,77 @@ include __DIR__ . '/database.php';
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 
-// Konfigurasi broker MQTT
 $server = 'broker.emqx.io';
-$port = 1883; // gunakan 8883 jika TLS diaktifkan
+$port = 1883;
 $clientId = 'php_gateway_' . uniqid();
 $username = 'emqx_test';
 $password = 'emqx_test';
 
-// Pengaturan koneksi
 $connectionSettings = (new ConnectionSettings)
     ->setUsername($username)
     ->setPassword($password)
     ->setKeepAliveInterval(60)
     ->setUseTls(false);
 
-// Inisialisasi klien MQTT
 $mqtt = new MqttClient($server, $port, $clientId);
 
-// Coba koneksi ke broker
-$mqtt->connect($connectionSettings, true);
-echo "Terhubung ke broker MQTT...\n";
+try {
+    $mqtt->connect($connectionSettings, true);
+    echo "Terhubung ke broker MQTT...\n";
+} catch (Exception $e) {
+    echo "Gagal konek ke broker: " . $e->getMessage() . "\n";
+    exit(1);
+}
 
-// Subscribe ke topik utama
 $mqtt->subscribe('SmIr/data', function ($topic, $message) use ($connection) {
     echo "Pesan diterima di $topic: $message\n";
 
     $data = json_decode($message, true);
-    if (!$data || !isset($data['Node'])) {
-        echo "Data tidak valid atau field 'Node' tidak ditemukan.\n";
+
+    // Validasi struktur data
+    if (!is_array($data) || !isset($data['Node'])) {
+        echo "⚠️  Data tidak valid, abaikan.\n";
         return;
     }
 
-    // Siapkan variabel dasar
-    $node = "Node" . intval($data["Node"]);
-    $rssi = isset($data["rssi"]) ? mysqli_real_escape_string($connection, $data["rssi"]) : 0;
-    $topic = mysqli_real_escape_string($connection, $topic);
+    // Normalisasi nama node (pastikan tanpa spasi dan huruf besar-kecil konsisten)
+    $node = "Node" . trim($data["Node"]);
 
-    // Loop setiap key di JSON (otomatis simpan semua field)
-    foreach ($data as $key => $value) {
-        if ($key === "Node") continue; // lewati field Node
+    // Escape untuk keamanan SQL
+    $node = mysqli_real_escape_string($connection, $node);
+    $rssi = isset($data["rssi"]) ? floatval($data["rssi"]) : 0;
 
-        $keyEsc = mysqli_real_escape_string($connection, $key);
-        $valEsc = mysqli_real_escape_string($connection, $value);
+    // Daftar sensor
+    $sensorList = [
+        'tegangan',
+        'arus',
+        'waterlvA',
+        'waterlvB',
+        'flowrate',
+        'totalwater',
+        'rssi'
+    ];
 
-        $sql = "INSERT INTO data (node, sensor_actuator, name, value, mqtt_topic, rssi, created_at)
-                VALUES ('$node', 'sensor', '$keyEsc', '$valEsc', '$topic', '$rssi', NOW())";
+    foreach ($sensorList as $sensor) {
+        if (!isset($data[$sensor])) {
+            echo "⚠️  Data $sensor tidak ditemukan di Node {$data['Node']}\n";
+            continue;
+        }
+
+        $value = floatval($data[$sensor]);
+        $value = mysqli_real_escape_string($connection, $value);
+
+        $sql = "INSERT INTO data (node, sensor_actuator, name, value, rssi, mqtt_topic)
+                VALUES ('$node', 'sensor', '$sensor', '$value', '$rssi', '$topic')";
 
         if (!mysqli_query($connection, $sql)) {
-            echo "MySQL Error (Node {$data['Node']}): " . mysqli_error($connection) . "\n";
+            echo "❌ MySQL Error: " . mysqli_error($connection) . "\n";
         }
     }
 
-    echo "Data Node {$data['Node']} disimpan ke database\n";
-});
+    echo "✅ Data Node {$data['Node']} disimpan ke database\n";
 
-// Jalankan loop MQTT terus-menerus
+}, 0);
+
+// Loop agar tetap mendengarkan pesan
 $mqtt->loop(true);
