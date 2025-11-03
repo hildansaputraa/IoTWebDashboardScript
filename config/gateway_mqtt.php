@@ -38,8 +38,8 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use ($connection) {
         return;
     }
 
-    // Normalisasi nama node (pastikan tanpa spasi dan huruf besar-kecil konsisten)
-    $node = "Node" . trim($data["Node"]);
+    // Simpan node sebagai angka murni (tanpa "Node")
+    $node = intval($data["Node"]);
 
     // Escape untuk keamanan SQL
     $node = mysqli_real_escape_string($connection, $node);
@@ -73,7 +73,7 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use ($connection) {
         }
     }
 
-    echo "✅ Data Node {$data['Node']} disimpan ke database\n";
+    echo "✅ Data Node {$data['Node']} disimpan ke database sebagai Node $node\n";
 
 }, 0);
 
