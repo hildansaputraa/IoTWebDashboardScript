@@ -148,7 +148,7 @@ $result = mysqli_query($connection, $sql);
 
   <script>
     const clientId = Math.random().toString(16).substr(2, 8)
-    const host = 'wss://broker.hivemq.com:8884/mqtt'
+    const host = 'wss://broker.hivemq.com:8884'
 
     const options = {
       keepalive: 30,
