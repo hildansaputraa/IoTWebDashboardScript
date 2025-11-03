@@ -306,17 +306,6 @@ $result = mysqli_query($connection, $sql);
           document.getElementById(`node${node}-sensor3`).innerHTML = data.sensor3;
           
           console.log(`Data diterima untuk Node ${node}:`, data);
-
-          // Kirim data JSON ke server (PHP) untuk disimpan di database
-          fetch('save_sensor_data.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-          })
-          .then(res => res.text())
-          .then(res => console.log("Data disimpan:", res))
-          .catch(err => console.error("Gagal simpan data:", err));
-
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
