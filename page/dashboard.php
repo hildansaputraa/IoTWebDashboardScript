@@ -148,13 +148,13 @@ $result = mysqli_query($connection, $sql);
 
   <script>
     const clientId = Math.random().toString(16).substr(2, 8)
-    const host = 'wss://kelasiottt.cloud.shiftr.io:443'
+    const host = 'wss://broker.hivemq.com:8884/mqtt'
 
     const options = {
       keepalive: 30,
       clientId: clientId,
-      username: "kelasiottt",
-      password: "caecbzs6erwT0HRk",
+      username: "",
+      password: "",
       protocolId: 'MQTT',
       protocolVersion: 4,
       clean: true,
