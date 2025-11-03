@@ -37,7 +37,7 @@ $result = mysqli_query($connection, $sql);
                 <thead>
                   <tr>
                     <th>Id</th>
-                    <th>Serial Number</th>
+                    <th>Node</th>
                     <th>Sensor Name</th>
                     <th>Value</th>
                     <th>Topic</th>
