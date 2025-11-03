@@ -12,16 +12,17 @@ $result = mysqli_query($connection, $sql);
           <div class="row mb-2">
             <div class="col-sm-6">
               <h1 class="m-0">Dashboard</h1>
-            </div>
+            </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="?page=dashboard">Home</a></li>
                 <li class="breadcrumb-item active">Dashboard</li>
               </ol>
-            </div>
-          </div>
-        </div>
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
       </div>
+      <!-- /.content-header -->
 
       <!-- Main content -->
       <div class="content">
@@ -33,30 +34,34 @@ $result = mysqli_query($connection, $sql);
                   <h3 id="potentiometer">-</h3>
                   <p>Potentiometer</p>
                 </div>
-                <div class="icon"><i class="fas fa-tachometer-alt"></i></div>
+                <div class="icon">
+                  <i class="fas fa-tachometer-alt"></i>
+                </div>
               </div>
             </div>
-
             <div class="col-lg-4">
               <div class="small-box bg-danger">
                 <div class="inner">
                   <h3 id="temperature">-</h3>
                   <p>Temperature</p>
                 </div>
-                <div class="icon"><i class="fas fa-temperature-high"></i></div>
+                <div class="icon">
+                  <i class="fas fa-temperature-high"></i>
+                </div>
               </div>
             </div>
-
             <div class="col-lg-4">
               <div class="small-box bg-gray">
                 <div class="inner">
                   <h3><span id="humidity">-</span>%</h3>
                   <p>Humidity</p>
                 </div>
-                <div class="icon"><i class="fas fa-water"></i></div>
+                <div class="icon">
+                  <i class="fas fa-water"></i>
+                </div>
               </div>
             </div>
-
+          
             <div class="col-lg-6">
               <div class="card card-lightblue">
                 <div class="card-header">
@@ -72,22 +77,91 @@ $result = mysqli_query($connection, $sql);
                     </label>
                   </div>
                 </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+            
+            <!-- Tambahkan bagian baru untuk menampilkan data sensor dari Node 1-4 -->
+            <div class="col-lg-12">
+              <div class="card card-success">
+                <div class="card-header">
+                  <h3 class="card-title">Sensor Data (Node 1-4)</h3>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <!-- Node 1 -->
+                    <div class="col-md-3">
+                      <div class="card card-primary">
+                        <div class="card-header">
+                          <h3 class="card-title">Node 1</h3>
+                        </div>
+                        <div class="card-body">
+                          <p>Tegangan: <span id="node1-tegangan">-</span> V</p>
+                          <p>Arus: <span id="node1-arus">-</span> A</p>
+                          <p>Sensor 1: <span id="node1-sensor1">-</span></p>
+                          <p>Sensor 2: <span id="node1-sensor2">-</span></p>
+                          <p>Sensor 3: <span id="node1-sensor3">-</span></p>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Node 2 -->
+                    <div class="col-md-3">
+                      <div class="card card-success">
+                        <div class="card-header">
+                          <h3 class="card-title">Node 2</h3>
+                        </div>
+                        <div class="card-body">
+                          <p>Tegangan: <span id="node2-tegangan">-</span> V</p>
+                          <p>Arus: <span id="node2-arus">-</span> A</p>
+                          <p>Sensor 1: <span id="node2-sensor1">-</span></p>
+                          <p>Sensor 2: <span id="node2-sensor2">-</span></p>
+                          <p>Sensor 3: <span id="node2-sensor3">-</span></p>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Node 3 -->
+                    <div class="col-md-3">
+                      <div class="card card-warning">
+                        <div class="card-header">
+                          <h3 class="card-title">Node 3</h3>
+                        </div>
+                        <div class="card-body">
+                          <p>Tegangan: <span id="node3-tegangan">-</span> V</p>
+                          <p>Arus: <span id="node3-arus">-</span> A</p>
+                          <p>Sensor 1: <span id="node3-sensor1">-</span></p>
+                          <p>Sensor 2: <span id="node3-sensor2">-</span></p>
+                          <p>Sensor 3: <span id="node3-sensor3">-</span></p>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Node 4 -->
+                    <div class="col-md-3">
+                      <div class="card card-danger">
+                        <div class="card-header">
+                          <h3 class="card-title">Node 4</h3>
+                        </div>
+                        <div class="card-body">
+                          <p>Tegangan: <span id="node4-tegangan">-</span> V</p>
+                          <p>Arus: <span id="node4-arus">-</span> A</p>
+                          <p>Sensor 1: <span id="node4-sensor1">-</span></p>
+                          <p>Sensor 2: <span id="node4-sensor2">-</span></p>
+                          <p>Sensor 3: <span id="node4-sensor3">-</span></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- ===================== NODE DATA SECTION ===================== -->
-          <div class="row" id="node-container">
-            <!-- Data Node 1–4 dari topic SmIr/data muncul otomatis -->
-          </div>
-          <!-- ============================================================= -->
-
-          <div class="row mt-4">
+          
+          <div class="row">
             <div class="col-12">
               <div class="card card-lightblue">
                 <div class="card-header">
                   <h3 class="card-title">Devices Status</h3>
                 </div>
+                <!-- /.card-header -->
                 <div class="card-body table-responsive p-0" style="height: 300px;">
                   <table class="table table-head-fixed text-nowrap">
                     <thead>
@@ -98,25 +172,32 @@ $result = mysqli_query($connection, $sql);
                       </tr>
                     </thead>
                     <tbody>
-                      <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-                        <tr>
-                          <td><?php echo $row['serial_number'] ?></td>
-                          <td><?php echo $row['location'] ?></td>
-                          <td style="color:red" id="kelasiottt/status/<?php echo $row['serial_number'] ?>">offline</td>
+                      <?php
+                      while ($row = mysqli_fetch_assoc($result)) { ?> <tr>
+                          <td><?php echo $row['serial_number'] ?> </td>
+                          <td><?php echo $row['location'] ?> </td>
+                          <td style="color:red" id="kelasiottt/status/<?php echo $row['serial_number']?>">offline</td>
                         </tr>
                       <?php } ?>
                     </tbody>
                   </table>
                 </div>
+                <!-- /.card-body -->
               </div>
+              <!-- /.card -->
             </div>
           </div>
           <!-- /.card -->
         </div>
+        <!-- /.card -->
       </div>
-    </div>
+      <!-- /.col-md-6 -->
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
   </div>
-
+  <!-- /.content -->
+  </div>
+  </div>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
   <script>
@@ -140,8 +221,12 @@ $result = mysqli_query($connection, $sql);
 
     client.on("connect", () => {
       console.log("Berhasil Connect");
+      document.getElementById("status").innerHTML = "Terhubung";
+      document.getElementById("status").style.color = "green";
+
       client.subscribe("kelasiottt/#", { qos: 1 });
-      client.subscribe("SmIr/data", { qos: 1 }); // tambahan untuk Node
+      client.subscribe("SmIr/data", { qos: 1 }); // Subscribe ke topik baru
+
     });
 
     client.on("message", function(topic, payload) {
@@ -161,60 +246,46 @@ $result = mysqli_query($connection, $sql);
         }
       }
 
-      if (topic.includes("kelasiottt/status/12345678")) {
+      if(topic.includes("kelasiottt/status/12345678")){
         document.getElementById(topic).innerHTML = payload;
-        if (payload.toString() === "offline") {
+
+        if(payload.toString()==="offline"){
           document.getElementById(topic).style.color = "red";
-        } else if (payload.toString() === "online") {
+        } else if(payload.toString()==="online"){
           document.getElementById(topic).style.color = "green";
         }
       }
 
-      // Tambahan untuk menerima data Node dari topic SmIr/data
+      // Tambahkan pemrosesan untuk topik SmIr/data
       if (topic === "SmIr/data") {
         try {
           const data = JSON.parse(payload.toString());
           const node = data.Node;
-
-          if (node >= 1 && node <= 4) {
-            let card = document.getElementById(`node-${node}`);
-            if (!card) {
-              const container = document.getElementById("node-container");
-              const div = document.createElement("div");
-              div.className = "col-lg-3";
-              div.innerHTML = `
-                <div class="card card-lightblue" id="node-${node}">
-                  <div class="card-header">
-                    <h3 class="card-title">Node ${node}</h3>
-                  </div>
-                  <div class="card-body">
-                    <p><b>Tegangan:</b> <span id="tegangan-${node}">0</span> V</p>
-                    <p><b>Arus:</b> <span id="arus-${node}">0</span> A</p>
-                    <p><b>Sensor1:</b> <span id="sensor1-${node}">0</span></p>
-                    <p><b>Sensor2:</b> <span id="sensor2-${node}">0</span></p>
-                    <p><b>Sensor3:</b> <span id="sensor3-${node}">0</span></p>
-                  </div>
-                </div>`;
-              container.appendChild(div);
-            }
-
-            document.getElementById(`tegangan-${node}`).innerText = data.tegangan;
-            document.getElementById(`arus-${node}`).innerText = data.arus;
-            document.getElementById(`sensor1-${node}`).innerText = data.sensor1;
-            document.getElementById(`sensor2-${node}`).innerText = data.sensor2;
-            document.getElementById(`sensor3-${node}`).innerText = data.sensor3;
-          }
-        } catch (e) {
-          console.error("Error parsing JSON dari SmIr/data:", e);
+          
+          // Update data untuk node yang sesuai
+          document.getElementById(`node${node}-tegangan`).innerHTML = data.tegangan;
+          document.getElementById(`node${node}-arus`).innerHTML = data.arus;
+          document.getElementById(`node${node}-sensor1`).innerHTML = data.sensor1;
+          document.getElementById(`node${node}-sensor2`).innerHTML = data.sensor2;
+          document.getElementById(`node${node}-sensor3`).innerHTML = data.sensor3;
+          
+          console.log(`Data diterima untuk Node ${node}:`, data);
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
         }
       }
     });
 
     function publishLamp(value) {
-      let data;
-      if (document.getElementById("lampu1nyala").checked) data = "nyala";
-      if (document.getElementById("lampu1mati").checked) data = "mati";
-      client.publish("kelasiottt/12345678/lampu", data, { qos: 1, retain: true });
+      if (document.getElementById("lampu1nyala").checked) {
+        data = "nyala";
+      }
+      if (document.getElementById("lampu1mati").checked) {
+        data = "mati";
+      }
+      client.publish("kelasiottt/12345678/lampu", data, {
+        qos: 1,
+        retain: true
+      });
     }
   </script>
-</body>
