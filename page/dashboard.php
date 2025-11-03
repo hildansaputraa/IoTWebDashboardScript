@@ -62,7 +62,7 @@ $result = mysqli_query($connection, $sql);
               </div>
             </div>
           
-            <div class="col-lg-6">
+            <div class="col-lg-12">
               <div class="card card-lightblue">
                 <div class="card-header">
                   <h3 class="card-title">Lamp Button</h3>
