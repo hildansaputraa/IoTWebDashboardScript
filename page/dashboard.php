@@ -148,13 +148,13 @@ $result = mysqli_query($connection, $sql);
 
   <script>
     const clientId = Math.random().toString(16).substr(2, 8)
-    const host = 'wss://iot.coreflux.cloud:443'
+    const host = 'wss://broker.emqx.io:8084/mqtt'
 
     const options = {
       keepalive: 30,
       clientId: clientId,
-      username: "",
-      password: "",
+      username: "emqx_test",
+      password: "emqx_test",
       protocolId: 'MQTT',
       protocolVersion: 4,
       clean: true,
