@@ -77,8 +77,6 @@ $result = mysqli_query($connection, $sql);
                     </label>
                   </div>
                 </div>
-                <!-- /.card-body -->
-              </div>
             </div>
             <div class="col-lg-6">
               <div class="card card-lightblue">
@@ -101,71 +99,72 @@ $result = mysqli_query($connection, $sql);
             
           
           <!-- Bagian Sensor Data (Node 1-4) -->
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="card card-success">
-                <div class="card-header">
-                  <h3 class="card-title">Monitoring Sensor</h3>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <!-- Node 1 -->
-                    <div class="col-md-3">
-                      <div class="card card-primary">
-                        <div class="card-header">
-                          <h3 class="card-title">Node 1</h3>
-                        </div>
-                        <div class="card-body">
-                          <p>Tegangan: <span id="node1-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node1-arus">-</span> A</p>
-                          <p>Sensor 1: <span id="node1-sensor1">-</span></p>
-                          <p>Sensor 2: <span id="node1-sensor2">-</span></p>
-                          <p>Sensor 3: <span id="node1-sensor3">-</span></p>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Node 2 -->
-                    <div class="col-md-3">
-                      <div class="card card-success">
-                        <div class="card-header">
-                          <h3 class="card-title">Node 2</h3>
-                        </div>
-                        <div class="card-body">
-                          <p>Tegangan: <span id="node2-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node2-arus">-</span> A</p>
-                          <p>Sensor 1: <span id="node2-sensor1">-</span></p>
-                          <p>Sensor 2: <span id="node2-sensor2">-</span></p>
-                          <p>Sensor 3: <span id="node2-sensor3">-</span></p>
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="card card-success">
+                  <div class="card-header">
+                    <h3 class="card-title">Monitoring Sensor</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <!-- Node 1 -->
+                      <div class="col-md-3">
+                        <div class="card card-primary">
+                          <div class="card-header">
+                            <h3 class="card-title">Node 1</h3>
+                          </div>
+                          <div class="card-body">
+                            <p>Tegangan: <span id="node1-tegangan">-</span> V</p>
+                            <p>Arus: <span id="node1-arus">-</span> A</p>
+                            <p>Sensor 1: <span id="node1-sensor1">-</span></p>
+                            <p>Sensor 2: <span id="node1-sensor2">-</span></p>
+                            <p>Sensor 3: <span id="node1-sensor3">-</span></p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- Node 3 -->
-                    <div class="col-md-3">
-                      <div class="card card-warning">
-                        <div class="card-header">
-                          <h3 class="card-title">Node 3</h3>
-                        </div>
-                        <div class="card-body">
-                          <p>Tegangan: <span id="node3-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node3-arus">-</span> A</p>
-                          <p>Sensor 1: <span id="node3-sensor1">-</span></p>
-                          <p>Sensor 2: <span id="node3-sensor2">-</span></p>
-                          <p>Sensor 3: <span id="node3-sensor3">-</span></p>
+                      <!-- Node 2 -->
+                      <div class="col-md-3">
+                        <div class="card card-success">
+                          <div class="card-header">
+                            <h3 class="card-title">Node 2</h3>
+                          </div>
+                          <div class="card-body">
+                            <p>Tegangan: <span id="node2-tegangan">-</span> V</p>
+                            <p>Arus: <span id="node2-arus">-</span> A</p>
+                            <p>Sensor 1: <span id="node2-sensor1">-</span></p>
+                            <p>Sensor 2: <span id="node2-sensor2">-</span></p>
+                            <p>Sensor 3: <span id="node2-sensor3">-</span></p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- Node 4 -->
-                    <div class="col-md-3">
-                      <div class="card card-danger">
-                        <div class="card-header">
-                          <h3 class="card-title">Node 4</h3>
+                      <!-- Node 3 -->
+                      <div class="col-md-3">
+                        <div class="card card-warning">
+                          <div class="card-header">
+                            <h3 class="card-title">Node 3</h3>
+                          </div>
+                          <div class="card-body">
+                            <p>Tegangan: <span id="node3-tegangan">-</span> V</p>
+                            <p>Arus: <span id="node3-arus">-</span> A</p>
+                            <p>Sensor 1: <span id="node3-sensor1">-</span></p>
+                            <p>Sensor 2: <span id="node3-sensor2">-</span></p>
+                            <p>Sensor 3: <span id="node3-sensor3">-</span></p>
+                          </div>
                         </div>
-                        <div class="card-body">
-                          <p>Tegangan: <span id="node4-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node4-arus">-</span> A</p>
-                          <p>Sensor 1: <span id="node4-sensor1">-</span></p>
-                          <p>Sensor 2: <span id="node4-sensor2">-</span></p>
-                          <p>Sensor 3: <span id="node4-sensor3">-</span></p>
+                      </div>
+                      <!-- Node 4 -->
+                      <div class="col-md-3">
+                        <div class="card card-danger">
+                          <div class="card-header">
+                            <h3 class="card-title">Node 4</h3>
+                          </div>
+                          <div class="card-body">
+                            <p>Tegangan: <span id="node4-tegangan">-</span> V</p>
+                            <p>Arus: <span id="node4-arus">-</span> A</p>
+                            <p>Sensor 1: <span id="node4-sensor1">-</span></p>
+                            <p>Sensor 2: <span id="node4-sensor2">-</span></p>
+                            <p>Sensor 3: <span id="node4-sensor3">-</span></p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -173,26 +172,25 @@ $result = mysqli_query($connection, $sql);
                 </div>
               </div>
             </div>
-          </div>
-          
-          <!-- Tambahkan gambar di bawah Sensor Data -->
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="card card-default">
-                <div class="card-header">
-                  <h3 class="card-title">Monitoring Dashboard</h3>
-                </div>
-                <div class="card-body text-center">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 500px;">
-                      <p class="mt-2">Network Layout Diagram</p>
+            
+            <!-- Tambahkan gambar di bawah Sensor Data -->
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="card card-default">
+                  <div class="card-header">
+                    <h3 class="card-title">Monitoring Dashboard</h3>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 500px;">
+                        <p class="mt-2">Network Layout Diagram</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
           
           <div class="row">
             <div class="col-12">
