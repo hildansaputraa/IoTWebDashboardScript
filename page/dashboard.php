@@ -1,5 +1,6 @@
 <?php
-include("/../config/database.php");
+// Ubah koneksi ke file config/database.php
+include("config/database.php");
 
 // Ambil daftar device aktif
 $sql = "SELECT * FROM devices WHERE active='Yes'";
@@ -286,7 +287,6 @@ while ($row = mysqli_fetch_assoc($resultData)) {
         document.getElementById(`node${node}-totalwater`).innerHTML = data.totalwater;
         document.getElementById(`node${node}-rssi`).innerHTML = data.rssi;
 
-        // Update waktu terakhir
         const now = new Date();
         const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         const cardNode = document.querySelector(`#node${node}-rssi`).closest('.card-body');
