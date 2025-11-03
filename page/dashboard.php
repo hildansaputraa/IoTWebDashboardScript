@@ -3,7 +3,7 @@ $sql = "SELECT * FROM devices WHERE active='Yes'";
 $result = mysqli_query($connection, $sql);
 ?>
 
-< class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini">
   <div class="wrapper">
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
@@ -325,3 +325,4 @@ $result = mysqli_query($connection, $sql);
       });
     }
   </script>
+</body>
