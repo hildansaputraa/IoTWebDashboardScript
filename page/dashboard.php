@@ -157,8 +157,8 @@ $result = mysqli_query($connection, $sql);
             <!-- Tambahkan gambar di bawah Sensor Data -->
             <div class="row">
               <div class="col-lg-12">
-                <div class="card card bg-gray">
-                  <div class="card-header">
+                <div class="card card-default">
+                  <div class="card-header bg-gray">
                     <h3 class="card-title">Monitoring Dashboard</h3>
                   </div>
                   <div class="card-body text-center">
