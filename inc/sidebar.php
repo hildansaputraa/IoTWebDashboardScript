@@ -42,16 +42,7 @@
             </p>
           </a>
         </li>
-
-        <li class="nav-item">
-          <a href="?page=device" class="nav-link">
-            <i class="nav-icon fas fa-laptop-house"></i>
-            <p>
-              Data Device
-            </p>
-          </a>
-        </li>
-
+        
         <?php if ($_SESSION['role'] == "Admin") { ?>
           <li class="nav-item">
             <a href="?page=user" class="nav-link">
