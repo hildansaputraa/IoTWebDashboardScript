@@ -62,7 +62,7 @@ $result = mysqli_query($connection, $sql);
               </div>
             </div>
           
-            <div class="col-lg-12">
+            <div class="col-lg-6">
               <div class="card card-lightblue">
                 <div class="card-header">
                   <h3 class="card-title">Lamp Button</h3>
@@ -80,7 +80,20 @@ $result = mysqli_query($connection, $sql);
                 <!-- /.card-body -->
               </div>
             </div>
-      
+            
+            <!-- Tambahkan gambar di sini (sebelah kanan Lamp Button) -->
+            <div class="col-lg-6">
+              <div class="card card-info">
+                <div class="card-header">
+                  <h3 class="card-title">System Overview</h3>
+                </div>
+                <div class="card-body text-center">
+                  <img src="images/system-diagram.jpg" alt="System Diagram" class="img-fluid" style="max-height: 200px;">
+                  <p class="mt-2">IoT System Architecture</p>
+                </div>
+              </div>
+            </div>
+          </div>
           
           <!-- Bagian Sensor Data (Node 1-4) -->
           <div class="row">
@@ -167,8 +180,12 @@ $result = mysqli_query($connection, $sql);
                 <div class="card-body text-center">
                   <div class="row">
                     <div class="col-md-6">
-                      <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 250px;">
+                      <img src="images/network-layout.png" alt="Network Layout" class="img-fluid rounded" style="max-height: 250px;">
                       <p class="mt-2">Network Layout Diagram</p>
+                    </div>
+                    <div class="col-md-6">
+                      <img src="images/sensor-placement.jpg" alt="Sensor Placement" class="img-fluid rounded" style="max-height: 250px;">
+                      <p class="mt-2">Sensor Placement Map</p>
                     </div>
                   </div>
                 </div>
