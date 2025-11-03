@@ -27,19 +27,19 @@ if ($topic == "SmIr/data") {
 
         // Buat array query
         $sqls = [
-            "INSERT INTO data (serial_number, sensor_actuator, value, name, mqtt_topic)
+            "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic)
              VALUES ('$node', 'sensor', '$tegangan', 'tegangan', '$topic')",
-            "INSERT INTO data (serial_number, sensor_actuator, value, name, mqtt_topic)
+            "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic)
              VALUES ('$node', 'sensor', '$arus', 'arus', '$topic')",
-            "INSERT INTO data (serial_number, sensor_actuator, value, name, mqtt_topic)
+            "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic)
              VALUES ('$node', 'sensor', '$waterlvA', 'waterlvA', '$topic')",
-            "INSERT INTO data (serial_number, sensor_actuator, value, name, mqtt_topic)
+            "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic)
              VALUES ('$node', 'sensor', '$waterlvB', 'waterlvB', '$topic')",
-            "INSERT INTO data (serial_number, sensor_actuator, value, name, mqtt_topic)
+            "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic)
              VALUES ('$node', 'sensor', '$flowrate', 'flowrate', '$topic')",
-            "INSERT INTO data (serial_number, sensor_actuator, value, name, mqtt_topic)
+            "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic)
              VALUES ('$node', 'sensor', '$totalwater', 'totalwater', '$topic')",
-            "INSERT INTO data (serial_number, sensor_actuator, value, name, mqtt_topic)
+            "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic)
              VALUES ('$node', 'sensor', '$rssi', 'rssi', '$topic')"
         ];
 
