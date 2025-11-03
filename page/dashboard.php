@@ -3,7 +3,7 @@ $sql = "SELECT * FROM devices WHERE active='Yes'";
 $result = mysqli_query($connection, $sql);
 ?>
 
-<body class="hold-transition sidebar-mini">
+< class="hold-transition sidebar-mini">
   <div class="wrapper">
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
@@ -81,7 +81,22 @@ $result = mysqli_query($connection, $sql);
               </div>
             </div>
             
-            <!-- Tambahkan bagian baru untuk menampilkan data sensor dari Node 1-4 -->
+            <!-- Tambahkan gambar di sini (sebelah kanan Lamp Button) -->
+            <div class="col-lg-6">
+              <div class="card card-info">
+                <div class="card-header">
+                  <h3 class="card-title">Maps</h3>
+                </div>
+                <div class="card-body text-center">
+                  <img src="dist\img\maps.jpg" alt="System Diagram" class="img-fluid" style="max-height: 200px;">
+                  <p class="mt-2">Node</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Bagian Sensor Data (Node 1-4) -->
+          <div class="row">
             <div class="col-lg-12">
               <div class="card card-success">
                 <div class="card-header">
@@ -155,6 +170,29 @@ $result = mysqli_query($connection, $sql);
             </div>
           </div>
           
+          <!-- Tambahkan gambar di bawah Sensor Data -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card card-default">
+                <div class="card-header">
+                  <h3 class="card-title">Monitoring Dashboard</h3>
+                </div>
+                <div class="card-body text-center">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <img src="images/network-layout.png" alt="Network Layout" class="img-fluid rounded" style="max-height: 250px;">
+                      <p class="mt-2">Network Layout Diagram</p>
+                    </div>
+                    <div class="col-md-6">
+                      <img src="images/sensor-placement.jpg" alt="Sensor Placement" class="img-fluid rounded" style="max-height: 250px;">
+                      <p class="mt-2">Sensor Placement Map</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div class="row">
             <div class="col-12">
               <div class="card card-lightblue">
@@ -187,17 +225,15 @@ $result = mysqli_query($connection, $sql);
               <!-- /.card -->
             </div>
           </div>
-          <!-- /.card -->
         </div>
-        <!-- /.card -->
+        <!-- /.container-fluid -->
       </div>
-      <!-- /.col-md-6 -->
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
   </div>
-  <!-- /.content -->
-  </div>
-  </div>
+  <!-- /.wrapper -->
+
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
   <script>
