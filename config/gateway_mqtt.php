@@ -5,68 +5,59 @@ include __DIR__ . '/database.php';
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 
+// Konfigurasi broker MQTT
 $server = 'broker.emqx.io';
-$port = 1883; // gunakan 8883 jika pakai TLS
+$port = 1883; // gunakan 8883 jika TLS diaktifkan
 $clientId = 'php_gateway_' . uniqid();
 $username = 'emqx_test';
 $password = 'emqx_test';
 
+// Pengaturan koneksi
 $connectionSettings = (new ConnectionSettings)
     ->setUsername($username)
     ->setPassword($password)
     ->setKeepAliveInterval(60)
     ->setUseTls(false);
 
+// Inisialisasi klien MQTT
 $mqtt = new MqttClient($server, $port, $clientId);
 
+// Coba koneksi ke broker
 $mqtt->connect($connectionSettings, true);
-
 echo "Terhubung ke broker MQTT...\n";
 
-// Subscribe ke topik data
-$mqtt->subscribe('SmIr/data', function ($topic, $message) use ($connection, $mqtt) {
+// Subscribe ke topik utama
+$mqtt->subscribe('SmIr/data', function ($topic, $message) use ($connection) {
     echo "Pesan diterima di $topic: $message\n";
 
     $data = json_decode($message, true);
-
     if (!$data || !isset($data['Node'])) {
-        echo "Data tidak valid\n";
+        echo "Data tidak valid atau field 'Node' tidak ditemukan.\n";
         return;
     }
 
-    $node = mysqli_real_escape_string($connection, "Node" . $data["Node"]);
-    $tegangan = mysqli_real_escape_string($connection, $data["tegangan"]);
-    $arus = mysqli_real_escape_string($connection, $data["arus"]);
-    $waterlvA = mysqli_real_escape_string($connection, $data["waterlvA"]);
-    $waterlvB = mysqli_real_escape_string($connection, $data["waterlvB"]);
-    $flowrate = mysqli_real_escape_string($connection, $data["flowrate"]);
-    $totalwater = mysqli_real_escape_string($connection, $data["totalwater"]);
-    $rssi = mysqli_real_escape_string($connection, $data["rssi"]);
+    // Siapkan variabel dasar
+    $node = "Node" . intval($data["Node"]);
+    $rssi = isset($data["rssi"]) ? mysqli_real_escape_string($connection, $data["rssi"]) : 0;
+    $topic = mysqli_real_escape_string($connection, $topic);
 
-    $sqls = [
-        "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic, rssi)
-         VALUES ('$node', 'sensor', '$tegangan', 'tegangan', '$topic', '$rssi')",
-        "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic, rssi)
-         VALUES ('$node', 'sensor', '$arus', 'arus', '$topic', '$rssi')",
-        "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic, rssi)
-         VALUES ('$node', 'sensor', '$waterlvA', 'waterlvA', '$topic', '$rssi')",
-        "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic, rssi)
-         VALUES ('$node', 'sensor', '$waterlvB', 'waterlvB', '$topic', '$rssi')",
-        "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic, rssi)
-         VALUES ('$node', 'sensor', '$flowrate', 'flowrate', '$topic', '$rssi')",
-        "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic, rssi)
-         VALUES ('$node', 'sensor', '$totalwater', 'totalwater', '$topic', '$rssi')",
-        "INSERT INTO data (node, sensor_actuator, value, name, mqtt_topic, rssi)
-         VALUES ('$node', 'sensor', '$rssi', 'rssi', '$topic', '$rssi')"
-    ];
+    // Loop setiap key di JSON (otomatis simpan semua field)
+    foreach ($data as $key => $value) {
+        if ($key === "Node") continue; // lewati field Node
 
-    foreach ($sqls as $sql) {
+        $keyEsc = mysqli_real_escape_string($connection, $key);
+        $valEsc = mysqli_real_escape_string($connection, $value);
+
+        $sql = "INSERT INTO data (node, sensor_actuator, name, value, mqtt_topic, rssi, created_at)
+                VALUES ('$node', 'sensor', '$keyEsc', '$valEsc', '$topic', '$rssi', NOW())";
+
         if (!mysqli_query($connection, $sql)) {
-            echo "MySQL Error: " . mysqli_error($connection) . "\n";
+            echo "MySQL Error (Node {$data['Node']}): " . mysqli_error($connection) . "\n";
         }
     }
 
     echo "Data Node {$data['Node']} disimpan ke database\n";
 });
 
-$mqtt->loop(true); // listen terus menerus
+// Jalankan loop MQTT terus-menerus
+$mqtt->loop(true);
