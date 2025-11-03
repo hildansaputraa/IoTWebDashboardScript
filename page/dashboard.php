@@ -64,7 +64,7 @@ $result = mysqli_query($connection, $sql);
           </div> <!-- Tutup row pertama -->
 
           <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
               <div class="card card-lightblue">
                 <div class="card-header">
                   <h3 class="card-title">Lamp Button</h3>
@@ -81,7 +81,7 @@ $result = mysqli_query($connection, $sql);
                 </div>
               </div> <!-- Tutup card card-lightblue -->
             </div> <!-- Tutup col-lg-12 -->
-            <div class="col-lg-12">
+            <div class="col-lg-6">
               <div class="card card-lightblue">
                 <div class="card-header">
                   <h3 class="card-title">Lamp Button</h3>
