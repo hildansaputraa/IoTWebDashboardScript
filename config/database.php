@@ -1,6 +1,6 @@
 <?php
 
-$servername = "beige-owl-319179.hostingersite.com";
+$servername = "srv482.hstgr.io";
 $username = "smartiot";
 $password = "Smartiot123.";
 $database = "u212736227_systemiot";
