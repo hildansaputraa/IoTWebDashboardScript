@@ -179,7 +179,7 @@ $result = mysqli_query($connection, $sql);
           <div class="row">
             <div class="col-lg-12">
               <div class="card card-default">
-                <div class="card-header card-primary">
+                <div class="card-primary">
                   <h3 class="card-title">Monitoring Dashboard</h3>
                 </div>
                 <div class="card-body text-center">
