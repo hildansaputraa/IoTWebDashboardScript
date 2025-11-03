@@ -80,27 +80,32 @@ $result = mysqli_query($connection, $sql);
                 <!-- /.card-body -->
               </div>
             </div>
-            
-            <!-- Tambahkan gambar di sini (sebelah kanan Lamp Button) -->
             <div class="col-lg-6">
-              <div class="card card-info">
+              <div class="card card-lightblue">
                 <div class="card-header">
-                  <h3 class="card-title">System Overview</h3>
+                  <h3 class="card-title">Lamp Button</h3>
                 </div>
-                <div class="card-body text-center">
-                  <img src="images/system-diagram.jpg" alt="System Diagram" class="img-fluid" style="max-height: 200px;">
-                  <p class="mt-2">IoT System Architecture</p>
+                <div class="card-body table-responsive pad">
+                  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-danger" id="label-lampu1-nyala">
+                      <input type="radio" name="lampu1" onchange="publishLamp(this)" id="lampu1nyala" autocomplete="off"> On
+                    </label>
+                    <label class="btn btn-danger" id="label-lampu1-mati">
+                      <input type="radio" name="lampu1" onchange="publishLamp(this)" id="lampu1mati" autocomplete="off"> Off
+                    </label>
+                  </div>
                 </div>
+                <!-- /.card-body -->
               </div>
             </div>
-          </div>
+            
           
           <!-- Bagian Sensor Data (Node 1-4) -->
           <div class="row">
             <div class="col-lg-12">
               <div class="card card-success">
                 <div class="card-header">
-                  <h3 class="card-title">Sensor Data (Node 1-4)</h3>
+                  <h3 class="card-title">Monitoring Sensor</h3>
                 </div>
                 <div class="card-body">
                   <div class="row">
@@ -179,13 +184,9 @@ $result = mysqli_query($connection, $sql);
                 </div>
                 <div class="card-body text-center">
                   <div class="row">
-                    <div class="col-md-6">
-                      <img src="images/network-layout.png" alt="Network Layout" class="img-fluid rounded" style="max-height: 250px;">
+                    <div class="col-md-12">
+                      <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 500px;">
                       <p class="mt-2">Network Layout Diagram</p>
-                    </div>
-                    <div class="col-md-6">
-                      <img src="images/sensor-placement.jpg" alt="Sensor Placement" class="img-fluid rounded" style="max-height: 250px;">
-                      <p class="mt-2">Sensor Placement Map</p>
                     </div>
                   </div>
                 </div>
