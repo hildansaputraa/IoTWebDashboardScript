@@ -117,7 +117,7 @@ $result = mysqli_query($connection, $sql);
                         </div>
                         <div class="card-body">
                           <p>Tegangan: <span id="node1-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node1-arus">-</span> A</p>
+                          <p>Arus: <span id="node1-arus">-</span> mA</p>
                           <p>Water Level A: <span id="node1-waterlvA">-</span> cm</p>
                           <p>Water Level B: <span id="node1-waterlvB">-</span> cm</p>
                           <p>Flow Rate: <span id="node1-flowrate">-</span> L/min</p>
@@ -134,7 +134,7 @@ $result = mysqli_query($connection, $sql);
                         </div>
                         <div class="card-body">
                           <p>Tegangan: <span id="node2-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node2-arus">-</span> A</p>
+                          <p>Arus: <span id="node2-arus">-</span> mA</p>
                           <p>Water Level A: <span id="node2-waterlvA">-</span> cm</p>
                           <p>Water Level B: <span id="node2-waterlvB">-</span> cm</p>
                           <p>Flow Rate: <span id="node2-flowrate">-</span> L/min</p>
@@ -151,7 +151,7 @@ $result = mysqli_query($connection, $sql);
                         </div>
                         <div class="card-body">
                           <p>Tegangan: <span id="node3-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node3-arus">-</span> A</p>
+                          <p>Arus: <span id="node3-arus">-</span> mA</p>
                           <p>Water Level A: <span id="node3-waterlvA">-</span> cm</p>
                           <p>Water Level B: <span id="node3-waterlvB">-</span> cm</p>
                           <p>Flow Rate: <span id="node3-flowrate">-</span> L/min</p>
@@ -168,7 +168,7 @@ $result = mysqli_query($connection, $sql);
                         </div>
                         <div class="card-body">
                           <p>Tegangan: <span id="node4-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node4-arus">-</span> A</p>
+                          <p>Arus: <span id="node4-arus">-</span> mA</p>
                           <p>Water Level A: <span id="node4-waterlvA">-</span> cm</p>
                           <p>Water Level B: <span id="node4-waterlvB">-</span> cm</p>
                           <p>Flow Rate: <span id="node4-flowrate">-</span> L/min</p>
