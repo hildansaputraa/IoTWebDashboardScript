@@ -64,7 +64,7 @@ $result = mysqli_query($connection, $sql);
           </div> <!-- Tutup row pertama -->
 
           <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
               <div class="card card-lightblue">
                 <div class="card-header">
                   <h3 class="card-title">Lamp Button</h3>
@@ -83,6 +83,26 @@ $result = mysqli_query($connection, $sql);
             </div> <!-- Tutup col-lg-12 -->
           </div> <!-- Tutup row untuk Lamp Button -->
 
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="card card-lightblue">
+                <div class="card-header">
+                  <h3 class="card-title">Lamp Button</h3>
+                </div>
+                <div class="card-body table-responsive pad">
+                  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-danger" id="label-lampu1-nyala">
+                      <input type="radio" name="lampu1" onchange="publishLamp(this)" id="lampu1nyala" autocomplete="off"> On
+                    </label>
+                    <label class="btn btn-danger" id="label-lampu1-mati">
+                      <input type="radio" name="lampu1" onchange="publishLamp(this)" id="lampu1mati" autocomplete="off"> Off
+                    </label>
+                  </div>
+                </div>
+              </div> <!-- Tutup card card-lightblue -->
+            </div> <!-- Tutup col-lg-12 -->
+          </div> <!-- Tutup row untuk Lamp Button -->          
+          
           <!-- Bagian Sensor Data (Node 1-4) -->
           <div class="row">
             <div class="col-lg-12">
