@@ -1,14 +1,21 @@
 <?php
 include "../config/database.php";
 
-// Simpan log mentah (sementara, bisa hapus kalau sudah jalan)
-file_put_contents("webhook_log.txt", date("Y-m-d H:i:s") . " | RAW: " . file_get_contents('php://input') . "\n", FILE_APPEND);
+// Aktifkan log error ke file di folder ini
+ini_set("log_errors", 1);
+ini_set("error_log", __DIR__ . "/webhook_error_log.txt");  // log error PHP & MySQL
+error_reporting(E_ALL); // tampilkan semua error
 
-// Decode JSON dari EMQX
-$webhookResponse = json_decode(file_get_contents('php://input'), true);
+// Simpan log mentah dari EMQX (request body)
+file_put_contents(__DIR__ . "/webhook_log.txt", date("Y-m-d H:i:s") . " | RAW: " . file_get_contents('php://input') . "\n", FILE_APPEND);
 
+// Ambil isi JSON yang dikirim oleh EMQX
+$rawInput = file_get_contents('php://input');
+$webhookResponse = json_decode($rawInput, true);
+
+// Jika gagal decode JSON, catat log
 if (!$webhookResponse) {
-    error_log("Webhook tidak menerima data JSON");
+    error_log("Webhook tidak menerima data JSON: " . $rawInput);
     exit;
 }
 
@@ -24,6 +31,7 @@ if (strpos($topic, "SmIr/data") !== false) {
         $data = $payload;
     }
 
+    // Cek apakah data valid
     if ($data && isset($data["Node"])) {
 
         $node = mysqli_real_escape_string($connection, "Node" . $data["Node"]);
@@ -59,7 +67,7 @@ if (strpos($topic, "SmIr/data") !== false) {
         }
 
     } else {
-        error_log("Payload JSON tidak valid: " . json_encode($payload));
+        error_log("Payload JSON tidak valid atau tidak ada field 'Node': " . json_encode($payload));
     }
 } else {
     error_log("Topik tidak sesuai: $topic");
