@@ -1,7 +1,7 @@
 <?php
 
 $servername = "srv482.hstgr.io";
-$username = "smartiot";
+$username = "u212736227_smartiot";
 $password = "Smartiot123.";
 $database = "u212736227_systemiot";
 
