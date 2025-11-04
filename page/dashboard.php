@@ -23,7 +23,6 @@ if ($fallbackQuery) {
 }
 ?>
 
-<body class="hold-transition sidebar-mini layout-fixed">
   <div class="wrapper">
     <div class="content-wrapper">
       <div class="content-header">
@@ -654,4 +653,3 @@ if ($fallbackQuery) {
       saveToDatabase('reset', 0, payload);
     }
   </script>
-</body>
