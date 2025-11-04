@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <!-- Favicon / Logo di Tab Browser -->
-  <link rel="icon" type="image/png" href="dist/img/logo-with-title.png">
-  <link rel="shortcut icon" type="image/png" href="dist/img/logo-with-title.png">
+  <!-- <link rel="icon" type="image/png" href="dist/img/logo-with-title.png">
+  <link rel="shortcut icon" type="image/png" href="dist/img/logo-with-title.png"> -->
 
   <title>IoT Agrowisata Banjarsari</title>
 
