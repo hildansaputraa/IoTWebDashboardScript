@@ -1,8 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
   <a href="index3.html" class="brand-link">
-    <img src="dist/img/logo-with-title.png" alt="Logo" class="brand-image ">
-    <span class="brand-text font-weight-light">.</span>
+    <img src="dist/img/logo-with-title.png" alt="Logo" class="brand-image">
   </a>
   <!-- Sidebar -->
   <div class="sidebar">
@@ -76,7 +75,5 @@
     </nav>
     <!-- /.sidebar-menu -->
   </div>
-  </aside>
-  <!-- /.sidebar -->
-
-  
+</aside>
+<!-- /.sidebar -->
