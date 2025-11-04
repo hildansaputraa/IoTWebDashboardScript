@@ -251,7 +251,13 @@ while ($row = mysqli_fetch_assoc($resultData)) {
           <div class="row">
             <div class="col-lg-12">
               <div class="card card-default">
+<<<<<<< HEAD
                 <div class="card-header bg-primary text-white"><h3 class="card-title">Monitoring Dashboard</h3></div>
+=======
+                <div class="card-header primary">
+                  <h3 class="card-title">Monitoring Dashboard</h3>
+                </div>
+>>>>>>> parent of 319f6a1 (Update dashboard.php)
                 <div class="card-body text-center">
                   <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height:300px;">
                 </div>
