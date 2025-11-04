@@ -13,9 +13,6 @@ $result = mysqli_query($connection, $sql);
             <div class="col-sm-6">
               <h1 class="m-0">Dashboard</h1>
             </div>
-            <div class="col-sm-6 text-right">
-              <strong>Status MQTT:</strong> <span id="status" style="color:red;">Tidak Terhubung</span>
-            </div>
           </div>
         </div>
       </div>
