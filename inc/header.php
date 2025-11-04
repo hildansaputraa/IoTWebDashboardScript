@@ -1,12 +1,7 @@
 <!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
 <html lang="en">
 
 <head>
-<body class="hold-transition sidebar-mini layout-fixed">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SYSTEM IOT</title>
@@ -26,3 +21,5 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- bootstrap slider -->
   <link rel="stylesheet" href="plugins/bootstrap-slider/css/bootstrap-slider.min.css">
 </head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
