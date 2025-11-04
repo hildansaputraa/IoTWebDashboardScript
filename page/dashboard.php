@@ -32,9 +32,6 @@ if ($fallbackQuery) {
             <div class="col-sm-6">
               <h1 class="m-0">Dashboard</h1>
             </div>
-            <div class="col-sm-6 text-right">
-              <span id="status" style="font-weight: bold; color: gray;">Menghubungkan...</span>
-            </div>
           </div>
         </div>
       </div>
