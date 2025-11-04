@@ -16,9 +16,6 @@ if ($fallbackQuery) {
 }
 ?>
 
-<body class="hold-transition sidebar-mini">
-  <div class="wrapper">
-    <div class="content-wrapper">
       <div class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
@@ -171,8 +168,6 @@ if ($fallbackQuery) {
 
         </div>
       </div>
-    </div>
-  </div>
 
   <!-- MQTT Script -->
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
@@ -253,4 +248,4 @@ if ($fallbackQuery) {
       client.publish("kelasiottt/12345678/lampu", data, { qos: 1, retain: true });
     }
   </script>
-</body>
+
