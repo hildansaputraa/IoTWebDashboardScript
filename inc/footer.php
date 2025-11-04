@@ -13,3 +13,4 @@
     <!-- Control sidebar content goes here -->
 </aside>
 </div>
+</body>
