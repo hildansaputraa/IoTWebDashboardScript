@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <!-- Favicon / Logo di Tab Browser -->
-  <link rel="icon" type="image/jpg" href="../dist/img/unesa.jpgg">
+  <link rel="icon" type="image/jpg" href="../dist/img/unesa.jpg">
   <link rel="shortcut icon" type="image/jpg" href="../dist/img/unesa.jpg">
 
   <title>IoT Agrowisata Banjarsari</title>
