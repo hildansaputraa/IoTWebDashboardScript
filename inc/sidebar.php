@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
   <a href="index3.html" class="brand-link">
-    <img src="dist/img/logo-with-title.png" alt="Logo" class="brand-image " style="opacity: .10">
+    <img src="dist/img/logo-with-title.png" alt="Logo" class="brand-image " style="opacity: .1">
     <span class="brand-text font-weight-light">SYSTEM IOT</span>
   </a>
   <!-- Sidebar -->
