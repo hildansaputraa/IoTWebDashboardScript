@@ -1,15 +1,16 @@
 <?php
 // ============================================================================
-// gateway_mqtt.php — versi stabil final
+// gateway_mqtt.php — Versi stabil & auto-reconnect
+// ============================================================================
 // Fungsi:
-//  - Subscribe topic SmIr/data dari broker MQTT
-//  - Simpan payload JSON ke MySQL
-//  - Otomatis reconnect MQTT & MySQL bila koneksi terputus
-//  - Logging aktivitas & error ke file log
+//  - Subscribe ke topic SmIr/data
+//  - Terima payload JSON & simpan ke database MySQL
+//  - Auto reconnect MQTT & MySQL bila koneksi terputus
+//  - Logging lengkap ke mqtt_debug.log
 // ============================================================================
 
 // -------------------------------------
-// Load composer & koneksi database
+// Load composer & database
 // -------------------------------------
 require_once __DIR__ . '/../vendor/autoload.php';
 include __DIR__ . '/database.php';
@@ -18,15 +19,12 @@ use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 
 // -------------------------------------
-// Pengaturan error dan log
+// Pengaturan log
 // -------------------------------------
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 $logFile = __DIR__ . '/mqtt_debug.log';
 
-// helper log sederhana
-function append_log($file, $text) {
+function append_log($file, $text)
+{
     file_put_contents($file, "[" . date('Y-m-d H:i:s') . "] " . $text . PHP_EOL, FILE_APPEND);
 }
 
@@ -35,11 +33,11 @@ function append_log($file, $text) {
 // -------------------------------------
 $server = 'broker.emqx.io';
 $port = 1883;
-$clientId = 'php_gateway_' . uniqid();
+$clientId = 'php_gateway_main'; // <<< Gunakan client ID tetap
 $username = 'emqx_test';
 $password = 'emqx_test';
 
-// pengaturan koneksi MQTT
+// pengaturan koneksi
 $connectionSettings = (new ConnectionSettings)
     ->setUsername($username)
     ->setPassword($password)
@@ -47,14 +45,15 @@ $connectionSettings = (new ConnectionSettings)
     ->setUseTls(false);
 
 // -------------------------------------
-// Membuat client MQTT
+// Inisialisasi client MQTT
 // -------------------------------------
 $mqtt = new MqttClient($server, $port, $clientId);
 
 // -------------------------------------
-// Fungsi koneksi ke broker MQTT dengan retry
+// Fungsi koneksi ke broker dengan retry
 // -------------------------------------
-function connect_mqtt($mqtt, $settings, $logFile) {
+function connect_mqtt($mqtt, $settings, $logFile)
+{
     while (true) {
         try {
             $mqtt->connect($settings, true);
@@ -73,7 +72,7 @@ function connect_mqtt($mqtt, $settings, $logFile) {
 connect_mqtt($mqtt, $connectionSettings, $logFile);
 
 // -------------------------------------
-// Daftar field sensor yang diharapkan
+// Daftar field sensor
 // -------------------------------------
 $sensorList = [
     'tegangan',
@@ -86,40 +85,31 @@ $sensorList = [
 ];
 
 // -------------------------------------
-// Callback utama saat data diterima
+// Callback data diterima
 // -------------------------------------
-$mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $logFile, $sensorList) {
+$callback = function ($topic, $message) use (&$connection, $logFile, $sensorList) {
 
     append_log($logFile, "📩 Received on $topic: $message");
     echo "Pesan diterima di $topic: $message\n";
 
-    // Validasi JSON
+    // Pastikan JSON valid
     $data = json_decode($message, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        $err = "⚠️ JSON decode error: " . json_last_error_msg();
+    if (!is_array($data) || !isset($data['Node'])) {
+        $err = "⚠️ Data tidak valid atau field 'Node' hilang. Diabaikan.";
         append_log($logFile, $err);
         echo $err . "\n";
         return;
     }
 
-    if (!isset($data['Node'])) {
-        $err = "⚠️ Field 'Node' tidak ditemukan. Pesan diabaikan.";
-        append_log($logFile, $err);
-        echo $err . "\n";
-        return;
-    }
-
-    // -------------------------------------
-    // Pastikan koneksi database masih hidup
-    // -------------------------------------
-    $ensureDb = function() use (&$connection, $logFile) {
+    // Pastikan koneksi database aktif
+    $ensureDb = function () use (&$connection, $logFile) {
         if (!isset($connection) || !($connection instanceof mysqli)) {
-            append_log($logFile, "DB object invalid, re-include database.php");
+            append_log($logFile, "DB object tidak valid, mencoba include ulang database.php");
             include __DIR__ . '/database.php';
         }
 
         if (!@mysqli_ping($connection)) {
-            append_log($logFile, "⚠️ DB ping gagal, mencoba reconnect...");
+            append_log($logFile, "DB ping gagal, mencoba reconnect...");
             include __DIR__ . '/database.php';
             if (!@mysqli_ping($connection)) {
                 append_log($logFile, "❌ DB reconnect gagal.");
@@ -131,15 +121,14 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $lo
     };
 
     if (!$ensureDb()) {
-        append_log($logFile, "❌ Koneksi database gagal. Data diabaikan.");
+        append_log($logFile, "❌ ensureDb() return false, koneksi DB gagal sebelum insert");
         return;
     }
 
-    // -------------------------------------
-    // Proses insert
-    // -------------------------------------
     $node = intval($data['Node']);
     $rssi = isset($data['rssi']) && is_numeric($data['rssi']) ? floatval($data['rssi']) : 0.0;
+
+    append_log($logFile, "DEBUG: Memulai proses DB insert untuk Node {$node}");
 
     $stmt = mysqli_prepare($connection,
         "INSERT INTO data (node, sensor_actuator, name, value, rssi, mqtt_topic, created_at)
@@ -153,9 +142,10 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $lo
         return;
     }
 
+    // Loop semua sensor
     foreach ($sensorList as $sensor) {
         if (!array_key_exists($sensor, $data)) {
-            $warn = "⚠️ Field '$sensor' tidak ada pada Node {$data['Node']}.";
+            $warn = "⚠️ Field '$sensor' tidak ada pada Node {$node}.";
             append_log($logFile, $warn);
             echo $warn . "\n";
             continue;
@@ -170,7 +160,7 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $lo
             append_log($logFile, $err);
             echo $err . "\n";
 
-            // Reconnect & retry 1x
+            // Reconnect DB & retry 1x
             include __DIR__ . '/database.php';
             if (@mysqli_ping($connection)) {
                 $stmtRetry = mysqli_prepare($connection,
@@ -195,12 +185,16 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $lo
     }
 
     mysqli_stmt_close($stmt);
-    append_log($logFile, "✅ Data Node {$data['Node']} selesai diproses.");
-
-}, 0);
+    append_log($logFile, "✅ Data Node {$node} selesai diproses.");
+};
 
 // -------------------------------------
-// Loop utama — auto reconnect MQTT bila terputus
+// Subscribe ke topic
+// -------------------------------------
+$mqtt->subscribe('SmIr/data', $callback, 0);
+
+// -------------------------------------
+// Loop utama (auto reconnect MQTT)
 // -------------------------------------
 while (true) {
     try {
@@ -208,8 +202,16 @@ while (true) {
     } catch (Exception $e) {
         append_log($logFile, "⚠️ MQTT disconnected: " . $e->getMessage());
         echo "⚠️ MQTT disconnected: " . $e->getMessage() . "\n";
+
+        try {
+            $mqtt->disconnect();
+        } catch (Exception $ex) {
+            append_log($logFile, "MQTT disconnect error: " . $ex->getMessage());
+        }
+
         sleep(5);
         connect_mqtt($mqtt, $connectionSettings, $logFile);
+        $mqtt->subscribe('SmIr/data', $callback, 0); // re-subscribe
     }
 }
 ?>
