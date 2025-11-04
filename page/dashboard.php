@@ -405,6 +405,7 @@ if ($fallbackQuery) {
           <div class="row">
             <div class="col-12">
               <div class="card card-lightblue">
+                
                 <!-- TOMBOL DARURAT: MATIKAN SEMUA SOLENOID -->
                 <div class="row">
                   <div class="col-12 text-center mt-4 mb-4">
@@ -414,6 +415,7 @@ if ($fallbackQuery) {
                     <p class="text-muted mt-2"><small>Mode 0: Solenoid 1 & 2 langsung mati</small></p>
                   </div>
                 </div>
+
                 <div class="card-header"><h3 class="card-title">Devices Status</h3></div>
                 <div class="card-body table-responsive p-0" style="height: 300px;">
                   <table class="table table-head-fixed text-nowrap">
@@ -641,9 +643,14 @@ if ($fallbackQuery) {
         });
     }
     function forceOffAll() {
-      client.publish("SmIr/kontrol", JSON.stringify({ mode: 0 }), { qos: 1, retain: true });
+      if (!confirm("Yakin matikan SEMUA solenoid?")) return;
+
+      const payload = { mode: 0 };
+      client.publish("SmIr/kontrol", JSON.stringify(payload), { qos: 1, retain: true });
       console.log("Semua solenoid dimatikan!");
-      saveToDatabase('manual', 0, { mode: 0 }); // opsional: simpan ke DB
+
+      // GUNAKAN type: 'reset', solenoid: 0
+      saveToDatabase('reset', 0, payload);
     }
   </script>
 </body>

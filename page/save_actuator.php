@@ -1,5 +1,5 @@
 <?php
-// page/save_actuator.php - FINAL FIX NULL BINDING
+// page/save_actuator.php - FINAL VERSION WITH MODE 0 SUPPORT
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Content-Type: application/json');
@@ -32,39 +32,57 @@ if (!$input || !isset($input['type'], $input['solenoid'], $input['data'])) {
     exit;
 }
 
-$type = $input['type'];
-$solenoid = (int)$input['solenoid'];
-$data = $input['data'];
+$type = $input['type'];           // 'manual', 'auto', atau 'reset'
+$solenoid = (int)$input['solenoid']; // 1, 2, atau 0
+$data = $input['data'];           // JSON payload dari dashboard
 
-if (!in_array($solenoid, [1, 2]) || !in_array($type, ['manual', 'auto'])) {
+// === VALIDASI: IZINKAN solenoid 0 DAN type 'reset' ===
+if (!in_array($solenoid, [0, 1, 2]) || !in_array($type, ['manual', 'auto', 'reset'])) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid solenoid or mode']);
     exit;
 }
 
+// === INISIALISASI VARIABEL ===
 $mode = $type;
 $state = null;
 $action = null;
 $threshold_data = null;
 
-if ($type === 'manual') {
+// === PROSES BERDASARKAN TYPE ===
+if ($solenoid == 0 && $type === 'reset') {
+    // MODE 0: MATIKAN SEMUA (DARURAT)
+    $mode = 'reset';
+    $solenoid = 0;
+    $state = null;
+    $action = null;
+    $threshold_data = null;
+
+} elseif ($type === 'manual') {
+    // MODE 1: MANUAL ON/OFF
     $state = ($solenoid == 1) ? ($data['solenoidSatu'] ?? 0) : ($data['solenoidDua'] ?? 0);
     $state = (int)$state;
-} else {
+    $mode = 'manual';
+
+} elseif ($type === 'auto') {
+    // MODE 2: SIMPAN THRESHOLD
     $action = in_array($data['action'] ?? '', ['on', 'off']) ? $data['action'] : 'off';
-    
+    $mode = 'auto';
+
     $thresholds = [];
     for ($i = 1; $i <= 4; $i++) {
-        $a = $data["waterlvA$i"] ?? null;
-        $b = $data["waterlvB$i"] ?? null;
-        if ($a !== null && $b !== null && !is_nan((float)$a) && !is_nan((float)$b)) {
-            $thresholds["waterlvA$i"] = (float)$a;
-            $thresholds["waterlvB$i"] = (float)$b;
+        $keyA = "waterlvA$i";
+        $keyB = "waterlvB$i";
+        $a = $data[$keyA] ?? null;
+        $b = $data[$keyB] ?? null;
+        if ($a !== null && $b !== null && is_numeric($a) && is_numeric($b)) {
+            $thresholds[$keyA] = (float)$a;
+            $thresholds[$keyB] = (float)$b;
         }
     }
     $threshold_data = !empty($thresholds) ? json_encode($thresholds, JSON_UNESCAPED_UNICODE) : null;
 }
 
-// === INSERT DENGAN PENANGANAN NULL ===
+// === INSERT KE DATABASE ===
 $sql = "INSERT INTO actuator_history 
         (solenoid_num, mode, state, action, threshold_data, created_at) 
         VALUES (?, ?, ?, ?, ?, NOW())";
@@ -77,18 +95,18 @@ if (!$stmt) {
     exit;
 }
 
-// === GUNAKAN NULL BINDING YANG BENAR ===
+// === BIND PARAMETER DENGAN NULL SAFETY ===
 $stateParam = $state;
 $actionParam = $action;
 $thresholdParam = $threshold_data;
 
 if (!mysqli_stmt_bind_param(
-    $stmt, 
-    "isiss", 
-    $solenoid, 
-    $mode, 
-    $stateParam, 
-    $actionParam, 
+    $stmt,
+    "isiss",           // i = int, s = string, s = string (NULL), s = string (NULL)
+    $solenoid,
+    $mode,
+    $stateParam,
+    $actionParam,
     $thresholdParam
 )) {
     http_response_code(500);
@@ -96,7 +114,7 @@ if (!mysqli_stmt_bind_param(
     exit;
 }
 
-// === EXECUTE ===
+// === EKSEKUSI ===
 if (!mysqli_stmt_execute($stmt)) {
     $err = mysqli_stmt_error($stmt);
     error_log("Execute failed: $err | Input: " . json_encode($input));
