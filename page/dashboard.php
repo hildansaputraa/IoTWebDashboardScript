@@ -438,10 +438,9 @@ if ($fallbackQuery) {
     function publishSolenoid(solenoidNum, state) {
       if (solenoidState[solenoidNum].mode !== 'manual') return;
       
-      const controlData = {
-        solenoidSatu: solenoidNum === 1 ? state : solenoidState[2].currentState,
-        solenoidDua: solenoidNum === 2 ? state : solenoidState[1].currentState
-      };
+      const controlData = solenoidNum === 1 
+        ? { solenoidSatu: state }
+        : { solenoidDua: state };
       
       solenoidState[solenoidNum].currentState = state;
       
@@ -486,10 +485,9 @@ if ($fallbackQuery) {
       if (newState !== solenoidState[solenoidNum].currentState) {
         solenoidState[solenoidNum].currentState = newState;
         
-        const controlData = {
-          solenoidSatu: solenoidNum === 1 ? newState : solenoidState[2].currentState,
-          solenoidDua: solenoidNum === 2 ? newState : solenoidState[1].currentState
-        };
+        const controlData = solenoidNum === 1 
+          ? { solenoidSatu: newState }
+          : { solenoidDua: newState };
         
         client.publish("SmIr/control", JSON.stringify(controlData), { qos: 1, retain: true });
         console.log(`Auto control Solenoid ${solenoidNum}:`, controlData);
