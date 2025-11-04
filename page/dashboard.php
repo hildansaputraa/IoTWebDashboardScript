@@ -632,3 +632,4 @@ if ($fallbackQuery) {
         });
     }
   </script>
+</body>
