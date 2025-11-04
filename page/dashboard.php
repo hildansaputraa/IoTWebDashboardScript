@@ -80,7 +80,7 @@ if ($fallbackQuery) {
                 <div class="card-body">
                   <!-- Mode Selection -->
                   <div class="form-group">
-                    <label>Mode Kontrol:</label>
+                    <label>Mode Control:</label>
                     <div class="btn-group btn-group-toggle d-block" data-toggle="buttons">
                       <label class="btn btn-outline-primary active" id="label-solenoid1-manual">
                         <input type="radio" name="mode-solenoid1" value="manual" id="mode-solenoid1-manual" checked onchange="changeSolenoidMode(1, this.value)"> Manual
@@ -214,7 +214,7 @@ if ($fallbackQuery) {
                 <div class="card-body">
                   <!-- Mode Selection -->
                   <div class="form-group">
-                    <label>Mode Kontrol:</label>
+                    <label>Mode Control:</label>
                     <div class="btn-group btn-group-toggle d-block" data-toggle="buttons">
                       <label class="btn btn-outline-primary active" id="label-solenoid2-manual">
                         <input type="radio" name="mode-solenoid2" value="manual" id="mode-solenoid2-manual" checked onchange="changeSolenoidMode(2, this.value)"> Manual
@@ -562,7 +562,7 @@ if ($fallbackQuery) {
       
       solenoidState[solenoidNum].currentState = state;
       
-      client.publish("SmIr/kontrol", JSON.stringify(controlData), { qos: 1, retain: true });
+      client.publish("SmIr/control", JSON.stringify(controlData), { qos: 1, retain: true });
       console.log("Published manual control:", controlData);
       
       // Simpan ke database via AJAX
@@ -593,7 +593,7 @@ if ($fallbackQuery) {
         }
       }
       
-      // Tambahkan informasi solenoid mana yang dikontrol
+      // Tambahkan informasi solenoid mana yang dicontrol
       if (solenoidNum === 1) {
         autoSettings.solenoid = 1;
       } else {
@@ -607,7 +607,7 @@ if ($fallbackQuery) {
       }
       
       // Publish ke MQTT
-      client.publish("SmIr/kontrol", JSON.stringify(autoSettings), { qos: 1, retain: true });
+      client.publish("SmIr/control", JSON.stringify(autoSettings), { qos: 1, retain: true });
       console.log(`Published auto settings Solenoid ${solenoidNum}:`, autoSettings);
       
       // Simpan ke database via AJAX
@@ -688,7 +688,7 @@ if ($fallbackQuery) {
         // Hanya publish jika status berubah
         if (solenoidState[solenoidNum].currentState !== targetState && shouldActivate) {
             const controlData = { mode: 2, solenoid: solenoidNum, action: action === 'on' ? 1 : 0 };
-            client.publish("SmIr/kontrol", JSON.stringify(controlData), { qos: 1, retain: true });
+            client.publish("SmIr/control", JSON.stringify(controlData), { qos: 1, retain: true });
             solenoidState[solenoidNum].currentState = targetState;
             console.log(`Auto control activated: Solenoid ${solenoidNum} -> ${targetState}`);
         }
