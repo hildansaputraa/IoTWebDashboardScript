@@ -599,7 +599,7 @@ if ($fallbackQuery) {
         // Kirim solenoid number
         autoSettings.solenoid = solenoidNum;
 
-        client.publish("SmIr/kontrol", JSON.stringify(autoSettings), { qos: 1, retain: true });
+        client.publish("SmIr/control", JSON.stringify(autoSettings), { qos: 1, retain: true });
         console.log("Published auto settings:", autoSettings);
 
         saveToDatabase('auto', solenoidNum, autoSettings);
