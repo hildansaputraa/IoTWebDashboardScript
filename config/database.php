@@ -1,9 +1,9 @@
 <?php
 
 $servername = "srv482.hstgr.io";
-$username   = "u212736227_smartiot";
+$username   = "u212736227_iotbanjarsari";
 $password   = "Smartiot123.";
-$database   = "u212736227_systemiot";
+$database   = "u212736227_agrobanjarsari";
 
 // Koneksi ke database
 $connection = mysqli_connect($servername, $username, $password, $database);
