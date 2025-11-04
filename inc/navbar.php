@@ -6,17 +6,15 @@
       <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
     </li>
     <?php if (!isset($_GET['page']) || $_GET['page'] == "dashboard") { ?>
-      <li class="nav-item d-none d-sm-inline-block">
+      <li class="nav-item">
         <a class="nav-link">
           Status Server
           <span class="blink" style='color:red; margin-left: 5px;'>
-            <b id="status">
-              TERPUTUS
-            </b>
+            <b id="status">TERPUTUS</b>
           </span>
         </a>
       </li>
-
+      
       <style type="text/css">
         @-webkit-keyframes blinker {
           from {
