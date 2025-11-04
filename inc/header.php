@@ -30,7 +30,7 @@
   <script>
     // Fungsi untuk membuat judul berjalan di tab browser
     window.addEventListener('load', function() {
-      const originalTitle = "🌾 IoT Agrowisata Banjarsari - Monitoring & Control System 💧";
+      const originalTitle = "🌾 IoT Agrowisata Banjarsari - Monitoring & Control System";
       let titleIndex = 0;
 
       function scrollTitle() {
