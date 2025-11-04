@@ -106,25 +106,33 @@ if ($fallbackQuery) {
                   <!-- Auto Control Settings -->
                   <div id="auto-control-solenoid1" style="display: none;">
                     <div class="alert alert-info">
-                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan dikontrol ketika SEMUA NODE memenuhi threshold.
+                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan ON ketika SEMUA NODE memenuhi threshold (Water Level A DAN B).
                     </div>
-                    <div class="form-group">
-                      <label>Threshold Water Level A (cm):</label>
-                      <input type="number" class="form-control" id="threshold-waterlvA-solenoid1" placeholder="Contoh: 50" step="0.1">
-                      <small class="text-muted">Semua node harus memiliki water level A ≥ threshold ini</small>
+                    
+                    <?php for ($i = 1; $i <= 4; $i++) { ?>
+                    <div class="card mb-3">
+                      <div class="card-header bg-<?php echo ['primary', 'success', 'warning', 'danger'][$i - 1]; ?> text-white">
+                        <strong>Node <?php echo $i; ?> Threshold</strong>
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label>Water Level A (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node<?php echo $i; ?>-waterlvA-solenoid1" placeholder="Contoh: 50" step="0.1">
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label>Water Level B (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node<?php echo $i; ?>-waterlvB-solenoid1" placeholder="Contoh: 30" step="0.1">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div class="form-group">
-                      <label>Threshold Water Level B (cm):</label>
-                      <input type="number" class="form-control" id="threshold-waterlvB-solenoid1" placeholder="Contoh: 30" step="0.1">
-                      <small class="text-muted">Semua node harus memiliki water level B ≥ threshold ini</small>
-                    </div>
-                    <div class="form-group">
-                      <label>Kondisi per Node:</label>
-                      <select class="form-control" id="condition-solenoid1">
-                        <option value="both">Kedua level (A dan B) harus memenuhi (AND)</option>
-                        <option value="either">Salah satu level (A atau B) memenuhi (OR)</option>
-                      </select>
-                    </div>
+                    <?php } ?>
+
                     <div class="form-group">
                       <label>Aksi saat SEMUA node memenuhi threshold:</label>
                       <select class="form-control" id="action-solenoid1">
@@ -133,7 +141,7 @@ if ($fallbackQuery) {
                       </select>
                     </div>
                     <div class="alert alert-warning">
-                      <strong>Cara kerja:</strong> Sistem akan memeriksa semua 4 node. Solenoid hanya akan berubah status jika SEMUA node memenuhi kondisi threshold yang ditentukan.
+                      <strong>Cara kerja:</strong> Sistem akan memeriksa semua 4 node. Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN Water Level B) yang ditentukan untuk masing-masing node.
                     </div>
                   </div>
                 </div>
