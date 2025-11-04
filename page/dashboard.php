@@ -1,8 +1,49 @@
 <?php
+// Pastikan $connection sudah tersedia dari file konfigurasi (tidak saya ubah).
+// Contoh: include 'config/database.php'; jika diperlukan.
+
 $sql = "SELECT * FROM devices WHERE active='Yes'";
 $result = mysqli_query($connection, $sql);
-?>
 
+/* =========================
+   ADDED: Ambil last data per node (1..4)
+   Sesuaikan nama tabel/kolom jika berbeda
+   ========================= */
+$lastData = [];
+for ($i = 1; $i <= 4; $i++) {
+  $q = "SELECT tegangan, arus, waterlvA, waterlvB, flowrate, totalwater, rssi, waktu
+        FROM sensor_data
+        WHERE node_id = " . intval($i) . "
+        ORDER BY waktu DESC
+        LIMIT 1";
+  $r = mysqli_query($connection, $q);
+  if ($r && mysqli_num_rows($r) > 0) {
+    $lastData[$i] = mysqli_fetch_assoc($r);
+  } else {
+    $lastData[$i] = null;
+  }
+}
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <!-- Masukkan CSS/Font Awesome/Bootstrap yang diperlukan (tidak saya ubah) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Sedikit styling agar kartu terlihat rapi jika belum ada stylesheet utama */
+    .card { margin-bottom: 15px; }
+    .card-primary { border-top: 3px solid #007bff; }
+    .card-success { border-top: 3px solid #28a745; }
+    .card-warning { border-top: 3px solid #ffc107; }
+    .card-danger { border-top: 3px solid #dc3545; }
+    .bg-gray { background-color: #6c757d; color: #fff; }
+    .btn.active { box-shadow: none; }
+  </style>
+</head>
 <body class="hold-transition sidebar-mini">
   <div class="wrapper">
     <div class="content-wrapper">
@@ -121,6 +162,7 @@ $result = mysqli_query($connection, $sql);
                             <p>Flow Rate: <span id="node<?php echo $i; ?>-flowrate">-</span> L/min</p>
                             <p>Total Water: <span id="node<?php echo $i; ?>-totalwater">-</span> L</p>
                             <p>RSSI: <span id="node<?php echo $i; ?>-rssi">-</span> dBm</p>
+                            <!-- Jika ingin menampilkan waktu DB, tambahkan elemen <p id="node{i}-lastupdate"></p> di sini -->
                           </div>
                         </div>
                       </div>
@@ -164,9 +206,9 @@ $result = mysqli_query($connection, $sql);
                     <tbody>
                       <?php while ($row = mysqli_fetch_assoc($result)) { ?>
                         <tr>
-                          <td><?php echo $row['serial_number'] ?></td>
-                          <td><?php echo $row['location'] ?></td>
-                          <td style="color:red" id="SmIr/status/<?php echo $row['serial_number'] ?>">offline</td>
+                          <td><?php echo htmlspecialchars($row['serial_number']); ?></td>
+                          <td><?php echo htmlspecialchars($row['location']); ?></td>
+                          <td style="color:red" id="SmIr/status/<?php echo htmlspecialchars($row['serial_number']); ?>">offline</td>
                         </tr>
                       <?php } ?>
                     </tbody>
@@ -181,12 +223,63 @@ $result = mysqli_query($connection, $sql);
     </div>
   </div>
 
+  <!-- =========================
+       ADDED: Kirim lastDataFromDB ke JS dan fungsi applyLastData
+       ========================= -->
+  <script>
+    // Data terakhir dari DB (null jika tidak ada)
+    const lastDataFromDB = <?php echo json_encode($lastData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+
+    // Penanda node yang sudah menerima update via MQTT (agar tidak ditimpa)
+    const mqttReceivedNodes = {};
+
+    // Terapkan last data dari DB ke elemen jika belum ada data MQTT
+    function applyLastDataFromDB() {
+      for (let i = 1; i <= 4; i++) {
+        // jika sudah ada data realtime, skip
+        if (mqttReceivedNodes[i]) continue;
+
+        const row = lastDataFromDB[i];
+        if (!row) continue;
+
+        const setIfExists = (id, value) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          // Hanya set jika masih default (tanda '-'), atau kosong
+          const cur = (el.innerHTML || '').toString().trim();
+          if (cur === '-' || cur === '' ) {
+            el.innerHTML = value !== null && value !== undefined ? value : '-';
+          }
+        };
+
+        setIfExists(`node${i}-tegangan`, row.tegangan ?? '-');
+        setIfExists(`node${i}-arus`, row.arus ?? '-');
+        setIfExists(`node${i}-waterlvA`, row.waterlvA ?? '-');
+        setIfExists(`node${i}-waterlvB`, row.waterlvB ?? '-');
+        setIfExists(`node${i}-flowrate`, row.flowrate ?? '-');
+        setIfExists(`node${i}-totalwater`, row.totalwater ?? '-');
+        setIfExists(`node${i}-rssi`, row.rssi ?? '-');
+
+        // (Opsional) jika mau menampilkan waktu update terakhir,
+        // tambahkan elemen <p id="node{i}-lastupdate">-</p> di HTML dan uncomment:
+        // setIfExists(`node${i}-lastupdate`, row.waktu ?? '-');
+      }
+    }
+
+    // Pastikan dipanggil ketika DOM siap.
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", applyLastDataFromDB);
+    } else {
+      applyLastDataFromDB();
+    }
+  </script>
+
   <!-- MQTT Script -->
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
   <script>
-    const clientId = Math.random().toString(16).substr(2, 8)
-    const host = 'wss://broker.emqx.io:8084/mqtt'
+    const clientId = Math.random().toString(16).substr(2, 8);
+    const host = 'wss://broker.emqx.io:8084/mqtt';
 
     const options = {
       keepalive: 30,
@@ -198,7 +291,7 @@ $result = mysqli_query($connection, $sql);
       clean: true,
       reconnectPeriod: 1000,
       connectTimeout: 30 * 1000,
-    }
+    };
 
     console.log("Menghubungkan ke broker...");
     const client = mqtt.connect(host, options);
@@ -206,8 +299,10 @@ $result = mysqli_query($connection, $sql);
     client.on("connect", () => {
       console.log("Berhasil connect ke broker!");
       const statusEl = document.getElementById("status");
-      statusEl.innerHTML = "Terhubung";
-      statusEl.style.color = "green";
+      if (statusEl) {
+        statusEl.innerHTML = "Terhubung";
+        statusEl.style.color = "green";
+      }
 
       client.subscribe("kelasiottt/#", { qos: 1 });
       client.subscribe("SmIr/data", { qos: 1 });
@@ -218,16 +313,26 @@ $result = mysqli_query($connection, $sql);
       payload = payload.toString();
 
       // Sensor dasar
-      if (topic === "kelasiottt/12345678/temperature") document.getElementById("temperature").innerHTML = payload;
-      else if (topic === "kelasiottt/12345678/humidity") document.getElementById("humidity").innerHTML = payload;
-      else if (topic === "kelasiottt/12345678/potentiometer") document.getElementById("potentiometer").innerHTML = payload;
-      else if (topic === "kelasiottt/12345678/lampu") {
+      if (topic === "kelasiottt/12345678/temperature") {
+        const el = document.getElementById("temperature");
+        if (el) el.innerHTML = payload;
+      } else if (topic === "kelasiottt/12345678/humidity") {
+        const el = document.getElementById("humidity");
+        if (el) el.innerHTML = payload;
+      } else if (topic === "kelasiottt/12345678/potentiometer") {
+        const el = document.getElementById("potentiometer");
+        if (el) el.innerHTML = payload;
+      } else if (topic === "kelasiottt/12345678/lampu") {
         if (payload === "nyala") {
-          document.getElementById("label-lampu1-nyala").classList.add("active");
-          document.getElementById("label-lampu1-mati").classList.remove("active");
+          const a = document.getElementById("label-lampu1-nyala");
+          const b = document.getElementById("label-lampu1-mati");
+          if (a) a.classList.add("active");
+          if (b) b.classList.remove("active");
         } else {
-          document.getElementById("label-lampu1-nyala").classList.remove("active");
-          document.getElementById("label-lampu1-mati").classList.add("active");
+          const a = document.getElementById("label-lampu1-nyala");
+          const b = document.getElementById("label-lampu1-mati");
+          if (a) a.classList.remove("active");
+          if (b) b.classList.add("active");
         }
       }
 
@@ -240,27 +345,63 @@ $result = mysqli_query($connection, $sql);
         }
       }
 
-      // Data node JSON
+      // Data node JSON (SmIr/data)
       if (topic === "SmIr/data") {
         try {
           const data = JSON.parse(payload);
-          const node = data.Node;
-          document.getElementById(`node${node}-tegangan`).innerHTML = data.tegangan;
-          document.getElementById(`node${node}-arus`).innerHTML = data.arus;
-          document.getElementById(`node${node}-waterlvA`).innerHTML = data.waterlvA;
-          document.getElementById(`node${node}-waterlvB`).innerHTML = data.waterlvB;
-          document.getElementById(`node${node}-flowrate`).innerHTML = data.flowrate;
-          document.getElementById(`node${node}-totalwater`).innerHTML = data.totalwater;
-          document.getElementById(`node${node}-rssi`).innerHTML = data.rssi;
+          // Node bisa berupa string/number, gunakan parseInt aman
+          const nodeRaw = data.Node ?? data.node ?? data.node_id;
+          const node = parseInt(nodeRaw);
+          if (!node || isNaN(node)) {
+            console.warn("Node invalid di payload SmIr/data:", nodeRaw);
+            return;
+          }
+
+          // Tandai node ini sudah menerima data realtime, supaya last DB tidak menimpa
+          mqttReceivedNodes[node] = true;
+
+          // Update field jika elemen ada
+          const trySet = (id, value) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerHTML = value !== undefined && value !== null ? value : '-';
+          };
+
+          trySet(`node${node}-tegangan`, data.tegangan ?? data.voltage ?? '-');
+          trySet(`node${node}-arus`, data.arus ?? data.current ?? '-');
+          trySet(`node${node}-waterlvA`, data.waterlvA ?? data.waterLevelA ?? '-');
+          trySet(`node${node}-waterlvB`, data.waterlvB ?? data.waterLevelB ?? '-');
+          trySet(`node${node}-flowrate`, data.flowrate ?? data.flowRate ?? '-');
+          trySet(`node${node}-totalwater`, data.totalwater ?? data.totalWater ?? '-');
+          trySet(`node${node}-rssi`, data.rssi ?? '-');
+
+          console.log(`Data diterima untuk Node ${node}:`, data);
         } catch (e) {
-          console.error("Error parsing JSON:", e);
+          console.error("Error parsing JSON SmIr/data:", e);
         }
       }
     });
 
-    function publishLamp() {
-      const data = document.getElementById("lampu1nyala").checked ? "nyala" : "mati";
-      client.publish("kelasiottt/12345678/lampu", data, { qos: 1, retain: true });
+    /**
+     * publishLamp(el)
+     * dipanggil dari onchange radio button (passing element this)
+     * akan publish ke topic kelasiottt/12345678/lampu dengan payload 'nyala' atau 'mati'
+     * (saya pertahankan topik sebelumnya agar kompatibel)
+     */
+    function publishLamp(el) {
+      if (!client || !client.connected) {
+        console.warn("MQTT client belum terhubung.");
+        return;
+      }
+      try {
+        const name = el.name; // 'lampu1' atau 'lampu2'
+        // cari radio ter-check untuk grup ini
+        const checked = document.querySelector(`input[name="${name}"]:checked`);
+        if (!checked) return;
+        const data = checked.id.includes('nyala') ? "nyala" : "mati";
+        client.publish("kelasiottt/12345678/lampu", data, { qos: 1, retain: true });
+      } catch (err) {
+        console.error("publishLamp error:", err);
+      }
     }
   </script>
-</body>
