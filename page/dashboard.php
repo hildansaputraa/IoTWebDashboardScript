@@ -618,7 +618,7 @@ if ($fallbackQuery) {
     }
         // Fungsi untuk menyimpan ke database
     function saveToDatabase(type, solenoidNum, data) {
-        fetch('/page/save_actuator.php', {
+        fetch('page/save_actuator.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

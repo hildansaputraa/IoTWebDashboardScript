@@ -1,188 +1,126 @@
 <?php
-// Query untuk mengambil history actuator
-$sql = "SELECT * FROM actuator_history ORDER BY created_at DESC LIMIT 1000";
-$result = mysqli_query($connection, $sql);
+// save_actuator.php - FINAL VERSION (config/ di luar page/)
+header('Content-Type: application/json; charset=utf-8');
+
+// === 1. ERROR REPORTING (Hapus di production) ===
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// === 2. AMBIL database.php DARI LUAR FOLDER page/ ===
+$databasePath = __DIR__ . '/../config/database.php';  // Kunci: naik 1 level
+
+if (!file_exists($databasePath)) {
+    error_log("save_actuator.php: config/database.php tidak ditemukan di $databasePath");
+    echo json_encode(['status' => 'error', 'message' => 'File konfigurasi database tidak ditemukan']);
+    exit;
+}
+
+require_once $databasePath;
+
+// === 3. CEK KONEKSI DB ===
+if (!$connection || mysqli_connect_error()) {
+    $msg = 'Koneksi database gagal: ' . mysqli_connect_error();
+    error_log("save_actuator.php: $msg");
+    echo json_encode(['status' => 'error', 'message' => $msg]);
+    exit;
+}
+
+// === 4. AMBIL INPUT JSON ===
+$input = json_decode(file_get_contents('php://input'), true);
+if (json_last_error() !== JSON_ERROR_NONE) {
+    echo json_encode(['status' => 'error', 'message' => 'JSON tidak valid: ' . json_last_error_msg()]);
+    exit;
+}
+
+if (!$input || !isset($input['type'], $input['solenoid'], $input['data'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Data input tidak lengkap']);
+    exit;
+}
+
+$type = $input['type'];
+$solenoid = (int)$input['solenoid'];
+$data = $input['data'];
+
+if (!in_array($solenoid, [1, 2])) {
+    echo json_encode(['status' => 'error', 'message' => 'Solenoid harus 1 atau 2']);
+    exit;
+}
+
+if (!in_array($type, ['manual', 'auto'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Mode harus manual atau auto']);
+    exit;
+}
+
+// === 5. PERSIAPAN DATA ===
+$mode = $type;
+$state = null;
+$action = null;
+$threshold_data = null;
+
+try {
+    if ($type === 'manual') {
+        $state = ($solenoid == 1)
+            ? ($data['solenoidSatu'] ?? 0)
+            : ($data['solenoidDua'] ?? 0);
+        $state = (int)$state;
+    } else {
+        $action = in_array($data['action'] ?? '', ['on', 'off']) ? $data['action'] : 'off';
+        
+        $threshold_data = [];
+        for ($i = 1; $i <= 4; $i++) {
+            $keyA = "waterlvA$i";
+            $keyB = "waterlvB$i";
+            $a = isset($data[$keyA]) ? floatval($data[$keyA]) : null;
+            $b = isset($data[$keyB]) ? floatval($data[$keyB]) : null;
+            
+            if ($a !== null && $b !== null && !is_nan($a) && !is_nan($b)) {
+                $threshold_data[$keyA] = $a;
+                $threshold_data[$keyB] = $b;
+            }
+        }
+        $threshold_data = !empty($threshold_data) ? json_encode($threshold_data, JSON_UNESCAPED_UNICODE) : null;
+        
+        if ($threshold_data === false) {
+            throw new Exception('Gagal encode JSON threshold');
+        }
+    }
+
+    // === 6. INSERT KE DB ===
+    $sql = "INSERT INTO actuator_history 
+            (solenoid_num, mode, state, action, threshold_data, created_at) 
+            VALUES (?, ?, ?, ?, ?, NOW())";
+
+    $stmt = mysqli_prepare($connection, $sql);
+    if (!$stmt) {
+        throw new Exception('Prepare gagal: ' . mysqli_error($connection));
+    }
+
+    if (!mysqli_stmt_bind_param($stmt, "isiss", $solenoid, $mode, $state, $action, $threshold_data)) {
+        throw new Exception('Bind gagal');
+    }
+
+    if (!mysqli_stmt_execute($stmt)) {
+        throw new Exception('Execute gagal: ' . mysqli_stmt_error($stmt));
+    }
+
+    $insertId = mysqli_insert_id($connection);
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'History tersimpan',
+        'id' => $insertId
+    ]);
+
+} catch (Exception $e) {
+    error_log("save_actuator.php ERROR: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode([
+        'status' => 'error',
+        'message' => $e->getMessage()
+    ]);
+} finally {
+    if (isset($stmt)) mysqli_stmt_close($stmt);
+    if (isset($connection)) mysqli_close($connection);
+}
 ?>
-
-<div class="content-wrapper">
-  <!-- Content Header (Page header) -->
-  <div class="content-header">
-    <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1 class="m-0">Data Actuator</h1>
-        </div>
-        <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="?page=dashboard">Home</a></li>
-            <li class="breadcrumb-item active">Data Actuator</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main content -->
-  <div class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Actuator Control History</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-sm btn-info" onclick="location.reload()">
-                  <i class="fas fa-sync-alt"></i> Refresh
-                </button>
-              </div>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Solenoid</th>
-                    <th>Mode</th>
-                    <th>Command</th>
-                    <th>Details</th>
-                    <th>Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php 
-                  if (mysqli_num_rows($result) > 0) {
-                    while($row = mysqli_fetch_assoc($result)) { 
-                      // Format waktu
-                      setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'Indonesian_indonesia.1252');
-                      $timestamp = strtotime($row['created_at']);
-                      $formattedTime = strftime('%d %B %Y %H:%M:%S', $timestamp);
-                      
-                      // Tentukan badge untuk mode
-                      $modeBadge = $row['mode'] === 'manual' 
-                        ? '<span class="badge badge-primary">Manual</span>' 
-                        : '<span class="badge badge-success">Otomatis</span>';
-                      
-                      // Tentukan command
-                      $command = '';
-                      if ($row['mode'] === 'manual') {
-                        $state = $row['state'];
-                        $command = $state == 1 
-                          ? '<span class="badge badge-success">ON</span>' 
-                          : '<span class="badge badge-danger">OFF</span>';
-                      } else {
-                        $command = '<span class="badge badge-info">Settings Update</span>';
-                      }
-                      
-                      // Details
-                      $details = '';
-                      if ($row['mode'] === 'auto' && !empty($row['threshold_data'])) {
-                        $thresholdData = json_decode($row['threshold_data'], true);
-                        $details = '<small>';
-                        $details .= 'Action: <strong>' . strtoupper($row['action']) . '</strong><br>';
-                        for ($i = 1; $i <= 4; $i++) {
-                          if (isset($thresholdData["waterlvA{$i}"]) && isset($thresholdData["waterlvB{$i}"])) {
-                            $details .= "Node {$i}: A={$thresholdData["waterlvA{$i}"]}cm, B={$thresholdData["waterlvB{$i}"]}cm<br>";
-                          }
-                        }
-                        $details .= '</small>';
-                      } else if ($row['mode'] === 'manual') {
-                        $details = '<small>Direct control command</small>';
-                      }
-                      ?>
-                      <tr>
-                        <td><?php echo $row['id']; ?></td>
-                        <td>
-                          <span class="badge badge-<?php echo $row['solenoid_num'] == 1 ? 'info' : 'warning'; ?>">
-                            Solenoid <?php echo $row['solenoid_num']; ?>
-                          </span>
-                        </td>
-                        <td><?php echo $modeBadge; ?></td>
-                        <td><?php echo $command; ?></td>
-                        <td><?php echo $details; ?></td>
-                        <td><?php echo $formattedTime; ?></td>
-                      </tr>
-                    <?php 
-                    }
-                  } else { ?>
-                    <tr>
-                      <td colspan="6" class="text-center">Belum ada history actuator</td>
-                    </tr>
-                  <?php } ?>
-                </tbody>
-              </table>
-            </div>
-            <!-- /.card-body -->
-          </div>
-          <!-- /.card -->
-
-          <!-- Summary Cards -->
-          <div class="row">
-            <div class="col-lg-6">
-              <div class="card card-primary">
-                <div class="card-header">
-                  <h3 class="card-title">Solenoid 1 - Last Activity</h3>
-                </div>
-                <div class="card-body">
-                  <?php
-                  $sql1 = "SELECT * FROM actuator_history WHERE solenoid_num = 1 ORDER BY created_at DESC LIMIT 1";
-                  $result1 = mysqli_query($connection, $sql1);
-                  if ($row1 = mysqli_fetch_assoc($result1)) {
-                    $timestamp1 = strtotime($row1['created_at']);
-                    $time1 = strftime('%d %B %Y %H:%M:%S', $timestamp1);
-                    echo "<p><strong>Mode:</strong> " . ucfirst($row1['mode']) . "</p>";
-                    if ($row1['mode'] === 'manual') {
-                      echo "<p><strong>State:</strong> " . ($row1['state'] == 1 ? 'ON' : 'OFF') . "</p>";
-                    }
-                    echo "<p><strong>Time:</strong> {$time1}</p>";
-                  } else {
-                    echo "<p>No activity yet</p>";
-                  }
-                  ?>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-6">
-              <div class="card card-warning">
-                <div class="card-header">
-                  <h3 class="card-title">Solenoid 2 - Last Activity</h3>
-                </div>
-                <div class="card-body">
-                  <?php
-                  $sql2 = "SELECT * FROM actuator_history WHERE solenoid_num = 2 ORDER BY created_at DESC LIMIT 1";
-                  $result2 = mysqli_query($connection, $sql2);
-                  if ($row2 = mysqli_fetch_assoc($result2)) {
-                    $timestamp2 = strtotime($row2['created_at']);
-                    $time2 = strftime('%d %B %Y %H:%M:%S', $timestamp2);
-                    echo "<p><strong>Mode:</strong> " . ucfirst($row2['mode']) . "</p>";
-                    if ($row2['mode'] === 'manual') {
-                      echo "<p><strong>State:</strong> " . ($row2['state'] == 1 ? 'ON' : 'OFF') . "</p>";
-                    }
-                    echo "<p><strong>Time:</strong> {$time2}</p>";
-                  } else {
-                    echo "<p>No activity yet</p>";
-                  }
-                  ?>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true,
-      "lengthChange": true,
-      "autoWidth": false,
-      "order": [[0, "desc"]],
-      "buttons": ["copy", "csv", "excel", "pdf", "print"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-  });
-</script>
