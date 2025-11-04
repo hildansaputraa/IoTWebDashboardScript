@@ -530,8 +530,8 @@ if ($fallbackQuery) {
           }
 
           // Check automatic control untuk kedua solenoid
-          checkAutoControl(1);
-          checkAutoControl(2);
+          // checkAutoControl(1);
+          // checkAutoControl(2);
 
         } catch (e) {
           console.error("Error parsing JSON:", e);
