@@ -109,29 +109,83 @@ if ($fallbackQuery) {
                       <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan ON ketika SEMUA NODE memenuhi threshold (Water Level A DAN B).
                     </div>
                     
-                    <?php for ($i = 1; $i <= 4; $i++) { ?>
-                    <div class="card mb-3">
-                      <div class="card-header bg-<?php echo ['primary', 'success', 'warning', 'danger'][$i - 1]; ?> text-white">
-                        <strong>Node <?php echo $i; ?> Threshold</strong>
-                      </div>
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col-md-6">
+                    <div class="row">
+                      <!-- Node 1 -->
+                      <div class="col-md-6">
+                        <div class="card mb-3 border-primary">
+                          <div class="card-header bg-primary text-white">
+                            <strong>Node 1 Threshold</strong>
+                          </div>
+                          <div class="card-body">
                             <div class="form-group">
                               <label>Water Level A (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node<?php echo $i; ?>-waterlvA-solenoid1" placeholder="Contoh: 50" step="0.1">
+                              <input type="number" class="form-control" id="threshold-node1-waterlvA-solenoid1" placeholder="Contoh: 50" step="0.1">
                             </div>
-                          </div>
-                          <div class="col-md-6">
                             <div class="form-group">
                               <label>Water Level B (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node<?php echo $i; ?>-waterlvB-solenoid1" placeholder="Contoh: 30" step="0.1">
+                              <input type="number" class="form-control" id="threshold-node1-waterlvB-solenoid1" placeholder="Contoh: 30" step="0.1">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Node 2 -->
+                      <div class="col-md-6">
+                        <div class="card mb-3 border-success">
+                          <div class="card-header bg-success text-white">
+                            <strong>Node 2 Threshold</strong>
+                          </div>
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label>Water Level A (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node2-waterlvA-solenoid1" placeholder="Contoh: 45" step="0.1">
+                            </div>
+                            <div class="form-group">
+                              <label>Water Level B (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node2-waterlvB-solenoid1" placeholder="Contoh: 25" step="0.1">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Node 3 -->
+                      <div class="col-md-6">
+                        <div class="card mb-3 border-warning">
+                          <div class="card-header bg-warning text-white">
+                            <strong>Node 3 Threshold</strong>
+                          </div>
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label>Water Level A (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node3-waterlvA-solenoid1" placeholder="Contoh: 55" step="0.1">
+                            </div>
+                            <div class="form-group">
+                              <label>Water Level B (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node3-waterlvB-solenoid1" placeholder="Contoh: 35" step="0.1">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Node 4 -->
+                      <div class="col-md-6">
+                        <div class="card mb-3 border-danger">
+                          <div class="card-header bg-danger text-white">
+                            <strong>Node 4 Threshold</strong>
+                          </div>
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label>Water Level A (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node4-waterlvA-solenoid1" placeholder="Contoh: 48" step="0.1">
+                            </div>
+                            <div class="form-group">
+                              <label>Water Level B (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node4-waterlvB-solenoid1" placeholder="Contoh: 28" step="0.1">
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <?php } ?>
 
                     <div class="form-group">
                       <label>Aksi saat SEMUA node memenuhi threshold:</label>
@@ -141,7 +195,7 @@ if ($fallbackQuery) {
                       </select>
                     </div>
                     <div class="alert alert-warning">
-                      <strong>Cara kerja:</strong> Sistem akan memeriksa semua 4 node. Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN Water Level B) yang ditentukan untuk masing-masing node.
+                      <strong>Cara kerja:</strong> Isi threshold untuk setiap node (total 8 input). Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN Water Level B) yang ditentukan.
                     </div>
                   </div>
                 </div>
@@ -181,25 +235,87 @@ if ($fallbackQuery) {
                   <!-- Auto Control Settings -->
                   <div id="auto-control-solenoid2" style="display: none;">
                     <div class="alert alert-info">
-                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan dikontrol ketika SEMUA NODE memenuhi threshold.
+                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan ON ketika SEMUA NODE memenuhi threshold (Water Level A DAN B).
                     </div>
-                    <div class="form-group">
-                      <label>Threshold Water Level A (cm):</label>
-                      <input type="number" class="form-control" id="threshold-waterlvA-solenoid2" placeholder="Contoh: 50" step="0.1">
-                      <small class="text-muted">Semua node harus memiliki water level A ≥ threshold ini</small>
+                    
+                    <div class="row">
+                      <!-- Node 1 -->
+                      <div class="col-md-6">
+                        <div class="card mb-3 border-primary">
+                          <div class="card-header bg-primary text-white">
+                            <strong>Node 1 Threshold</strong>
+                          </div>
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label>Water Level A (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node1-waterlvA-solenoid2" placeholder="Contoh: 50" step="0.1">
+                            </div>
+                            <div class="form-group">
+                              <label>Water Level B (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node1-waterlvB-solenoid2" placeholder="Contoh: 30" step="0.1">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Node 2 -->
+                      <div class="col-md-6">
+                        <div class="card mb-3 border-success">
+                          <div class="card-header bg-success text-white">
+                            <strong>Node 2 Threshold</strong>
+                          </div>
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label>Water Level A (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node2-waterlvA-solenoid2" placeholder="Contoh: 45" step="0.1">
+                            </div>
+                            <div class="form-group">
+                              <label>Water Level B (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node2-waterlvB-solenoid2" placeholder="Contoh: 25" step="0.1">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Node 3 -->
+                      <div class="col-md-6">
+                        <div class="card mb-3 border-warning">
+                          <div class="card-header bg-warning text-white">
+                            <strong>Node 3 Threshold</strong>
+                          </div>
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label>Water Level A (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node3-waterlvA-solenoid2" placeholder="Contoh: 55" step="0.1">
+                            </div>
+                            <div class="form-group">
+                              <label>Water Level B (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node3-waterlvB-solenoid2" placeholder="Contoh: 35" step="0.1">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Node 4 -->
+                      <div class="col-md-6">
+                        <div class="card mb-3 border-danger">
+                          <div class="card-header bg-danger text-white">
+                            <strong>Node 4 Threshold</strong>
+                          </div>
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label>Water Level A (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node4-waterlvA-solenoid2" placeholder="Contoh: 48" step="0.1">
+                            </div>
+                            <div class="form-group">
+                              <label>Water Level B (cm):</label>
+                              <input type="number" class="form-control" id="threshold-node4-waterlvB-solenoid2" placeholder="Contoh: 28" step="0.1">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div class="form-group">
-                      <label>Threshold Water Level B (cm):</label>
-                      <input type="number" class="form-control" id="threshold-waterlvB-solenoid2" placeholder="Contoh: 30" step="0.1">
-                      <small class="text-muted">Semua node harus memiliki water level B ≥ threshold ini</small>
-                    </div>
-                    <div class="form-group">
-                      <label>Kondisi per Node:</label>
-                      <select class="form-control" id="condition-solenoid2">
-                        <option value="both">Kedua level (A dan B) harus memenuhi (AND)</option>
-                        <option value="either">Salah satu level (A atau B) memenuhi (OR)</option>
-                      </select>
-                    </div>
+
                     <div class="form-group">
                       <label>Aksi saat SEMUA node memenuhi threshold:</label>
                       <select class="form-control" id="action-solenoid2">
@@ -208,7 +324,7 @@ if ($fallbackQuery) {
                       </select>
                     </div>
                     <div class="alert alert-warning">
-                      <strong>Cara kerja:</strong> Sistem akan memeriksa semua 4 node. Solenoid hanya akan berubah status jika SEMUA node memenuhi kondisi threshold yang ditentukan.
+                      <strong>Cara kerja:</strong> Isi threshold untuk setiap node (total 8 input). Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN Water Level B) yang ditentukan.
                     </div>
                   </div>
                 </div>
@@ -438,36 +554,37 @@ if ($fallbackQuery) {
     function checkAutoControl(solenoidNum) {
       if (solenoidState[solenoidNum].mode !== 'auto') return;
       
-      const thresholdA = document.getElementById(`threshold-waterlvA-solenoid${solenoidNum}`);
-      const thresholdB = document.getElementById(`threshold-waterlvB-solenoid${solenoidNum}`);
-      const condition = document.getElementById(`condition-solenoid${solenoidNum}`);
       const action = document.getElementById(`action-solenoid${solenoidNum}`);
-      
-      if (!thresholdA || !thresholdB || !condition || !action) return;
-      
-      const threshA = parseFloat(thresholdA.value);
-      const threshB = parseFloat(thresholdB.value);
-      
-      if (isNaN(threshA) || isNaN(threshB)) return;
+      if (!action) return;
       
       // Cek semua node (1 sampai 4)
       let allNodesMet = true;
       
       for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+        const thresholdA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid${solenoidNum}`);
+        const thresholdB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid${solenoidNum}`);
+        
+        if (!thresholdA || !thresholdB) {
+          allNodesMet = false;
+          break;
+        }
+        
+        const threshA = parseFloat(thresholdA.value);
+        const threshB = parseFloat(thresholdB.value);
+        
+        // Jika threshold tidak diisi, anggap node ini tidak memenuhi
+        if (isNaN(threshA) || isNaN(threshB)) {
+          allNodesMet = false;
+          break;
+        }
+        
         const currentWaterA = sensorData[nodeNum].waterlvA;
         const currentWaterB = sensorData[nodeNum].waterlvB;
         
-        let nodeConditionMet = false;
+        // Node harus memenuhi KEDUA threshold (Water Level A DAN B)
+        const nodeConditionMet = (currentWaterA >= threshA) && (currentWaterB >= threshB);
         
-        if (condition.value === 'both') {
-          // AND: kedua level di node ini harus memenuhi threshold
-          nodeConditionMet = (currentWaterA >= threshA) && (currentWaterB >= threshB);
-        } else {
-          // OR: salah satu level di node ini memenuhi threshold
-          nodeConditionMet = (currentWaterA >= threshA) || (currentWaterB >= threshB);
-        }
-        
-        // Jika salah satu node tidak memenuhi, maka allNodesMet = false
+        // Jika node ini tidak memenuhi, maka allNodesMet = false
         if (!nodeConditionMet) {
           allNodesMet = false;
           break;
