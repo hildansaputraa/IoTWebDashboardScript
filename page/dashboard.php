@@ -571,50 +571,40 @@ if ($fallbackQuery) {
 
     // Fungsi untuk menyimpan pengaturan otomatis
     function saveAutoSettings(solenoidNum) {
-      const autoSettings = {
-        mode: 2
-      };
-      
-      // Ambil threshold untuk setiap node
-      for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
-        const thresholdA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid${solenoidNum}`);
-        const thresholdB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid${solenoidNum}`);
-        
-        if (thresholdA && thresholdB) {
-          const valA = parseFloat(thresholdA.value);
-          const valB = parseFloat(thresholdB.value);
-          
-          if (!isNaN(valA)) {
-            autoSettings[`waterlvA${nodeNum}`] = valA;
-          }
-          if (!isNaN(valB)) {
-            autoSettings[`waterlvB${nodeNum}`] = valB;
-          }
+        const autoSettings = { mode: 2 };
+
+        let hasData = false;
+        for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+            const aInput = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid${solenoidNum}`);
+            const bInput = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid${solenoidNum}`);
+            
+            const valA = aInput?.value.trim();
+            const valB = bInput?.value.trim();
+
+            if (valA !== '' && valB !== '' && !isNaN(valA) && !isNaN(valB)) {
+                autoSettings[`waterlvA${nodeNum}`] = parseFloat(valA);
+                autoSettings[`waterlvB${nodeNum}`] = parseFloat(valB);
+                hasData = true;
+            }
         }
-      }
-      
-      // Tambahkan informasi solenoid mana yang dicontrol
-      if (solenoidNum === 1) {
-        autoSettings.solenoid = 1;
-      } else {
-        autoSettings.solenoid = 2;
-      }
-      
-      // Tambahkan aksi
-      const action = document.getElementById(`action-solenoid${solenoidNum}`);
-      if (action) {
-        autoSettings.action = action.value;
-      }
-      
-      // Publish ke MQTT
-      client.publish("SmIr/control", JSON.stringify(autoSettings), { qos: 1, retain: true });
-      console.log(`Published auto settings Solenoid ${solenoidNum}:`, autoSettings);
-      
-      // Simpan ke database via AJAX
-      saveToDatabase('auto', solenoidNum, autoSettings);
-      
-      // Tampilkan notifikasi
-      alert(`Pengaturan otomatis Solenoid ${solenoidNum} berhasil disimpan!`);
+
+        if (!hasData) {
+            alert('Isi minimal satu pasang threshold (A dan B)!');
+            return;
+        }
+
+        const actionSelect = document.getElementById(`action-solenoid${solenoidNum}`);
+        autoSettings.action = actionSelect?.value || 'off';
+
+        if (solenoidNum === 1) autoSettings.solenoid = 1;
+        else autoSettings.solenoid = 2;
+
+        // Publish ke MQTT
+        client.publish("SmIr/kontrol", JSON.stringify(autoSettings), { qos: 1, retain: true });
+        console.log("Published auto settings:", autoSettings);
+
+        // Simpan ke DB
+        saveToDatabase('auto', solenoidNum, autoSettings);
     }
         // Fungsi untuk menyimpan ke database
     function saveToDatabase(type, solenoidNum, data) {

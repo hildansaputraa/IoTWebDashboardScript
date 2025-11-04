@@ -1,45 +1,27 @@
 <?php
-// page/save_actuator.php - FINAL VERSION (config di luar page/)
+// page/save_actuator.php - FINAL FIX OTOMATIS MODE
 
-// === CEK METHOD POST ===
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Content-Type: application/json');
-    echo json_encode(['status' => 'error', 'message' => 'Gunakan POST']);
+    echo json_encode(['status' => 'error', 'message' => 'POST only']);
     exit;
 }
 
 header('Content-Type: application/json; charset=utf-8');
 
-// === 1. INCLUDE DATABASE (dari folder page/ ke config/) ===
-$databasePath = __DIR__ . '/../config/database.php';  // KUNCI: ../config/
+// === INCLUDE DATABASE ===
+require_once __DIR__ . '/../config/database.php';
 
-if (!file_exists($databasePath)) {
-    error_log("save_actuator.php: File tidak ditemukan: $databasePath");
-    http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Config database tidak ditemukan']);
-    exit;
-}
-
-require_once $databasePath;
-
-// === 2. CEK KONEKSI DB ===
 if (!$connection || mysqli_connect_error()) {
-    $msg = 'DB gagal: ' . mysqli_connect_error();
-    error_log("save_actuator.php: $msg");
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => $msg]);
+    echo json_encode(['status' => 'error', 'message' => 'DB connection failed']);
     exit;
 }
 
-// === 3. AMBIL DATA JSON ===
+// === AMBIL INPUT ===
 $input = json_decode(file_get_contents('php://input'), true);
-if (json_last_error() !== JSON_ERROR_NONE) {
-    echo json_encode(['status' => 'error', 'message' => 'JSON invalid']);
-    exit;
-}
-
 if (!$input || !isset($input['type'], $input['solenoid'], $input['data'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid input']);
     exit;
 }
 
@@ -47,59 +29,63 @@ $type = $input['type'];
 $solenoid = (int)$input['solenoid'];
 $data = $input['data'];
 
-if (!in_array($solenoid, [1, 2])) {
-    echo json_encode(['status' => 'error', 'message' => 'Solenoid invalid']);
+if (!in_array($solenoid, [1, 2]) || !in_array($type, ['manual', 'auto'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid solenoid or mode']);
     exit;
 }
 
-if (!in_array($type, ['manual', 'auto'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Mode invalid']);
-    exit;
-}
-
-// === 4. PROSES DATA ===
 $mode = $type;
 $state = null;
 $action = null;
 $threshold_data = null;
 
+// === PROSES DATA ===
 if ($type === 'manual') {
     $state = ($solenoid == 1) ? ($data['solenoidSatu'] ?? 0) : ($data['solenoidDua'] ?? 0);
     $state = (int)$state;
 } else {
+    // AUTO MODE
     $action = in_array($data['action'] ?? '', ['on', 'off']) ? $data['action'] : 'off';
-    
-    $threshold_data = [];
+
+    $thresholds = [];
     for ($i = 1; $i <= 4; $i++) {
-        $a = $data["waterlvA$i"] ?? null;
-        $b = $data["waterlvB$i"] ?? null;
-        if ($a !== null && $b !== null) {
-            $a = floatval($a);
-            $b = floatval($b);
-            if (!is_nan($a) && !is_nan($b)) {
-                $threshold_data["waterlvA$i"] = $a;
-                $threshold_data["waterlvB$i"] = $b;
-            }
+        $a = isset($data["waterlvA$i"]) ? floatval($data["waterlvA$i"]) : null;
+        $b = isset($data["waterlvB$i"]) ? floatval($data["waterlvB$i"]) : null;
+
+        // Hanya simpan jika keduanya ada dan valid
+        if ($a !== null && $b !== null && !is_nan($a) && !is_nan($b)) {
+            $thresholds["waterlvA$i"] = $a;
+            $thresholds["waterlvB$i"] = $b;
         }
     }
-    $threshold_data = !empty($threshold_data) ? json_encode($threshold_data, JSON_UNESCAPED_UNICODE) : null;
+
+    // Hanya encode jika ada data
+    $threshold_data = !empty($thresholds) ? json_encode($thresholds, JSON_UNESCAPED_UNICODE) : null;
 }
 
-// === 5. INSERT KE DB ===
+// === INSERT KE DB ===
 $sql = "INSERT INTO actuator_history 
         (solenoid_num, mode, state, action, threshold_data, created_at) 
         VALUES (?, ?, ?, ?, ?, NOW())";
 
 $stmt = mysqli_prepare($connection, $sql);
 if (!$stmt) {
-    $err = mysqli_error($connection);
-    error_log("save_actuator.php: Prepare failed: $err");
+    error_log("Prepare failed: " . mysqli_error($connection));
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'DB Error']);
+    echo json_encode(['status' => 'error', 'message' => 'DB prepare error']);
     exit;
 }
 
-$bind = mysqli_stmt_bind_param($stmt, "isiss", $solenoid, $mode, $state, $action, $threshold_data);
+// Gunakan bind_param dengan penanganan NULL
+$bind = mysqli_stmt_bind_param(
+    $stmt, "isiss",
+    $solenoid,
+    $mode,
+    $state,
+    $action,
+    $threshold_data
+);
+
 if (!$bind) {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => 'Bind failed']);
@@ -108,19 +94,18 @@ if (!$bind) {
 
 if (!mysqli_stmt_execute($stmt)) {
     $err = mysqli_stmt_error($stmt);
-    error_log("save_actuator.php: Execute failed: $err");
+    error_log("Execute failed: $err | Data: " . json_encode($input));
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Execute failed']);
+    echo json_encode(['status' => 'error', 'message' => 'Execute failed: ' . $err]);
     exit;
 }
 
 echo json_encode([
     'status' => 'success',
-    'message' => 'History tersimpan',
+    'message' => 'History saved',
     'id' => mysqli_insert_id($connection)
 ]);
 
-// === TUTUP ===
 mysqli_stmt_close($stmt);
 mysqli_close($connection);
 ?>
