@@ -2,7 +2,6 @@
   <!-- Brand Logo -->
   <a href="index3.html" class="brand-link">
     <img src="dist/img/logo-with-title.png" alt="Logo" class="brand-image ">
-    <span class="brand-text font-weight-light">SYSTEM IOT</span>
   </a>
   <!-- Sidebar -->
   <div class="sidebar">
