@@ -79,25 +79,25 @@ if ($fallbackQuery) {
                 <div class="card-header"><h3 class="card-title">Solenoid 1</h3></div>
                 <div class="card-body">
                   <!-- Mode Selection -->
-                  <div class="form-group">
-                    <label>Mode Control:</label>
-                    <div class="btn-group btn-group-toggle d-block mx-auto" style="max-width: 300px;" data-toggle="buttons">
-                      <label class="btn btn-outline-primary active" id="label-solenoid1-manual">
+                  <div class="form-group text-center">
+                    <label><strong>Mode Control:</strong></label>
+                    <div class="btn-group btn-group-toggle mx-auto d-block" style="max-width: 320px;" data-toggle="buttons">
+                      <label class="btn btn-outline-primary active flex-fill" id="label-solenoid1-manual">
                         <input type="radio" name="mode-solenoid1" value="manual" id="mode-solenoid1-manual" checked onchange="changeSolenoidMode(1, this.value)"> Manual
                       </label>
-                      <label class="btn btn-outline-success" id="label-solenoid1-auto">
+                      <label class="btn btn-outline-success flex-fill" id="label-solenoid1-auto">
                         <input type="radio" name="mode-solenoid1" value="auto" id="mode-solenoid1-auto" onchange="changeSolenoidMode(1, this.value)"> Otomatis
                       </label>
                     </div>
                   </div>
 
                   <!-- Manual Control -->
-                  <div id="manual-control-solenoid1">
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                      <label class="btn btn-success" id="label-solenoid1-on">
+                  <div id="manual-control-solenoid1" class="text-center mt-3">
+                    <div class="btn-group btn-group-toggle mx-auto d-inline-block" style="min-width: 200px;" data-toggle="buttons">
+                      <label class="btn btn-success flex-fill" id="label-solenoid1-on">
                         <input type="radio" name="solenoid1" onchange="publishSolenoid(1, 1)" id="solenoid1on" autocomplete="off"> ON
                       </label>
-                      <label class="btn btn-danger active" id="label-solenoid1-off">
+                      <label class="btn btn-danger flex-fill active" id="label-solenoid1-off">
                         <input type="radio" name="solenoid1" onchange="publishSolenoid(1, 0)" id="solenoid1off" autocomplete="off" checked> OFF
                       </label>
                     </div>
