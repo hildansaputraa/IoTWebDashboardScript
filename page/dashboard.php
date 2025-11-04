@@ -81,7 +81,7 @@ if ($fallbackQuery) {
                   <!-- Mode Selection -->
                   <div class="form-group">
                     <label>Mode Control:</label>
-                    <div class="btn-group btn-group-toggle d-block" data-toggle="buttons">
+                    <div class="btn-group btn-group-toggle d-block mx-auto" style="max-width: 300px;" data-toggle="buttons">
                       <label class="btn btn-outline-primary active" id="label-solenoid1-manual">
                         <input type="radio" name="mode-solenoid1" value="manual" id="mode-solenoid1-manual" checked onchange="changeSolenoidMode(1, this.value)"> Manual
                       </label>
@@ -215,7 +215,7 @@ if ($fallbackQuery) {
                   <!-- Mode Selection -->
                   <div class="form-group">
                     <label>Mode Control:</label>
-                    <div class="btn-group btn-group-toggle d-block" data-toggle="buttons">
+                    <div class="btn-group btn-group-toggle d-block mx-auto" style="max-width: 300px;" data-toggle="buttons">
                       <label class="btn btn-outline-primary active" id="label-solenoid2-manual">
                         <input type="radio" name="mode-solenoid2" value="manual" id="mode-solenoid2-manual" checked onchange="changeSolenoidMode(2, this.value)"> Manual
                       </label>
@@ -414,17 +414,6 @@ if ($fallbackQuery) {
           <div class="row">
             <div class="col-12">
               <div class="card card-lightblue">
-                
-                <!-- TOMBOL DARURAT: MATIKAN SEMUA SOLENOID -->
-                <div class="row">
-                  <div class="col-12 text-center mt-4 mb-4">
-                    <button type="button" class="btn btn-danger btn-lg shadow-lg" onclick="forceOffAll()">
-                      <i class="fas fa-power-off"></i> <strong>MATIKAN SEMUA SOLENOID</strong>
-                    </button>
-                    <p class="text-muted mt-2"><small>Mode 0: Solenoid 1 & 2 langsung mati</small></p>
-                  </div>
-                </div>
-
                 <div class="card-header"><h3 class="card-title">Devices Status</h3></div>
                 <div class="card-body table-responsive p-0" style="height: 300px;">
                   <table class="table table-head-fixed text-nowrap">
