@@ -589,21 +589,19 @@ if ($fallbackQuery) {
         }
 
         if (!hasData) {
-            alert('Isi minimal satu pasang threshold (A dan B)!');
+            alert('Isi minimal satu pasang threshold!');
             return;
         }
 
         const actionSelect = document.getElementById(`action-solenoid${solenoidNum}`);
         autoSettings.action = actionSelect?.value || 'off';
 
-        if (solenoidNum === 1) autoSettings.solenoid = 1;
-        else autoSettings.solenoid = 2;
+        // Kirim solenoid number
+        autoSettings.solenoid = solenoidNum;
 
-        // Publish ke MQTT
         client.publish("SmIr/kontrol", JSON.stringify(autoSettings), { qos: 1, retain: true });
         console.log("Published auto settings:", autoSettings);
 
-        // Simpan ke DB
         saveToDatabase('auto', solenoidNum, autoSettings);
     }
         // Fungsi untuk menyimpan ke database
