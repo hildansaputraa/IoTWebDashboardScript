@@ -1,6 +1,6 @@
 <?php
-// gateway_mqtt.php — debug-heavy version with retry queue
-// Letakkan di folder config/, gunakan path absolut untuk nohup
+// gateway_mqtt.php — robust reconnect on "MySQL server has gone away"
+// Put this file in config/ and run with nohup as before.
 
 require_once __DIR__ . '/../vendor/autoload.php';
 include __DIR__ . '/database.php';
@@ -8,19 +8,46 @@ include __DIR__ . '/database.php';
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 
-date_default_timezone_set('Asia/Jakarta'); // agar timestamp konsisten
+date_default_timezone_set('Asia/Jakarta');
 
 $logFile = __DIR__ . '/mqtt_debug.log';
-$failedQueueFile = __DIR__ . '/failed_queue.jsonl'; // setiap line = raw JSON pesan yang gagal
+$failedQueueFile = __DIR__ . '/failed_queue.jsonl';
 
 function append_log($file, $text) {
     file_put_contents($file, "[".date('Y-m-d H:i:s')."] " . $text . PHP_EOL, FILE_APPEND);
 }
 
-// MQTT config
+function push_failed_queue($file, $topic, $message) {
+    $entry = [
+        'ts' => date('c'),
+        'topic' => $topic,
+        'message' => $message
+    ];
+    file_put_contents($file, json_encode($entry) . PHP_EOL, FILE_APPEND | LOCK_EX);
+}
+
+// Helper: reconnect database (close + include database.php), return true on success
+function reconnect_db(&$connection, $logFile) {
+    append_log($logFile, "DEBUG: reconnect_db() mulai — menutup koneksi lama jika ada.");
+    if (isset($connection) && ($connection instanceof mysqli)) {
+        @mysqli_close($connection);
+    }
+    // re-include database.php (ini harus mendefinisikan $connection)
+    include __DIR__ . '/database.php';
+    // kecilkan jeda sejenak
+    usleep(200000); // 200ms
+    if (isset($connection) && ($connection instanceof mysqli) && @mysqli_ping($connection)) {
+        append_log($logFile, "✅ reconnect_db(): koneksi baru berhasil.");
+        return true;
+    } else {
+        append_log($logFile, "❌ reconnect_db(): gagal membuat koneksi baru.");
+        return false;
+    }
+}
+
 $server = 'broker.emqx.io';
 $port = 1883;
-$clientId = 'php_gateway_main'; // tetap (jangan uniqid)
+$clientId = 'php_gateway_main';
 $username = 'emqx_test';
 $password = 'emqx_test';
 
@@ -30,10 +57,8 @@ $connectionSettings = (new ConnectionSettings)
     ->setKeepAliveInterval(60)
     ->setUseTls(false);
 
-// init mqtt client
 $mqtt = new MqttClient($server, $port, $clientId);
 
-// sensor list
 $sensorList = [
     'tegangan',
     'arus',
@@ -44,17 +69,7 @@ $sensorList = [
     'rssi'
 ];
 
-// helper: tulis pesan gagal ke queue (json lines)
-function push_failed_queue($file, $topic, $message) {
-    $entry = [
-        'ts' => date('c'),
-        'topic' => $topic,
-        'message' => $message
-    ];
-    file_put_contents($file, json_encode($entry) . PHP_EOL, FILE_APPEND | LOCK_EX);
-}
-
-// konek mqtt with retry
+// connect mqtt with retry
 function connect_mqtt($mqtt, $settings, $logFile) {
     while (true) {
         try {
@@ -70,156 +85,145 @@ function connect_mqtt($mqtt, $settings, $logFile) {
     }
 }
 
-// ensure DB connection utility (lebih detail logging)
+// ensure DB connection (try to ping, else reconnect)
 function ensure_db_connection(&$connection, $logFile) {
-    // check existence
     if (!isset($connection) || !($connection instanceof mysqli)) {
-        append_log($logFile, "DEBUG: \$connection tidak ada atau tidak instance mysqli. Include ulang database.php");
+        append_log($logFile, "DEBUG: connection object invalid, include database.php");
         include __DIR__ . '/database.php';
     }
-
-    // ping
     if (!@mysqli_ping($connection)) {
-        append_log($logFile, "DEBUG: mysqli_ping gagal, attempt reconnect...");
-        // tutup dulu jika ada
-        if (isset($connection) && ($connection instanceof mysqli)) {
-            @mysqli_close($connection);
-        }
-        include __DIR__ . '/database.php';
-        if (!@mysqli_ping($connection)) {
-            append_log($logFile, "❌ DB reconnect gagal: " . (isset($connection) ? mysqli_error($connection) : 'no connection object'));
-            return false;
-        } else {
-            append_log($logFile, "✅ DB reconnect berhasil.");
-        }
-    } else {
-        append_log($logFile, "DEBUG: mysqli_ping OK.");
+        append_log($logFile, "DEBUG: mysqli_ping gagal, mencoba reconnect_db()");
+        return reconnect_db($connection, $logFile);
     }
     return true;
 }
 
-// callback
+// The callback with explicit "MySQL server has gone away" handling
 $callback = function($topic, $message) use (&$connection, $logFile, $sensorList, $failedQueueFile) {
-    try {
-        append_log($logFile, "📩 Received on $topic: $message");
-        echo "Pesan diterima di $topic: $message\n";
+    append_log($logFile, "📩 Received on $topic: $message");
+    echo "Pesan diterima di $topic: $message\n";
 
-        // decode
-        $data = json_decode($message, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            $err = "⚠️ JSON decode error: " . json_last_error_msg();
-            append_log($logFile, $err);
-            echo $err . "\n";
-            push_failed_queue($failedQueueFile, $topic, $message);
-            return;
+    $data = json_decode($message, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        $err = "⚠️ JSON decode error: " . json_last_error_msg();
+        append_log($logFile, $err);
+        echo $err . "\n";
+        push_failed_queue($failedQueueFile, $topic, $message);
+        return;
+    }
+    if (!isset($data['Node'])) {
+        $err = "⚠️ Field Node tidak ditemukan.";
+        append_log($logFile, $err);
+        echo $err . "\n";
+        push_failed_queue($failedQueueFile, $topic, $message);
+        return;
+    }
+
+    // ensure DB ready
+    if (!ensure_db_connection($connection, $logFile)) {
+        append_log($logFile, "❌ ensure_db_connection() gagal — push ke failed queue.");
+        push_failed_queue($failedQueueFile, $topic, $message);
+        return;
+    }
+
+    $node = intval($data['Node']);
+    $rssi = isset($data['rssi']) && is_numeric($data['rssi']) ? floatval($data['rssi']) : 0.0;
+
+    // Prepare once
+    $stmt = mysqli_prepare($connection,
+        "INSERT INTO data (node, sensor_actuator, name, value, rssi, mqtt_topic, created_at)
+         VALUES (?, 'sensor', ?, ?, ?, ?, NOW())"
+    );
+    if ($stmt === false) {
+        $err = "❌ Prepare gagal awal: " . mysqli_error($connection);
+        append_log($logFile, $err);
+        echo $err . "\n";
+        push_failed_queue($failedQueueFile, $topic, $message);
+        return;
+    }
+
+    foreach ($sensorList as $sensor) {
+        if (!array_key_exists($sensor, $data)) {
+            append_log($logFile, "⚠️ Field '$sensor' tidak ada pada Node {$node}, skip");
+            continue;
         }
 
-        if (!isset($data['Node'])) {
-            $err = "⚠️ Field Node tidak ada. Discard.";
-            append_log($logFile, $err);
-            echo $err . "\n";
-            push_failed_queue($failedQueueFile, $topic, $message);
-            return;
-        }
+        $value = floatval($data[$sensor]);
 
-        // cek DB connection
-        if (!ensure_db_connection($connection, $logFile)) {
-            append_log($logFile, "❌ ensure_db_connection() false — push ke failed queue dan return.");
-            push_failed_queue($failedQueueFile, $topic, $message);
-            return;
-        }
+        // Try execute with up to 2 attempts if "MySQL server has gone away"
+        $attempt = 0;
+        $maxAttempts = 2;
+        $success = false;
 
-        $node = intval($data['Node']);
-        $rssi = isset($data['rssi']) && is_numeric($data['rssi']) ? floatval($data['rssi']) : 0.0;
-
-        append_log($logFile, "DEBUG: Mulai prepare statement (node={$node})");
-        $stmt = mysqli_prepare($connection,
-            "INSERT INTO data (node, sensor_actuator, name, value, rssi, mqtt_topic, created_at)
-             VALUES (?, 'sensor', ?, ?, ?, ?, NOW())"
-        );
-
-        if ($stmt === false) {
-            $err = "❌ Prepare gagal: errno=" . mysqli_errno($connection) . " error=" . mysqli_error($connection);
-            append_log($logFile, $err);
-            echo $err . "\n";
-            push_failed_queue($failedQueueFile, $topic, $message);
-            return;
-        } else {
-            append_log($logFile, "DEBUG: Prepare OK.");
-        }
-
-        foreach ($sensorList as $sensor) {
-            if (!array_key_exists($sensor, $data)) {
-                $warn = "⚠️ Field '$sensor' tidak ada pada Node {$node}.";
-                append_log($logFile, $warn);
-                echo $warn . "\n";
-                continue;
-            }
-
-            $value = floatval($data[$sensor]);
+        while ($attempt < $maxAttempts && !$success) {
+            $attempt++;
             mysqli_stmt_bind_param($stmt, "isdds", $node, $sensor, $value, $rssi, $topic);
 
             $exec = @mysqli_stmt_execute($stmt);
-            $stmt_errno = mysqli_stmt_errno($stmt);
-            $stmt_err = mysqli_stmt_error($stmt);
 
-            if ($exec === false) {
-                $err = "❌ Execute gagal (node={$node}, sensor={$sensor}): stmt_errno={$stmt_errno} stmt_err={$stmt_err} mysqli_err=" . mysqli_error($connection);
-                append_log($logFile, $err);
-                echo $err . "\n";
-
-                // retry logic: reconnect & try once
-                append_log($logFile, "DEBUG: mencoba reconnect DB & retry insert untuk sensor {$sensor}");
-                include __DIR__ . '/database.php';
-                if (@mysqli_ping($connection)) {
-                    $stmtRetry = mysqli_prepare($connection,
-                        "INSERT INTO data (node, sensor_actuator, name, value, rssi, mqtt_topic, created_at)
-                         VALUES (?, 'sensor', ?, ?, ?, ?, NOW())"
-                    );
-                    if ($stmtRetry) {
-                        mysqli_stmt_bind_param($stmtRetry, "isdds", $node, $sensor, $value, $rssi, $topic);
-                        $execRetry = @mysqli_stmt_execute($stmtRetry);
-                        if ($execRetry !== false) {
-                            append_log($logFile, "✅ Retry insert sukses (node={$node}, sensor={$sensor})");
-                            echo "✅ Retry insert sukses (node={$node}, sensor={$sensor})\n";
-                        } else {
-                            $err2 = "❌ Retry insert gagal: " . mysqli_stmt_error($stmtRetry) . " errno=" . mysqli_stmt_errno($stmtRetry);
-                            append_log($logFile, $err2);
-                            echo $err2 . "\n";
-                            // push entire message to failed queue (so we don't lose whole payload)
-                            push_failed_queue($failedQueueFile, $topic, $message);
-                        }
-                        mysqli_stmt_close($stmtRetry);
-                    } else {
-                        append_log($logFile, "❌ Retry prepare failed: " . mysqli_error($connection));
-                        push_failed_queue($failedQueueFile, $topic, $message);
-                    }
-                } else {
-                    append_log($logFile, "❌ Retry DB ping gagal: " . (isset($connection) ? mysqli_error($connection) : 'no connection'));
-                    push_failed_queue($failedQueueFile, $topic, $message);
-                }
-            } else {
+            if ($exec !== false) {
                 append_log($logFile, "✅ Insert sukses (node={$node}, sensor={$sensor}, value={$value})");
                 echo "✅ Insert sukses (node={$node}, sensor={$sensor}, value={$value})\n";
+                $success = true;
+                break;
+            } else {
+                $stmt_errno = mysqli_stmt_errno($stmt);
+                $stmt_err = mysqli_stmt_error($stmt);
+                $conn_err = mysqli_error($connection);
+                $fullErr = "Attempt {$attempt}: Execute gagal: stmt_errno={$stmt_errno} stmt_err={$stmt_err} conn_err={$conn_err}";
+                append_log($logFile, $fullErr);
+                echo $fullErr . "\n";
+
+                // If error indicates "server has gone away", try reconnect + re-prepare
+                $lower = strtolower($stmt_err . ' ' . $conn_err);
+                if (strpos($lower, 'server has gone away') !== false || strpos($lower, 'mysql server has gone away') !== false || strpos($lower, 'gone away') !== false) {
+                    append_log($logFile, "DEBUG: Detected 'gone away' — mencoba reconnect_db()");
+                    // reconnect DB
+                    if (reconnect_db($connection, $logFile)) {
+                        // close old stmt and re-prepare on new connection
+                        @mysqli_stmt_close($stmt);
+                        $stmt = mysqli_prepare($connection,
+                            "INSERT INTO data (node, sensor_actuator, name, value, rssi, mqtt_topic, created_at)
+                             VALUES (?, 'sensor', ?, ?, ?, ?, NOW())"
+                        );
+                        if ($stmt === false) {
+                            append_log($logFile, "❌ Re-prepare gagal setelah reconnect: " . mysqli_error($connection));
+                            echo "❌ Re-prepare gagal: " . mysqli_error($connection) . "\n";
+                            // no point retrying more
+                            break;
+                        } else {
+                            append_log($logFile, "DEBUG: Re-prepare sukses, akan retry execute.");
+                            // loop will retry
+                        }
+                    } else {
+                        append_log($logFile, "❌ reconnect_db() gagal saat menangani 'gone away'.");
+                        // cannot recover here
+                        break;
+                    }
+                } else {
+                    // non-recoverable DB error or other error: break and push to failed queue
+                    append_log($logFile, "❌ Execute error non-recoverable atau bukan 'gone away'.");
+                    break;
+                }
             }
+        } // end attempts
+
+        if (!$success) {
+            $errMsg = "❌ Setelah {$attempt} percobaan, insert masih gagal untuk node={$node}, sensor={$sensor}. Mem-push pesan full ke failed_queue.";
+            append_log($logFile, $errMsg);
+            echo $errMsg . "\n";
+            push_failed_queue($failedQueueFile, $topic, $message);
+            // optional: continue ke sensor berikutnya or break; we'll continue to next sensor
         }
+    } // end foreach sensor
 
-        mysqli_stmt_close($stmt);
-        append_log($logFile, "✅ Data Node {$node} selesai diproses.");
-
-    } catch (Throwable $t) {
-        // Tangkap fatal error & simpan pesan supaya tidak hilang
-        append_log($logFile, "EXCEPTION in callback: " . $t->getMessage());
-        echo "EXCEPTION: " . $t->getMessage() . "\n";
-        push_failed_queue($failedQueueFile, $topic, $message);
-    }
+    @mysqli_stmt_close($stmt);
+    append_log($logFile, "✅ Data Node {$node} selesai diproses (dikirim atau di-queue bila gagal).");
 };
 
-// konek & subscribe
 connect_mqtt($mqtt, $connectionSettings, $logFile);
 $mqtt->subscribe('SmIr/data', $callback, 0);
 
-// main loop with auto reconnect and re-subscribe
 while (true) {
     try {
         $mqtt->loop(true);
