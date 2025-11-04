@@ -206,32 +206,32 @@ if ($fallbackQuery) {
                 </div>
               </div>
             </div>
-
             <!-- Solenoid 2 -->
             <div class="col-lg-6">
               <div class="card card-lightblue">
                 <div class="card-header"><h3 class="card-title">Solenoid 2</h3></div>
                 <div class="card-body">
+
                   <!-- Mode Selection -->
-                  <div class="form-group">
-                    <label>Mode Control:</label>
-                    <div class="btn-group btn-group-toggle d-block mx-auto" style="max-width: 300px;" data-toggle="buttons">
-                      <label class="btn btn-outline-primary active" id="label-solenoid2-manual">
+                  <div class="form-group text-center">
+                    <label><strong>Mode Control:</strong></label>
+                    <div class="btn-group btn-group-toggle mx-auto d-block" style="max-width: 320px;" data-toggle="buttons">
+                      <label class="btn btn-outline-primary active flex-fill" id="label-solenoid2-manual">
                         <input type="radio" name="mode-solenoid2" value="manual" id="mode-solenoid2-manual" checked onchange="changeSolenoidMode(2, this.value)"> Manual
                       </label>
-                      <label class="btn btn-outline-success" id="label-solenoid2-auto">
+                      <label class="btn btn-outline-success flex-fill" id="label-solenoid2-auto">
                         <input type="radio" name="mode-solenoid2" value="auto" id="mode-solenoid2-auto" onchange="changeSolenoidMode(2, this.value)"> Otomatis
                       </label>
                     </div>
                   </div>
 
                   <!-- Manual Control -->
-                  <div id="manual-control-solenoid2">
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                      <label class="btn btn-success" id="label-solenoid2-on">
+                  <div id="manual-control-solenoid2" class="text-center mt-3">
+                    <div class="btn-group btn-group-toggle mx-auto d-inline-block" style="min-width: 200px;" data-toggle="buttons">
+                      <label class="btn btn-success flex-fill" id="label-solenoid2-on">
                         <input type="radio" name="solenoid2" onchange="publishSolenoid(2, 1)" id="solenoid2on" autocomplete="off"> ON
                       </label>
-                      <label class="btn btn-danger active" id="label-solenoid2-off">
+                      <label class="btn btn-danger flex-fill active" id="label-solenoid2-off">
                         <input type="radio" name="solenoid2" onchange="publishSolenoid(2, 0)" id="solenoid2off" autocomplete="off" checked> OFF
                       </label>
                     </div>
@@ -328,13 +328,16 @@ if ($fallbackQuery) {
                         <option value="off">Matikan Solenoid (OFF)</option>
                       </select>
                     </div>
-                    <div class="text-center mt-3">
-                      <button type="button" class="btn btn-primary btn-lg" onclick="saveAutoSettings(2)">
-                        <i class="fas fa-save"></i> Simpan Pengaturan Otomatis
+
+                    <!-- TOMBOL SIMPAN — RATA TENGAH -->
+                    <div class="text-center mt-4">
+                      <button type="button" class="btn btn-primary btn-lg px-5 shadow-sm" onclick="saveAutoSettings(2)">
+                        <i class="fas fa-save"></i> <strong>Simpan Pengaturan Otomatis</strong>
                       </button>
                     </div>
+
                     <div class="alert alert-warning mt-3">
-                      <strong>Cara kerja:</strong> Isi threshold untuk setiap node (total 8 input). Klik tombol "Simpan Pengaturan Otomatis" untuk mengirim konfigurasi ke sistem. Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN Water Level B) yang ditentukan.
+                      <strong>Cara kerja:</strong> Isi threshold untuk setiap node (total 8 input). Klik tombol "Simpan Pengaturan Otomatis" untuk mengirim konfigurasi ke sistem. Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN B) yang ditentukan.
                     </div>
                   </div>
                 </div>
