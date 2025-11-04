@@ -1,6 +1,6 @@
 <?php
 // ============================================================================
-// gateway_mqtt.php (versi revisi final & stabil)
+// gateway_mqtt.php — versi stabil final
 // Fungsi:
 //  - Subscribe topic SmIr/data dari broker MQTT
 //  - Simpan payload JSON ke MySQL
@@ -51,7 +51,9 @@ $connectionSettings = (new ConnectionSettings)
 // -------------------------------------
 $mqtt = new MqttClient($server, $port, $clientId);
 
-// fungsi koneksi ke broker MQTT dengan retry
+// -------------------------------------
+// Fungsi koneksi ke broker MQTT dengan retry
+// -------------------------------------
 function connect_mqtt($mqtt, $settings, $logFile) {
     while (true) {
         try {
@@ -91,24 +93,33 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $lo
     append_log($logFile, "📩 Received on $topic: $message");
     echo "Pesan diterima di $topic: $message\n";
 
-    // Pastikan data JSON valid
+    // Validasi JSON
     $data = json_decode($message, true);
-    if (!is_array($data) || !isset($data['Node'])) {
-        $err = "⚠️ Data tidak valid atau field 'Node' hilang. Diabaikan.";
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        $err = "⚠️ JSON decode error: " . json_last_error_msg();
         append_log($logFile, $err);
         echo $err . "\n";
         return;
     }
 
-    // Fungsi internal untuk memastikan koneksi DB aktif
+    if (!isset($data['Node'])) {
+        $err = "⚠️ Field 'Node' tidak ditemukan. Pesan diabaikan.";
+        append_log($logFile, $err);
+        echo $err . "\n";
+        return;
+    }
+
+    // -------------------------------------
+    // Pastikan koneksi database masih hidup
+    // -------------------------------------
     $ensureDb = function() use (&$connection, $logFile) {
         if (!isset($connection) || !($connection instanceof mysqli)) {
-            append_log($logFile, "DB object tidak valid, mencoba include ulang database.php");
+            append_log($logFile, "DB object invalid, re-include database.php");
             include __DIR__ . '/database.php';
         }
 
         if (!@mysqli_ping($connection)) {
-            append_log($logFile, "DB ping gagal, mencoba reconnect...");
+            append_log($logFile, "⚠️ DB ping gagal, mencoba reconnect...");
             include __DIR__ . '/database.php';
             if (!@mysqli_ping($connection)) {
                 append_log($logFile, "❌ DB reconnect gagal.");
@@ -124,10 +135,12 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $lo
         return;
     }
 
+    // -------------------------------------
+    // Proses insert
+    // -------------------------------------
     $node = intval($data['Node']);
     $rssi = isset($data['rssi']) && is_numeric($data['rssi']) ? floatval($data['rssi']) : 0.0;
 
-    // Siapkan statement insert
     $stmt = mysqli_prepare($connection,
         "INSERT INTO data (node, sensor_actuator, name, value, rssi, mqtt_topic, created_at)
          VALUES (?, 'sensor', ?, ?, ?, ?, NOW())"
@@ -140,7 +153,6 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $lo
         return;
     }
 
-    // Loop setiap sensor dalam daftar
     foreach ($sensorList as $sensor) {
         if (!array_key_exists($sensor, $data)) {
             $warn = "⚠️ Field '$sensor' tidak ada pada Node {$data['Node']}.";
@@ -158,7 +170,7 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $lo
             append_log($logFile, $err);
             echo $err . "\n";
 
-            // coba reconnect DB dan retry 1x
+            // Reconnect & retry 1x
             include __DIR__ . '/database.php';
             if (@mysqli_ping($connection)) {
                 $stmtRetry = mysqli_prepare($connection,
@@ -183,7 +195,7 @@ $mqtt->subscribe('SmIr/data', function ($topic, $message) use (&$connection, $lo
     }
 
     mysqli_stmt_close($stmt);
-    append_log($logFile, "✅ Data Node {$data['Node']} diproses sepenuhnya.");
+    append_log($logFile, "✅ Data Node {$data['Node']} selesai diproses.");
 
 }, 0);
 
