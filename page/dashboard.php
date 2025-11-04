@@ -341,6 +341,15 @@ if ($fallbackQuery) {
               </div>
             </div>
           </div>
+                    <!-- TOMBOL DARURAT: MATIKAN SEMUA SOLENOID -->
+          <div class="row mt-4">
+            <div class="col-12 text-center">
+              <button type="button" class="btn btn-danger btn-lg shadow-lg px-5" onclick="forceOffAll()">
+                <i class="fas fa-power-off"></i> <strong>MATIKAN SEMUA SOLENOID</strong>
+              </button>
+              <p class="text-muted mt-2"><small>Mode 0: Solenoid 1 & 2 langsung mati</small></p>
+            </div>
+          </div>
 
           <!-- Monitoring Sensor -->
           <div class="row">
