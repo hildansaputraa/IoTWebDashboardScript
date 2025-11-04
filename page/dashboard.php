@@ -71,35 +71,159 @@ if ($fallbackQuery) {
             </div>
           </div>
 
-          <!-- Lamp Button -->
+          <!-- Solenoid Control dengan Mode -->
           <div class="row">
+            <!-- Solenoid 1 -->
             <div class="col-lg-6">
               <div class="card card-lightblue">
-                <div class="card-header"><h3 class="card-title">Lampu 1</h3></div>
-                <div class="card-body table-responsive pad">
-                  <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                    <label class="btn btn-danger" id="label-lampu1-nyala">
-                      <input type="radio" name="lampu1" onchange="publishLamp(this)" id="lampu1nyala" autocomplete="off"> On
-                    </label>
-                    <label class="btn btn-danger" id="label-lampu1-mati">
-                      <input type="radio" name="lampu1" onchange="publishLamp(this)" id="lampu1mati" autocomplete="off"> Off
-                    </label>
+                <div class="card-header"><h3 class="card-title">Solenoid 1</h3></div>
+                <div class="card-body">
+                  <!-- Mode Selection -->
+                  <div class="form-group">
+                    <label>Mode Kontrol:</label>
+                    <div class="btn-group btn-group-toggle d-block" data-toggle="buttons">
+                      <label class="btn btn-outline-primary active" id="label-solenoid1-manual">
+                        <input type="radio" name="mode-solenoid1" value="manual" id="mode-solenoid1-manual" checked onchange="changeSolenoidMode(1, this.value)"> Manual
+                      </label>
+                      <label class="btn btn-outline-success" id="label-solenoid1-auto">
+                        <input type="radio" name="mode-solenoid1" value="auto" id="mode-solenoid1-auto" onchange="changeSolenoidMode(1, this.value)"> Otomatis
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Manual Control -->
+                  <div id="manual-control-solenoid1">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                      <label class="btn btn-success" id="label-solenoid1-on">
+                        <input type="radio" name="solenoid1" onchange="publishSolenoid(1, 1)" id="solenoid1on" autocomplete="off"> ON
+                      </label>
+                      <label class="btn btn-danger active" id="label-solenoid1-off">
+                        <input type="radio" name="solenoid1" onchange="publishSolenoid(1, 0)" id="solenoid1off" autocomplete="off" checked> OFF
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Auto Control Settings -->
+                  <div id="auto-control-solenoid1" style="display: none;">
+                    <div class="alert alert-info">
+                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan dikontrol berdasarkan water level.
+                    </div>
+                    <div class="form-group">
+                      <label>Node yang dipantau:</label>
+                      <select class="form-control" id="auto-node-solenoid1">
+                        <option value="1">Node 1</option>
+                        <option value="2">Node 2</option>
+                        <option value="3">Node 3</option>
+                        <option value="4">Node 4</option>
+                      </select>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Threshold Water Level A (cm):</label>
+                          <input type="number" class="form-control" id="threshold-waterlvA-solenoid1" placeholder="Contoh: 50" step="0.1">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Threshold Water Level B (cm):</label>
+                          <input type="number" class="form-control" id="threshold-waterlvB-solenoid1" placeholder="Contoh: 30" step="0.1">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Kondisi:</label>
+                      <select class="form-control" id="condition-solenoid1">
+                        <option value="both">Kedua level harus memenuhi (AND)</option>
+                        <option value="either">Salah satu level memenuhi (OR)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Aksi saat threshold terpenuhi:</label>
+                      <select class="form-control" id="action-solenoid1">
+                        <option value="on">Nyalakan Solenoid (ON)</option>
+                        <option value="off">Matikan Solenoid (OFF)</option>
+                      </select>
+                    </div>
+                    <small class="text-muted">Solenoid akan ON/OFF ketika water level memenuhi kondisi threshold</small>
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- Solenoid 2 -->
             <div class="col-lg-6">
               <div class="card card-lightblue">
-                <div class="card-header"><h3 class="card-title">Lampu 2</h3></div>
-                <div class="card-body table-responsive pad">
-                  <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                    <label class="btn btn-danger" id="label-lampu2-nyala">
-                      <input type="radio" name="lampu2" onchange="publishLamp(this)" id="lampu2nyala" autocomplete="off"> On
-                    </label>
-                    <label class="btn btn-danger" id="label-lampu2-mati">
-                      <input type="radio" name="lampu2" onchange="publishLamp(this)" id="lampu2mati" autocomplete="off"> Off
-                    </label>
+                <div class="card-header"><h3 class="card-title">Solenoid 2</h3></div>
+                <div class="card-body">
+                  <!-- Mode Selection -->
+                  <div class="form-group">
+                    <label>Mode Kontrol:</label>
+                    <div class="btn-group btn-group-toggle d-block" data-toggle="buttons">
+                      <label class="btn btn-outline-primary active" id="label-solenoid2-manual">
+                        <input type="radio" name="mode-solenoid2" value="manual" id="mode-solenoid2-manual" checked onchange="changeSolenoidMode(2, this.value)"> Manual
+                      </label>
+                      <label class="btn btn-outline-success" id="label-solenoid2-auto">
+                        <input type="radio" name="mode-solenoid2" value="auto" id="mode-solenoid2-auto" onchange="changeSolenoidMode(2, this.value)"> Otomatis
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Manual Control -->
+                  <div id="manual-control-solenoid2">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                      <label class="btn btn-success" id="label-solenoid2-on">
+                        <input type="radio" name="solenoid2" onchange="publishSolenoid(2, 1)" id="solenoid2on" autocomplete="off"> ON
+                      </label>
+                      <label class="btn btn-danger active" id="label-solenoid2-off">
+                        <input type="radio" name="solenoid2" onchange="publishSolenoid(2, 0)" id="solenoid2off" autocomplete="off" checked> OFF
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Auto Control Settings -->
+                  <div id="auto-control-solenoid2" style="display: none;">
+                    <div class="alert alert-info">
+                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan dikontrol berdasarkan water level.
+                    </div>
+                    <div class="form-group">
+                      <label>Node yang dipantau:</label>
+                      <select class="form-control" id="auto-node-solenoid2">
+                        <option value="1">Node 1</option>
+                        <option value="2">Node 2</option>
+                        <option value="3">Node 3</option>
+                        <option value="4">Node 4</option>
+                      </select>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Threshold Water Level A (cm):</label>
+                          <input type="number" class="form-control" id="threshold-waterlvA-solenoid2" placeholder="Contoh: 50" step="0.1">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Threshold Water Level B (cm):</label>
+                          <input type="number" class="form-control" id="threshold-waterlvB-solenoid2" placeholder="Contoh: 30" step="0.1">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Kondisi:</label>
+                      <select class="form-control" id="condition-solenoid2">
+                        <option value="both">Kedua level harus memenuhi (AND)</option>
+                        <option value="either">Salah satu level memenuhi (OR)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Aksi saat threshold terpenuhi:</label>
+                      <select class="form-control" id="action-solenoid2">
+                        <option value="on">Nyalakan Solenoid (ON)</option>
+                        <option value="off">Matikan Solenoid (OFF)</option>
+                      </select>
+                    </div>
+                    <small class="text-muted">Solenoid akan ON/OFF ketika water level memenuhi kondisi threshold</small>
                   </div>
                 </div>
               </div>
@@ -117,8 +241,7 @@ if ($fallbackQuery) {
                   <div class="row">
                     <?php for ($i = 1; $i <= 4; $i++) { 
                       $nodeData = $fallback[$i] ?? [];
-                      // Ambil waktu terakhir untuk node ini
-                      setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'Indonesian_indonesia.1252'); // dukung berbagai OS
+                      setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'Indonesian_indonesia.1252');
                       $queryTime = mysqli_query($connection, "SELECT MAX(created_at) AS last_time FROM data WHERE node = $i");
                       $timeRow = mysqli_fetch_assoc($queryTime);
                       if ($timeRow && $timeRow['last_time']) {
@@ -127,7 +250,6 @@ if ($fallbackQuery) {
                       } else {
                         $lastTime = '-';
                       }
-
                     ?>
                       <div class="col-md-3">
                         <div class="card card-<?php echo ['primary', 'success', 'warning', 'danger'][$i - 1]; ?>">
@@ -154,7 +276,6 @@ if ($fallbackQuery) {
               </div>
             </div>
           </div>
-
 
           <!-- Gambar Dashboard -->
           <div class="row">
@@ -217,6 +338,20 @@ if ($fallbackQuery) {
       connectTimeout: 30 * 1000,
     };
 
+    // State untuk mode solenoid
+    const solenoidState = {
+      1: { mode: 'manual', currentState: 0 },
+      2: { mode: 'manual', currentState: 0 }
+    };
+
+    // Data sensor terbaru dari setiap node
+    const sensorData = {
+      1: { waterlvA: 0, waterlvB: 0 },
+      2: { waterlvA: 0, waterlvB: 0 },
+      3: { waterlvA: 0, waterlvB: 0 },
+      4: { waterlvA: 0, waterlvB: 0 }
+    };
+
     console.log("Menghubungkan ke broker...");
     const client = mqtt.connect(host, options);
 
@@ -242,15 +377,6 @@ if ($fallbackQuery) {
         document.getElementById("humidity").innerHTML = payload;
       else if (topic === "kelasiottt/12345678/potentiometer")
         document.getElementById("potentiometer").innerHTML = payload;
-      else if (topic === "kelasiottt/12345678/lampu") {
-        if (payload === "nyala") {
-          document.getElementById("label-lampu1-nyala").classList.add("active");
-          document.getElementById("label-lampu1-mati").classList.remove("active");
-        } else {
-          document.getElementById("label-lampu1-nyala").classList.remove("active");
-          document.getElementById("label-lampu1-mati").classList.add("active");
-        }
-      }
 
       // Update status perangkat
       if (topic.startsWith("SmIr/status/")) {
@@ -267,19 +393,107 @@ if ($fallbackQuery) {
           const data = JSON.parse(payload);
           const node = data.Node;
           const fields = ["tegangan", "arus", "waterlvA", "waterlvB", "flowrate", "totalwater", "rssi"];
+          
+          // Update UI
           fields.forEach(f => {
             const el = document.getElementById(`node${node}-${f}`);
             if (el) el.innerHTML = data[f];
           });
+
+          // Simpan data sensor untuk logic otomatis
+          if (sensorData[node]) {
+            sensorData[node].waterlvA = parseFloat(data.waterlvA) || 0;
+            sensorData[node].waterlvB = parseFloat(data.waterlvB) || 0;
+          }
+
+          // Check automatic control untuk kedua solenoid
+          checkAutoControl(1);
+          checkAutoControl(2);
+
         } catch (e) {
           console.error("Error parsing JSON:", e);
         }
       }
     });
 
-    function publishLamp() {
-      const data = document.getElementById("lampu1nyala").checked ? "nyala" : "mati";
-      client.publish("kelasiottt/12345678/lampu", data, { qos: 1, retain: true });
+    // Fungsi untuk mengganti mode solenoid
+    function changeSolenoidMode(solenoidNum, mode) {
+      solenoidState[solenoidNum].mode = mode;
+      
+      const manualDiv = document.getElementById(`manual-control-solenoid${solenoidNum}`);
+      const autoDiv = document.getElementById(`auto-control-solenoid${solenoidNum}`);
+      
+      if (mode === 'manual') {
+        manualDiv.style.display = 'block';
+        autoDiv.style.display = 'none';
+      } else {
+        manualDiv.style.display = 'none';
+        autoDiv.style.display = 'block';
+        // Langsung check kondisi saat mode auto diaktifkan
+        checkAutoControl(solenoidNum);
+      }
+    }
+
+    // Fungsi untuk publish solenoid manual
+    function publishSolenoid(solenoidNum, state) {
+      if (solenoidState[solenoidNum].mode !== 'manual') return;
+      
+      const controlData = {
+        solenoidSatu: solenoidNum === 1 ? state : solenoidState[2].currentState,
+        solenoidDua: solenoidNum === 2 ? state : solenoidState[1].currentState
+      };
+      
+      solenoidState[solenoidNum].currentState = state;
+      
+      client.publish("SmIr/control", JSON.stringify(controlData), { qos: 1, retain: true });
+      console.log("Published control:", controlData);
+    }
+
+    // Fungsi untuk check dan execute automatic control
+    function checkAutoControl(solenoidNum) {
+      if (solenoidState[solenoidNum].mode !== 'auto') return;
+      
+      const nodeSelect = document.getElementById(`auto-node-solenoid${solenoidNum}`);
+      const thresholdA = document.getElementById(`threshold-waterlvA-solenoid${solenoidNum}`);
+      const thresholdB = document.getElementById(`threshold-waterlvB-solenoid${solenoidNum}`);
+      const condition = document.getElementById(`condition-solenoid${solenoidNum}`);
+      const action = document.getElementById(`action-solenoid${solenoidNum}`);
+      
+      if (!nodeSelect || !thresholdA || !thresholdB || !condition || !action) return;
+      
+      const selectedNode = parseInt(nodeSelect.value);
+      const threshA = parseFloat(thresholdA.value);
+      const threshB = parseFloat(thresholdB.value);
+      
+      if (isNaN(threshA) || isNaN(threshB)) return;
+      
+      const currentWaterA = sensorData[selectedNode].waterlvA;
+      const currentWaterB = sensorData[selectedNode].waterlvB;
+      
+      let conditionMet = false;
+      
+      if (condition.value === 'both') {
+        // AND: kedua threshold harus terpenuhi
+        conditionMet = (currentWaterA >= threshA) && (currentWaterB >= threshB);
+      } else {
+        // OR: salah satu threshold terpenuhi
+        conditionMet = (currentWaterA >= threshA) || (currentWaterB >= threshB);
+      }
+      
+      const newState = conditionMet ? (action.value === 'on' ? 1 : 0) : (action.value === 'on' ? 0 : 1);
+      
+      // Hanya publish jika state berubah
+      if (newState !== solenoidState[solenoidNum].currentState) {
+        solenoidState[solenoidNum].currentState = newState;
+        
+        const controlData = {
+          solenoidSatu: solenoidNum === 1 ? newState : solenoidState[2].currentState,
+          solenoidDua: solenoidNum === 2 ? newState : solenoidState[1].currentState
+        };
+        
+        client.publish("SmIr/control", JSON.stringify(controlData), { qos: 1, retain: true });
+        console.log(`Auto control Solenoid ${solenoidNum}:`, controlData);
+      }
     }
   </script>
 </body>
