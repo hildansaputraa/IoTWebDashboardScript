@@ -405,6 +405,15 @@ if ($fallbackQuery) {
           <div class="row">
             <div class="col-12">
               <div class="card card-lightblue">
+                <!-- TOMBOL DARURAT: MATIKAN SEMUA SOLENOID -->
+                <div class="row">
+                  <div class="col-12 text-center mt-4 mb-4">
+                    <button type="button" class="btn btn-danger btn-lg shadow-lg" onclick="forceOffAll()">
+                      <i class="fas fa-power-off"></i> <strong>MATIKAN SEMUA SOLENOID</strong>
+                    </button>
+                    <p class="text-muted mt-2"><small>Mode 0: Solenoid 1 & 2 langsung mati</small></p>
+                  </div>
+                </div>
                 <div class="card-header"><h3 class="card-title">Devices Status</h3></div>
                 <div class="card-body table-responsive p-0" style="height: 300px;">
                   <table class="table table-head-fixed text-nowrap">
@@ -630,6 +639,11 @@ if ($fallbackQuery) {
             console.error('Error AJAX:', error);
             alert('Terjadi kesalahan jaringan saat menyimpan data.');
         });
+    }
+    function forceOffAll() {
+      client.publish("SmIr/kontrol", JSON.stringify({ mode: 0 }), { qos: 1, retain: true });
+      console.log("Semua solenoid dimatikan!");
+      saveToDatabase('manual', 0, { mode: 0 }); // opsional: simpan ke DB
     }
   </script>
 </body>
