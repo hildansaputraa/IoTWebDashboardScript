@@ -12,17 +12,13 @@ $result = mysqli_query($connection, $sql);
           <div class="row mb-2">
             <div class="col-sm-6">
               <h1 class="m-0">Dashboard</h1>
-            </div><!-- /.col -->
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="?page=dashboard">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
-              </ol>
-            </div><!-- /.col -->
-          </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
+            </div>
+            <div class="col-sm-6 text-right">
+              <strong>Status MQTT:</strong> <span id="status" style="color:red;">Tidak Terhubung</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <!-- /.content-header -->
 
       <!-- Main content -->
       <div class="content">
@@ -61,8 +57,9 @@ $result = mysqli_query($connection, $sql);
                 </div>
               </div>
             </div>
-          </div> <!-- Tutup row pertama -->
+          </div>
 
+          <!-- Lamp Button -->
           <div class="row">
             <div class="col-lg-6">
               <div class="card card-lightblue">
@@ -79,8 +76,9 @@ $result = mysqli_query($connection, $sql);
                     </label>
                   </div>
                 </div>
-              </div> <!-- Tutup card card-lightblue -->
-            </div> <!-- Tutup col-lg-12 -->
+              </div>
+            </div>
+
             <div class="col-lg-6">
               <div class="card card-lightblue">
                 <div class="card-header">
@@ -88,19 +86,19 @@ $result = mysqli_query($connection, $sql);
                 </div>
                 <div class="card-body table-responsive pad">
                   <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                    <label class="btn btn-danger" id="label-lampu1-nyala">
-                      <input type="radio" name="lampu1" onchange="publishLamp(this)" id="lampu1nyala" autocomplete="off"> On
+                    <label class="btn btn-danger" id="label-lampu2-nyala">
+                      <input type="radio" name="lampu2" onchange="publishLamp(this)" id="lampu2nyala" autocomplete="off"> On
                     </label>
-                    <label class="btn btn-danger" id="label-lampu1-mati">
-                      <input type="radio" name="lampu1" onchange="publishLamp(this)" id="lampu1mati" autocomplete="off"> Off
+                    <label class="btn btn-danger" id="label-lampu2-mati">
+                      <input type="radio" name="lampu2" onchange="publishLamp(this)" id="lampu2mati" autocomplete="off"> Off
                     </label>
                   </div>
                 </div>
-              </div> <!-- Tutup card card-lightblue -->
-            </div> <!-- Tutup col-lg-12 -->
-          </div> <!-- Tutup row untuk Lamp Button -->        
-          
-          <!-- Bagian Sensor Data (Node 1-4) -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Monitoring Sensor -->
           <div class="row">
             <div class="col-lg-12">
               <div class="card card-success">
@@ -109,81 +107,31 @@ $result = mysqli_query($connection, $sql);
                 </div>
                 <div class="card-body">
                   <div class="row">
-                    <!-- Node 1 -->
-                    <div class="col-md-3">
-                      <div class="card card-primary">
-                        <div class="card-header">
-                          <h3 class="card-title">Node 1</h3>
-                        </div>
-                        <div class="card-body">
-                          <p>Tegangan: <span id="node1-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node1-arus">-</span> mA</p>
-                          <p>Water Level A: <span id="node1-waterlvA">-</span> cm</p>
-                          <p>Water Level B: <span id="node1-waterlvB">-</span> cm</p>
-                          <p>Flow Rate: <span id="node1-flowrate">-</span> L/min</p>
-                          <p>Total Water: <span id="node1-totalwater">-</span> L</p>
-                          <p>RSSI: <span id="node1-rssi">-</span> dBm</p>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Node 2 -->
-                    <div class="col-md-3">
-                      <div class="card card-success">
-                        <div class="card-header">
-                          <h3 class="card-title">Node 2</h3>
-                        </div>
-                        <div class="card-body">
-                          <p>Tegangan: <span id="node2-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node2-arus">-</span> mA</p>
-                          <p>Water Level A: <span id="node2-waterlvA">-</span> cm</p>
-                          <p>Water Level B: <span id="node2-waterlvB">-</span> cm</p>
-                          <p>Flow Rate: <span id="node2-flowrate">-</span> L/min</p>
-                          <p>Total Water: <span id="node2-totalwater">-</span> L</p>
-                          <p>RSSI: <span id="node2-rssi">-</span> dBm</p>
+                    <?php for ($i = 1; $i <= 4; $i++) { ?>
+                      <div class="col-md-3">
+                        <div class="card card-<?php echo ['primary', 'success', 'warning', 'danger'][$i - 1]; ?>">
+                          <div class="card-header">
+                            <h3 class="card-title">Node <?php echo $i; ?></h3>
+                          </div>
+                          <div class="card-body">
+                            <p>Tegangan: <span id="node<?php echo $i; ?>-tegangan">-</span> V</p>
+                            <p>Arus: <span id="node<?php echo $i; ?>-arus">-</span> mA</p>
+                            <p>Water Level A: <span id="node<?php echo $i; ?>-waterlvA">-</span> cm</p>
+                            <p>Water Level B: <span id="node<?php echo $i; ?>-waterlvB">-</span> cm</p>
+                            <p>Flow Rate: <span id="node<?php echo $i; ?>-flowrate">-</span> L/min</p>
+                            <p>Total Water: <span id="node<?php echo $i; ?>-totalwater">-</span> L</p>
+                            <p>RSSI: <span id="node<?php echo $i; ?>-rssi">-</span> dBm</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!-- Node 3 -->
-                    <div class="col-md-3">
-                      <div class="card card-warning">
-                        <div class="card-header">
-                          <h3 class="card-title">Node 3</h3>
-                        </div>
-                        <div class="card-body">
-                          <p>Tegangan: <span id="node3-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node3-arus">-</span> mA</p>
-                          <p>Water Level A: <span id="node3-waterlvA">-</span> cm</p>
-                          <p>Water Level B: <span id="node3-waterlvB">-</span> cm</p>
-                          <p>Flow Rate: <span id="node3-flowrate">-</span> L/min</p>
-                          <p>Total Water: <span id="node3-totalwater">-</span> L</p>
-                          <p>RSSI: <span id="node3-rssi">-</span> dBm</p>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Node 4 -->
-                    <div class="col-md-3">
-                      <div class="card card-danger">
-                        <div class="card-header">
-                          <h3 class="card-title">Node 4</h3>
-                        </div>
-                        <div class="card-body">
-                          <p>Tegangan: <span id="node4-tegangan">-</span> V</p>
-                          <p>Arus: <span id="node4-arus">-</span> mA</p>
-                          <p>Water Level A: <span id="node4-waterlvA">-</span> cm</p>
-                          <p>Water Level B: <span id="node4-waterlvB">-</span> cm</p>
-                          <p>Flow Rate: <span id="node4-flowrate">-</span> L/min</p>
-                          <p>Total Water: <span id="node4-totalwater">-</span> L</p>
-                          <p>RSSI: <span id="node4-rssi">-</span> dBm</p>
-                        </div>
-                      </div>
-                    </div>
+                    <?php } ?>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
-          <!-- Gambar Monitoring Dashboard -->
+
+          <!-- Gambar Dashboard -->
           <div class="row">
             <div class="col-lg-12">
               <div class="card card-default">
@@ -191,23 +139,19 @@ $result = mysqli_query($connection, $sql);
                   <h3 class="card-title">Monitoring Dashboard</h3>
                 </div>
                 <div class="card-body text-center">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 300px;">
-                    </div>
-                  </div>
+                  <img src="dist/img/maps.jpg" alt="Network Layout" class="img-fluid rounded" style="max-height: 300px;">
                 </div>
               </div>
             </div>
           </div>
-          
+
+          <!-- Devices Status -->
           <div class="row">
             <div class="col-12">
               <div class="card card-lightblue">
                 <div class="card-header">
                   <h3 class="card-title">Devices Status</h3>
                 </div>
-                <!-- /.card-header -->
                 <div class="card-body table-responsive p-0" style="height: 300px;">
                   <table class="table table-head-fixed text-nowrap">
                     <thead>
@@ -218,31 +162,26 @@ $result = mysqli_query($connection, $sql);
                       </tr>
                     </thead>
                     <tbody>
-                      <?php
-                      while ($row = mysqli_fetch_assoc($result)) { ?>
+                      <?php while ($row = mysqli_fetch_assoc($result)) { ?>
                         <tr>
                           <td><?php echo $row['serial_number'] ?></td>
                           <td><?php echo $row['location'] ?></td>
-                          <td style="color:red" id="SmIr/status/<?php echo $row['serial_number']?>">offline</td>
+                          <td style="color:red" id="SmIr/status/<?php echo $row['serial_number'] ?>">offline</td>
                         </tr>
                       <?php } ?>
                     </tbody>
                   </table>
                 </div>
-                <!-- /.card-body -->
               </div>
-              <!-- /.card -->
             </div>
           </div>
-        </div>
-        <!-- /.container-fluid -->
-      </div>
-      <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
-  </div>
-  <!-- /.wrapper -->
 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MQTT Script -->
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
   <script>
@@ -261,27 +200,29 @@ $result = mysqli_query($connection, $sql);
       connectTimeout: 30 * 1000,
     }
 
-    console.log("Menghubungkan Ke Broker");
+    console.log("Menghubungkan ke broker...");
     const client = mqtt.connect(host, options);
 
     client.on("connect", () => {
-      console.log("Berhasil Connect");
-      document.getElementById("status").innerHTML = "Terhubung";
-      document.getElementById("status").style.color = "green";
+      console.log("Berhasil connect ke broker!");
+      const statusEl = document.getElementById("status");
+      statusEl.innerHTML = "Terhubung";
+      statusEl.style.color = "green";
 
       client.subscribe("kelasiottt/#", { qos: 1 });
-      client.subscribe("SmIr/data", { qos: 1 }); // Subscribe ke topik baru
+      client.subscribe("SmIr/data", { qos: 1 });
+      client.subscribe("SmIr/status/#", { qos: 1 }); // subscribe semua status
     });
 
     client.on("message", function(topic, payload) {
-      if (topic === "kelasiottt/12345678/temperature") {
-        document.getElementById("temperature").innerHTML = payload;
-      } else if (topic === "kelasiottt/12345678/humidity") {
-        document.getElementById("humidity").innerHTML = payload;
-      } else if (topic === "kelasiottt/12345678/potentiometer") {
-        document.getElementById("potentiometer").innerHTML = payload;
-      } else if (topic === "kelasiottt/12345678/lampu") {
-        if (payload == "nyala") {
+      payload = payload.toString();
+
+      // Sensor dasar
+      if (topic === "kelasiottt/12345678/temperature") document.getElementById("temperature").innerHTML = payload;
+      else if (topic === "kelasiottt/12345678/humidity") document.getElementById("humidity").innerHTML = payload;
+      else if (topic === "kelasiottt/12345678/potentiometer") document.getElementById("potentiometer").innerHTML = payload;
+      else if (topic === "kelasiottt/12345678/lampu") {
+        if (payload === "nyala") {
           document.getElementById("label-lampu1-nyala").classList.add("active");
           document.getElementById("label-lampu1-mati").classList.remove("active");
         } else {
@@ -290,23 +231,20 @@ $result = mysqli_query($connection, $sql);
         }
       }
 
-      if(topic.includes("kelasiottt/status/12345678")){
-        document.getElementById(topic).innerHTML = payload;
-
-        if(payload.toString()==="offline"){
-          document.getElementById(topic).style.color = "red";
-        } else if(payload.toString()==="online"){
-          document.getElementById(topic).style.color = "green";
+      // Update status device dinamis
+      if (topic.startsWith("SmIr/status/")) {
+        const el = document.getElementById(topic);
+        if (el) {
+          el.innerHTML = payload;
+          el.style.color = payload === "online" ? "green" : "red";
         }
       }
 
-      // Pemrosesan untuk topik SmIr/data dengan format baru
+      // Data node JSON
       if (topic === "SmIr/data") {
         try {
-          const data = JSON.parse(payload.toString());
+          const data = JSON.parse(payload);
           const node = data.Node;
-          
-          // Update data untuk node yang sesuai dengan field baru
           document.getElementById(`node${node}-tegangan`).innerHTML = data.tegangan;
           document.getElementById(`node${node}-arus`).innerHTML = data.arus;
           document.getElementById(`node${node}-waterlvA`).innerHTML = data.waterlvA;
@@ -314,25 +252,15 @@ $result = mysqli_query($connection, $sql);
           document.getElementById(`node${node}-flowrate`).innerHTML = data.flowrate;
           document.getElementById(`node${node}-totalwater`).innerHTML = data.totalwater;
           document.getElementById(`node${node}-rssi`).innerHTML = data.rssi;
-          
-          console.log(`Data diterima untuk Node ${node}:`, data);
-        } catch (error) {
-          console.error("Error parsing JSON:", error);
+        } catch (e) {
+          console.error("Error parsing JSON:", e);
         }
       }
     });
 
-    function publishLamp(value) {
-      if (document.getElementById("lampu1nyala").checked) {
-        data = "nyala";
-      }
-      if (document.getElementById("lampu1mati").checked) {
-        data = "mati";
-      }
-      client.publish("kelasiottt/12345678/lampu", data, {
-        qos: 1,
-        retain: true
-      });
+    function publishLamp() {
+      const data = document.getElementById("lampu1nyala").checked ? "nyala" : "mati";
+      client.publish("kelasiottt/12345678/lampu", data, { qos: 1, retain: true });
     }
   </script>
 </body>
