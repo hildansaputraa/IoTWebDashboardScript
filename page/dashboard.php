@@ -23,19 +23,6 @@ if ($fallbackQuery) {
 }
 ?>
 
-<body class="hold-transition sidebar-mini">
-  <div class="wrapper">
-    <div class="content-wrapper">
-      <div class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-              <h1 class="m-0">Dashboard</h1>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Main content -->
       <div class="content">
         <div class="container-fluid">
@@ -45,7 +32,7 @@ if ($fallbackQuery) {
             <div class="col-lg-4">
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3 id="potentiometer"><?php echo $fallback['12345678']['potentiometer'] ?? '-' ?></h3>
+                  <h3 id="potentiometer"><?php echo htmlspecialchars($fallback['12345678']['potentiometer'] ?? '-') ?></h3>
                   <p>Potentiometer</p>
                 </div>
                 <div class="icon"><i class="fas fa-tachometer-alt"></i></div>
@@ -54,7 +41,7 @@ if ($fallbackQuery) {
             <div class="col-lg-4">
               <div class="small-box bg-danger">
                 <div class="inner">
-                  <h3 id="temperature"><?php echo $fallback['12345678']['temperature'] ?? '-' ?></h3>
+                  <h3 id="temperature"><?php echo htmlspecialchars($fallback['12345678']['temperature'] ?? '-') ?></h3>
                   <p>Temperature</p>
                 </div>
                 <div class="icon"><i class="fas fa-temperature-high"></i></div>
@@ -63,7 +50,7 @@ if ($fallbackQuery) {
             <div class="col-lg-4">
               <div class="small-box bg-gray">
                 <div class="inner">
-                  <h3><span id="humidity"><?php echo $fallback['12345678']['humidity'] ?? '-' ?></span>%</h3>
+                  <h3><span id="humidity"><?php echo htmlspecialchars($fallback['12345678']['humidity'] ?? '-') ?></span>%</h3>
                   <p>Humidity</p>
                 </div>
                 <div class="icon"><i class="fas fa-water"></i></div>
@@ -108,83 +95,27 @@ if ($fallbackQuery) {
                     <div class="alert alert-info">
                       <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan ON ketika SEMUA NODE memenuhi threshold (Water Level A DAN B).
                     </div>
-                    
                     <div class="row">
-                      <!-- Node 1 -->
-                      <div class="col-md-6">
-                        <div class="card mb-3 border-primary">
-                          <div class="card-header bg-primary text-white">
-                            <strong>Node 1 Threshold</strong>
-                          </div>
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label>Water Level A (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node1-waterlvA-solenoid1" placeholder="Contoh: 50" step="0.1">
+                      <!-- Node thresholds (1..4) -->
+                      <?php for ($node = 1; $node <= 4; $node++): ?>
+                        <div class="col-md-6">
+                          <div class="card mb-3 <?php echo ['border-primary','border-success','border-warning','border-danger'][$node-1]; ?>">
+                            <div class="card-header <?php echo ['bg-primary','bg-success','bg-warning','bg-danger'][$node-1]; ?> text-white">
+                              <strong>Node <?php echo $node ?> Threshold</strong>
                             </div>
-                            <div class="form-group">
-                              <label>Water Level B (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node1-waterlvB-solenoid1" placeholder="Contoh: 30" step="0.1">
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Node 2 -->
-                      <div class="col-md-6">
-                        <div class="card mb-3 border-success">
-                          <div class="card-header bg-success text-white">
-                            <strong>Node 2 Threshold</strong>
-                          </div>
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label>Water Level A (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node2-waterlvA-solenoid1" placeholder="Contoh: 45" step="0.1">
-                            </div>
-                            <div class="form-group">
-                              <label>Water Level B (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node2-waterlvB-solenoid1" placeholder="Contoh: 25" step="0.1">
+                            <div class="card-body">
+                              <div class="form-group">
+                                <label>Water Level A (cm):</label>
+                                <input type="number" class="form-control" id="threshold-node<?php echo $node ?>-waterlvA-solenoid1" placeholder="Contoh: 50" step="0.1">
+                              </div>
+                              <div class="form-group">
+                                <label>Water Level B (cm):</label>
+                                <input type="number" class="form-control" id="threshold-node<?php echo $node ?>-waterlvB-solenoid1" placeholder="Contoh: 30" step="0.1">
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-
-                      <!-- Node 3 -->
-                      <div class="col-md-6">
-                        <div class="card mb-3 border-warning">
-                          <div class="card-header bg-warning text-white">
-                            <strong>Node 3 Threshold</strong>
-                          </div>
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label>Water Level A (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node3-waterlvA-solenoid1" placeholder="Contoh: 55" step="0.1">
-                            </div>
-                            <div class="form-group">
-                              <label>Water Level B (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node3-waterlvB-solenoid1" placeholder="Contoh: 35" step="0.1">
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Node 4 -->
-                      <div class="col-md-6">
-                        <div class="card mb-3 border-danger">
-                          <div class="card-header bg-danger text-white">
-                            <strong>Node 4 Threshold</strong>
-                          </div>
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label>Water Level A (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node4-waterlvA-solenoid1" placeholder="Contoh: 48" step="0.1">
-                            </div>
-                            <div class="form-group">
-                              <label>Water Level B (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node4-waterlvB-solenoid1" placeholder="Contoh: 28" step="0.1">
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <?php endfor; ?>
                     </div>
 
                     <div class="form-group">
@@ -207,12 +138,11 @@ if ($fallbackQuery) {
               </div>
             </div>
 
-            <!-- Solenoid 2 -->
+            <!-- Solenoid 2 (mirip Solenoid 1) -->
             <div class="col-lg-6">
               <div class="card card-lightblue">
                 <div class="card-header"><h3 class="card-title">Solenoid 2</h3></div>
                 <div class="card-body">
-                  <!-- Mode Selection -->
                   <div class="form-group">
                     <label>Mode Kontrol:</label>
                     <div class="btn-group btn-group-toggle d-block" data-toggle="buttons">
@@ -225,7 +155,6 @@ if ($fallbackQuery) {
                     </div>
                   </div>
 
-                  <!-- Manual Control -->
                   <div id="manual-control-solenoid2">
                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
                       <label class="btn btn-success" id="label-solenoid2-on">
@@ -237,88 +166,30 @@ if ($fallbackQuery) {
                     </div>
                   </div>
 
-                  <!-- Auto Control Settings -->
                   <div id="auto-control-solenoid2" style="display: none;">
                     <div class="alert alert-info">
                       <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan ON ketika SEMUA NODE memenuhi threshold (Water Level A DAN B).
                     </div>
-                    
                     <div class="row">
-                      <!-- Node 1 -->
-                      <div class="col-md-6">
-                        <div class="card mb-3 border-primary">
-                          <div class="card-header bg-primary text-white">
-                            <strong>Node 1 Threshold</strong>
-                          </div>
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label>Water Level A (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node1-waterlvA-solenoid2" placeholder="Contoh: 50" step="0.1">
+                      <?php for ($node = 1; $node <= 4; $node++): ?>
+                        <div class="col-md-6">
+                          <div class="card mb-3 <?php echo ['border-primary','border-success','border-warning','border-danger'][$node-1]; ?>">
+                            <div class="card-header <?php echo ['bg-primary','bg-success','bg-warning','bg-danger'][$node-1]; ?> text-white">
+                              <strong>Node <?php echo $node ?> Threshold</strong>
                             </div>
-                            <div class="form-group">
-                              <label>Water Level B (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node1-waterlvB-solenoid2" placeholder="Contoh: 30" step="0.1">
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Node 2 -->
-                      <div class="col-md-6">
-                        <div class="card mb-3 border-success">
-                          <div class="card-header bg-success text-white">
-                            <strong>Node 2 Threshold</strong>
-                          </div>
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label>Water Level A (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node2-waterlvA-solenoid2" placeholder="Contoh: 45" step="0.1">
-                            </div>
-                            <div class="form-group">
-                              <label>Water Level B (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node2-waterlvB-solenoid2" placeholder="Contoh: 25" step="0.1">
+                            <div class="card-body">
+                              <div class="form-group">
+                                <label>Water Level A (cm):</label>
+                                <input type="number" class="form-control" id="threshold-node<?php echo $node ?>-waterlvA-solenoid2" placeholder="Contoh: 50" step="0.1">
+                              </div>
+                              <div class="form-group">
+                                <label>Water Level B (cm):</label>
+                                <input type="number" class="form-control" id="threshold-node<?php echo $node ?>-waterlvB-solenoid2" placeholder="Contoh: 30" step="0.1">
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-
-                      <!-- Node 3 -->
-                      <div class="col-md-6">
-                        <div class="card mb-3 border-warning">
-                          <div class="card-header bg-warning text-white">
-                            <strong>Node 3 Threshold</strong>
-                          </div>
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label>Water Level A (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node3-waterlvA-solenoid2" placeholder="Contoh: 55" step="0.1">
-                            </div>
-                            <div class="form-group">
-                              <label>Water Level B (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node3-waterlvB-solenoid2" placeholder="Contoh: 35" step="0.1">
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Node 4 -->
-                      <div class="col-md-6">
-                        <div class="card mb-3 border-danger">
-                          <div class="card-header bg-danger text-white">
-                            <strong>Node 4 Threshold</strong>
-                          </div>
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label>Water Level A (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node4-waterlvA-solenoid2" placeholder="Contoh: 48" step="0.1">
-                            </div>
-                            <div class="form-group">
-                              <label>Water Level B (cm):</label>
-                              <input type="number" class="form-control" id="threshold-node4-waterlvB-solenoid2" placeholder="Contoh: 28" step="0.1">
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <?php endfor; ?>
                     </div>
 
                     <div class="form-group">
@@ -351,7 +222,7 @@ if ($fallbackQuery) {
                 </div>
                 <div class="card-body">
                   <div class="row">
-                    <?php for ($i = 1; $i <= 4; $i++) { 
+                    <?php for ($i = 1; $i <= 4; $i++) {
                       $nodeData = $fallback[$i] ?? [];
                       setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'Indonesian_indonesia.1252');
                       $queryTime = mysqli_query($connection, "SELECT MAX(created_at) AS last_time FROM data WHERE node = $i");
@@ -369,13 +240,13 @@ if ($fallbackQuery) {
                             <h3 class="card-title">Node <?php echo $i; ?></h3>
                           </div>
                           <div class="card-body">
-                            <p>Tegangan: <span id="node<?php echo $i; ?>-tegangan"><?php echo $nodeData['tegangan'] ?? '-' ?></span> V</p>
-                            <p>Arus: <span id="node<?php echo $i; ?>-arus"><?php echo $nodeData['arus'] ?? '-' ?></span> mA</p>
-                            <p>Water Level A: <span id="node<?php echo $i; ?>-waterlvA"><?php echo $nodeData['waterlvA'] ?? '-' ?></span> cm</p>
-                            <p>Water Level B: <span id="node<?php echo $i; ?>-waterlvB"><?php echo $nodeData['waterlvB'] ?? '-' ?></span> cm</p>
-                            <p>Flow Rate: <span id="node<?php echo $i; ?>-flowrate"><?php echo $nodeData['flowrate'] ?? '-' ?></span> L/min</p>
-                            <p>Total Water: <span id="node<?php echo $i; ?>-totalwater"><?php echo $nodeData['totalwater'] ?? '-' ?></span> L</p>
-                            <p>RSSI: <span id="node<?php echo $i; ?>-rssi"><?php echo $nodeData['rssi'] ?? '-' ?></span> dBm</p>
+                            <p>Tegangan: <span id="node<?php echo $i; ?>-tegangan"><?php echo htmlspecialchars($nodeData['tegangan'] ?? '-') ?></span> V</p>
+                            <p>Arus: <span id="node<?php echo $i; ?>-arus"><?php echo htmlspecialchars($nodeData['arus'] ?? '-') ?></span> mA</p>
+                            <p>Water Level A: <span id="node<?php echo $i; ?>-waterlvA"><?php echo htmlspecialchars($nodeData['waterlvA'] ?? '-') ?></span> cm</p>
+                            <p>Water Level B: <span id="node<?php echo $i; ?>-waterlvB"><?php echo htmlspecialchars($nodeData['waterlvB'] ?? '-') ?></span> cm</p>
+                            <p>Flow Rate: <span id="node<?php echo $i; ?>-flowrate"><?php echo htmlspecialchars($nodeData['flowrate'] ?? '-') ?></span> L/min</p>
+                            <p>Total Water: <span id="node<?php echo $i; ?>-totalwater"><?php echo htmlspecialchars($nodeData['totalwater'] ?? '-') ?></span> L</p>
+                            <p>RSSI: <span id="node<?php echo $i; ?>-rssi"><?php echo htmlspecialchars($nodeData['rssi'] ?? '-') ?></span> dBm</p>
                             <p class="text-muted" style="font-size: 0.85em; font-style: italic; margin-top: -5px;">
                               Data ini terakhir pada: <span id="node<?php echo $i; ?>-time"><?php echo $lastTime; ?></span>
                             </p>
@@ -412,11 +283,13 @@ if ($fallbackQuery) {
                       <tr><th>Serial Number</th><th>Location</th><th>Status</th></tr>
                     </thead>
                     <tbody>
-                      <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+                      <?php while ($row = mysqli_fetch_assoc($result)) { 
+                        $statusId = 'SmIr_status_' . htmlspecialchars($row['serial_number']);
+                      ?>
                         <tr>
-                          <td><?php echo $row['serial_number'] ?></td>
-                          <td><?php echo $row['location'] ?></td>
-                          <td style="color:red" id="SmIr/status/<?php echo $row['serial_number'] ?>">offline</td>
+                          <td><?php echo htmlspecialchars($row['serial_number']) ?></td>
+                          <td><?php echo htmlspecialchars($row['location']) ?></td>
+                          <td style="color:red" id="<?php echo $statusId ?>">offline</td>
                         </tr>
                       <?php } ?>
                     </tbody>
@@ -480,22 +353,49 @@ if ($fallbackQuery) {
       client.subscribe("SmIr/status/#", { qos: 1 });
     });
 
+    client.on("reconnect", () => {
+      console.log("Mencoba reconnect...");
+      const statusEl = document.getElementById("status");
+      if (statusEl) {
+        statusEl.innerHTML = "Mencoba reconnect";
+        statusEl.style.color = "orange";
+      }
+    });
+
+    client.on("offline", () => {
+      console.log("Client offline");
+      const statusEl = document.getElementById("status");
+      if (statusEl) {
+        statusEl.innerHTML = "Offline";
+        statusEl.style.color = "red";
+      }
+    });
+
     client.on("message", function(topic, payload) {
       payload = payload.toString();
 
-      if (topic === "kelasiottt/12345678/temperature")
-        document.getElementById("temperature").innerHTML = payload;
-      else if (topic === "kelasiottt/12345678/humidity")
-        document.getElementById("humidity").innerHTML = payload;
-      else if (topic === "kelasiottt/12345678/potentiometer")
-        document.getElementById("potentiometer").innerHTML = payload;
+      // topic match untuk sensor spesifik (contoh)
+      if (topic === "kelasiottt/12345678/temperature") {
+        const el = document.getElementById("temperature");
+        if (el) el.innerHTML = payload;
+      } else if (topic === "kelasiottt/12345678/humidity") {
+        const el = document.getElementById("humidity");
+        if (el) el.innerHTML = payload;
+      } else if (topic === "kelasiottt/12345678/potentiometer") {
+        const el = document.getElementById("potentiometer");
+        if (el) el.innerHTML = payload;
+      }
 
-      // Update status perangkat
+      // Update status perangkat (mapping topic -> element id)
       if (topic.startsWith("SmIr/status/")) {
-        const el = document.getElementById(topic);
+        const mappedId = topic.replace(/\//g, '_'); // e.g. "SmIr_status_SERIAL"
+        const el = document.getElementById(mappedId);
         if (el) {
           el.innerHTML = payload;
           el.style.color = payload === "online" ? "green" : "red";
+        } else {
+          // fallback: coba cari element with prefix SmIr_status_ + serial
+          console.debug("Status element not found for topic:", topic);
         }
       }
 
@@ -509,10 +409,10 @@ if ($fallbackQuery) {
           // Update UI
           fields.forEach(f => {
             const el = document.getElementById(`node${node}-${f}`);
-            if (el) el.innerHTML = data[f];
+            if (el && data[f] !== undefined) el.innerHTML = data[f];
           });
 
-          // Simpan data sensor untuk logic otomatis
+          // Simpan data sensor untuk logic otomatis (pastikan numeric)
           if (sensorData[node]) {
             sensorData[node].waterlvA = parseFloat(data.waterlvA) || 0;
             sensorData[node].waterlvB = parseFloat(data.waterlvB) || 0;
@@ -523,7 +423,7 @@ if ($fallbackQuery) {
           checkAutoControl(2);
 
         } catch (e) {
-          console.error("Error parsing JSON:", e);
+          console.error("Error parsing JSON SmIr/data:", e, payload);
         }
       }
     });
@@ -536,11 +436,11 @@ if ($fallbackQuery) {
       const autoDiv = document.getElementById(`auto-control-solenoid${solenoidNum}`);
       
       if (mode === 'manual') {
-        manualDiv.style.display = 'block';
-        autoDiv.style.display = 'none';
+        if (manualDiv) manualDiv.style.display = 'block';
+        if (autoDiv) autoDiv.style.display = 'none';
       } else {
-        manualDiv.style.display = 'none';
-        autoDiv.style.display = 'block';
+        if (manualDiv) manualDiv.style.display = 'none';
+        if (autoDiv) autoDiv.style.display = 'block';
         // Langsung check kondisi saat mode auto diaktifkan
         checkAutoControl(solenoidNum);
       }
@@ -562,17 +462,19 @@ if ($fallbackQuery) {
       
       solenoidState[solenoidNum].currentState = state;
       
+      // Konsisten: topik publish semua kontrol = SmIr/kontrol
       client.publish("SmIr/kontrol", JSON.stringify(controlData), { qos: 1, retain: true });
       console.log("Published manual control:", controlData);
       
-      // Simpan ke database via AJAX
+      // Simpan ke database via AJAX (type 'manual')
       saveToDatabase('manual', solenoidNum, controlData);
     }
 
-    // Fungsi untuk menyimpan pengaturan otomatis
+    // Fungsi untuk menyimpan pengaturan otomatis (thresholds)
     function saveAutoSettings(solenoidNum) {
       const autoSettings = {
-        mode: 2
+        mode: 2,
+        solenoid: solenoidNum
       };
       
       // Ambil threshold untuk setiap node
@@ -593,13 +495,6 @@ if ($fallbackQuery) {
         }
       }
       
-      // Tambahkan informasi solenoid mana yang dikontrol
-      if (solenoidNum === 1) {
-        autoSettings.solenoid = 1;
-      } else {
-        autoSettings.solenoid = 2;
-      }
-      
       // Tambahkan aksi
       const action = document.getElementById(`action-solenoid${solenoidNum}`);
       if (action) {
@@ -610,27 +505,177 @@ if ($fallbackQuery) {
       client.publish("SmIr/kontrol", JSON.stringify(autoSettings), { qos: 1, retain: true });
       console.log(`Published auto settings Solenoid ${solenoidNum}:`, autoSettings);
       
-      // Simpan ke database via AJAX
+      // Simpan konfigurasi otomatis ke database (type 'auto')
       saveToDatabase('auto', solenoidNum, autoSettings);
       
       // Tampilkan notifikasi
       alert(`Pengaturan otomatis Solenoid ${solenoidNum} berhasil disimpan!`);
     }
 
-      // Fungsi untuk menyimpan ke database
-      function saveToDatabase(type, solenoidNum, data) {
-        fetch('save_actuator.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            type,
-            solenoidNum,
-            data
-          })
+    // Fungsi untuk menyimpan ke database via endpoint PHP
+    function saveToDatabase(type, solenoidNum, data) {
+      fetch('save_actuator.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: type,
+          solenoid: solenoidNum,
+          data: data
         })
-        .then(response => response.text())
-        .then(result => console.log("Database save result:", result))
-        .catch(error => console.error("Error saving to DB:", error));
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log('Saved to database:', result);
+      })
+      .catch(error => {
+        console.error('Error saving to database:', error);
+      });
+    }
+
+    // Fungsi untuk load settings dari database saat halaman dimuat
+    function loadSavedSettings() {
+      fetch('get_actuator_settings.php')
+        .then(response => response.json())
+        .then(settings => {
+          if (settings.success) {
+            // Load manual state untuk solenoid 1
+            if (settings.solenoid1_manual !== undefined) {
+              const state = parseInt(settings.solenoid1_manual);
+              if (state === 1) {
+                const elOn = document.getElementById('solenoid1on');
+                const lblOn = document.getElementById('label-solenoid1-on');
+                const lblOff = document.getElementById('label-solenoid1-off');
+                if (elOn) elOn.checked = true;
+                if (lblOn) lblOn.classList.add('active');
+                if (lblOff) lblOff.classList.remove('active');
+              }
+              solenoidState[1].currentState = parseInt(settings.solenoid1_manual) || 0;
+            }
+            
+            // Load manual state untuk solenoid 2
+            if (settings.solenoid2_manual !== undefined) {
+              const state = parseInt(settings.solenoid2_manual);
+              if (state === 1) {
+                const elOn = document.getElementById('solenoid2on');
+                const lblOn = document.getElementById('label-solenoid2-on');
+                const lblOff = document.getElementById('label-solenoid2-off');
+                if (elOn) elOn.checked = true;
+                if (lblOn) lblOn.classList.add('active');
+                if (lblOff) lblOff.classList.remove('active');
+              }
+              solenoidState[2].currentState = parseInt(settings.solenoid2_manual) || 0;
+            }
+            
+            // Load auto settings untuk solenoid 1
+            if (settings.solenoid1_auto) {
+              const autoSettings = settings.solenoid1_auto;
+              for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+                if (autoSettings[`waterlvA${nodeNum}`] !== undefined) {
+                  const inputA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid1`);
+                  if (inputA) inputA.value = autoSettings[`waterlvA${nodeNum}`];
+                }
+                if (autoSettings[`waterlvB${nodeNum}`] !== undefined) {
+                  const inputB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid1`);
+                  if (inputB) inputB.value = autoSettings[`waterlvB${nodeNum}`];
+                }
+              }
+              if (autoSettings.action) {
+                const actionSelect = document.getElementById('action-solenoid1');
+                if (actionSelect) actionSelect.value = autoSettings.action;
+              }
+            }
+            
+            // Load auto settings untuk solenoid 2
+            if (settings.solenoid2_auto) {
+              const autoSettings = settings.solenoid2_auto;
+              for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+                if (autoSettings[`waterlvA${nodeNum}`] !== undefined) {
+                  const inputA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid2`);
+                  if (inputA) inputA.value = autoSettings[`waterlvA${nodeNum}`];
+                }
+                if (autoSettings[`waterlvB${nodeNum}`] !== undefined) {
+                  const inputB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid2`);
+                  if (inputB) inputB.value = autoSettings[`waterlvB${nodeNum}`];
+                }
+              }
+              if (autoSettings.action) {
+                const actionSelect = document.getElementById('action-solenoid2');
+                if (actionSelect) actionSelect.value = autoSettings.action;
+              }
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error loading settings:', error);
+        });
+    }
+
+    // Load settings saat halaman dimuat
+    window.addEventListener('DOMContentLoaded', loadSavedSettings);
+
+    // Fungsi untuk check dan execute automatic control
+    function checkAutoControl(solenoidNum) {
+      if (solenoidState[solenoidNum].mode !== 'auto') return;
+      
+      const actionEl = document.getElementById(`action-solenoid${solenoidNum}`);
+      if (!actionEl) return;
+      
+      // Cek semua node (1 sampai 4)
+      let allNodesMet = true;
+      
+      for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+        const thresholdA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid${solenoidNum}`);
+        const thresholdB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid${solenoidNum}`);
+        
+        if (!thresholdA || !thresholdB) {
+          allNodesMet = false;
+          break;
+        }
+        
+        const threshA = parseFloat(thresholdA.value);
+        const threshB = parseFloat(thresholdB.value);
+        
+        // Jika threshold tidak diisi, anggap node ini tidak memenuhi
+        if (isNaN(threshA) || isNaN(threshB)) {
+          allNodesMet = false;
+          break;
+        }
+        
+        const currentWaterA = sensorData[nodeNum].waterlvA;
+        const currentWaterB = sensorData[nodeNum].waterlvB;
+        
+        // Node harus memenuhi KEDUA threshold (Water Level A DAN B)
+        const nodeConditionMet = (currentWaterA >= threshA) && (currentWaterB >= threshB);
+        
+        if (!nodeConditionMet) {
+          allNodesMet = false;
+          break;
+        }
       }
+      
+      // Tentukan state baru berdasarkan apakah semua node memenuhi kondisi
+      // Jika action = 'on' => newState = 1 ketika allNodesMet true
+      // Jika action = 'off' => newState = 0 ketika allNodesMet true
+      const action = actionEl.value;
+      const newState = allNodesMet ? (action === 'on' ? 1 : 0) : (action === 'on' ? 0 : 1);
+      
+      // Hanya publish jika state berubah
+      if (newState !== solenoidState[solenoidNum].currentState) {
+        solenoidState[solenoidNum].currentState = newState;
+        
+        const controlData = solenoidNum === 1 
+          ? { solenoidSatu: newState }
+          : { solenoidDua: newState };
+        
+        // Konsisten publish pada topik SmIr/kontrol
+        client.publish("SmIr/kontrol", JSON.stringify(controlData), { qos: 1, retain: true });
+        console.log(`Auto control Solenoid ${solenoidNum}:`, controlData, `(All nodes met: ${allNodesMet})`);
+        
+        // SIMPAN ke DB sebagai aksi otomatis (type 'auto') untuk tracking/history
+        saveToDatabase('auto_action', solenoidNum, controlData);
+      }
+    }
+  </script>
+</body>
