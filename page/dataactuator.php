@@ -8,7 +8,7 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
 // === 2. AMBIL database.php DARI LUAR FOLDER page/ ===
-$databasePath = __DIR__ . '../config/database.php';  // Kunci: naik 1 level
+$databasePath = __DIR__ . '/../config/database.php';  // Kunci: naik 1 level
 
 if (!file_exists($databasePath)) {
     error_log("save_actuator.php: config/database.php tidak ditemukan di $databasePath");
