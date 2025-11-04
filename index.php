@@ -80,5 +80,3 @@ include "inc/footer.php";
     })
   })
 </script>
-</body>
-</html>
