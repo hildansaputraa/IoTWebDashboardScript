@@ -23,7 +23,7 @@ if ($fallbackQuery) {
 }
 ?>
 
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed">
   <div class="wrapper">
     <div class="content-wrapper">
       <div class="content-header">

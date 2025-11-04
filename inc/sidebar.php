@@ -77,3 +77,15 @@
   </div>
 </aside>
 <!-- /.sidebar -->
+
+<script>
+$(document).ready(function() {
+  $('.nav-sidebar .nav-link').on('click', function() {
+    if ($(window).width() <= 991) {
+      setTimeout(function() {
+        $('body').removeClass('sidebar-open').addClass('sidebar-collapse');
+      }, 100);
+    }
+  });
+});
+</script>
