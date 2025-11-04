@@ -118,9 +118,16 @@ if ($fallbackQuery) {
                     <?php for ($i = 1; $i <= 4; $i++) { 
                       $nodeData = $fallback[$i] ?? [];
                       // Ambil waktu terakhir untuk node ini
+                      setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'Indonesian_indonesia.1252'); // dukung berbagai OS
                       $queryTime = mysqli_query($connection, "SELECT MAX(created_at) AS last_time FROM data WHERE node = $i");
                       $timeRow = mysqli_fetch_assoc($queryTime);
-                      $lastTime = $timeRow ? date('H:i:s', strtotime($timeRow['last_time'])) : '-';
+                      if ($timeRow && $timeRow['last_time']) {
+                        $timestamp = strtotime($timeRow['last_time']);
+                        $lastTime = strftime('%e %B %Y %H:%M:%S', $timestamp);
+                      } else {
+                        $lastTime = '-';
+                      }
+
                     ?>
                       <div class="col-md-3">
                         <div class="card card-<?php echo ['primary', 'success', 'warning', 'danger'][$i - 1]; ?>">
