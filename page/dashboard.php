@@ -106,46 +106,35 @@ if ($fallbackQuery) {
                   <!-- Auto Control Settings -->
                   <div id="auto-control-solenoid1" style="display: none;">
                     <div class="alert alert-info">
-                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan dikontrol berdasarkan water level.
+                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan dikontrol ketika SEMUA NODE memenuhi threshold.
                     </div>
                     <div class="form-group">
-                      <label>Node yang dipantau:</label>
-                      <select class="form-control" id="auto-node-solenoid1">
-                        <option value="1">Node 1</option>
-                        <option value="2">Node 2</option>
-                        <option value="3">Node 3</option>
-                        <option value="4">Node 4</option>
-                      </select>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Threshold Water Level A (cm):</label>
-                          <input type="number" class="form-control" id="threshold-waterlvA-solenoid1" placeholder="Contoh: 50" step="0.1">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Threshold Water Level B (cm):</label>
-                          <input type="number" class="form-control" id="threshold-waterlvB-solenoid1" placeholder="Contoh: 30" step="0.1">
-                        </div>
-                      </div>
+                      <label>Threshold Water Level A (cm):</label>
+                      <input type="number" class="form-control" id="threshold-waterlvA-solenoid1" placeholder="Contoh: 50" step="0.1">
+                      <small class="text-muted">Semua node harus memiliki water level A ≥ threshold ini</small>
                     </div>
                     <div class="form-group">
-                      <label>Kondisi:</label>
+                      <label>Threshold Water Level B (cm):</label>
+                      <input type="number" class="form-control" id="threshold-waterlvB-solenoid1" placeholder="Contoh: 30" step="0.1">
+                      <small class="text-muted">Semua node harus memiliki water level B ≥ threshold ini</small>
+                    </div>
+                    <div class="form-group">
+                      <label>Kondisi per Node:</label>
                       <select class="form-control" id="condition-solenoid1">
-                        <option value="both">Kedua level harus memenuhi (AND)</option>
-                        <option value="either">Salah satu level memenuhi (OR)</option>
+                        <option value="both">Kedua level (A dan B) harus memenuhi (AND)</option>
+                        <option value="either">Salah satu level (A atau B) memenuhi (OR)</option>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label>Aksi saat threshold terpenuhi:</label>
+                      <label>Aksi saat SEMUA node memenuhi threshold:</label>
                       <select class="form-control" id="action-solenoid1">
                         <option value="on">Nyalakan Solenoid (ON)</option>
                         <option value="off">Matikan Solenoid (OFF)</option>
                       </select>
                     </div>
-                    <small class="text-muted">Solenoid akan ON/OFF ketika water level memenuhi kondisi threshold</small>
+                    <div class="alert alert-warning">
+                      <strong>Cara kerja:</strong> Sistem akan memeriksa semua 4 node. Solenoid hanya akan berubah status jika SEMUA node memenuhi kondisi threshold yang ditentukan.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -184,46 +173,35 @@ if ($fallbackQuery) {
                   <!-- Auto Control Settings -->
                   <div id="auto-control-solenoid2" style="display: none;">
                     <div class="alert alert-info">
-                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan dikontrol berdasarkan water level.
+                      <i class="fas fa-info-circle"></i> Mode otomatis aktif. Solenoid akan dikontrol ketika SEMUA NODE memenuhi threshold.
                     </div>
                     <div class="form-group">
-                      <label>Node yang dipantau:</label>
-                      <select class="form-control" id="auto-node-solenoid2">
-                        <option value="1">Node 1</option>
-                        <option value="2">Node 2</option>
-                        <option value="3">Node 3</option>
-                        <option value="4">Node 4</option>
-                      </select>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Threshold Water Level A (cm):</label>
-                          <input type="number" class="form-control" id="threshold-waterlvA-solenoid2" placeholder="Contoh: 50" step="0.1">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Threshold Water Level B (cm):</label>
-                          <input type="number" class="form-control" id="threshold-waterlvB-solenoid2" placeholder="Contoh: 30" step="0.1">
-                        </div>
-                      </div>
+                      <label>Threshold Water Level A (cm):</label>
+                      <input type="number" class="form-control" id="threshold-waterlvA-solenoid2" placeholder="Contoh: 50" step="0.1">
+                      <small class="text-muted">Semua node harus memiliki water level A ≥ threshold ini</small>
                     </div>
                     <div class="form-group">
-                      <label>Kondisi:</label>
+                      <label>Threshold Water Level B (cm):</label>
+                      <input type="number" class="form-control" id="threshold-waterlvB-solenoid2" placeholder="Contoh: 30" step="0.1">
+                      <small class="text-muted">Semua node harus memiliki water level B ≥ threshold ini</small>
+                    </div>
+                    <div class="form-group">
+                      <label>Kondisi per Node:</label>
                       <select class="form-control" id="condition-solenoid2">
-                        <option value="both">Kedua level harus memenuhi (AND)</option>
-                        <option value="either">Salah satu level memenuhi (OR)</option>
+                        <option value="both">Kedua level (A dan B) harus memenuhi (AND)</option>
+                        <option value="either">Salah satu level (A atau B) memenuhi (OR)</option>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label>Aksi saat threshold terpenuhi:</label>
+                      <label>Aksi saat SEMUA node memenuhi threshold:</label>
                       <select class="form-control" id="action-solenoid2">
                         <option value="on">Nyalakan Solenoid (ON)</option>
                         <option value="off">Matikan Solenoid (OFF)</option>
                       </select>
                     </div>
-                    <small class="text-muted">Solenoid akan ON/OFF ketika water level memenuhi kondisi threshold</small>
+                    <div class="alert alert-warning">
+                      <strong>Cara kerja:</strong> Sistem akan memeriksa semua 4 node. Solenoid hanya akan berubah status jika SEMUA node memenuhi kondisi threshold yang ditentukan.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -452,34 +430,44 @@ if ($fallbackQuery) {
     function checkAutoControl(solenoidNum) {
       if (solenoidState[solenoidNum].mode !== 'auto') return;
       
-      const nodeSelect = document.getElementById(`auto-node-solenoid${solenoidNum}`);
       const thresholdA = document.getElementById(`threshold-waterlvA-solenoid${solenoidNum}`);
       const thresholdB = document.getElementById(`threshold-waterlvB-solenoid${solenoidNum}`);
       const condition = document.getElementById(`condition-solenoid${solenoidNum}`);
       const action = document.getElementById(`action-solenoid${solenoidNum}`);
       
-      if (!nodeSelect || !thresholdA || !thresholdB || !condition || !action) return;
+      if (!thresholdA || !thresholdB || !condition || !action) return;
       
-      const selectedNode = parseInt(nodeSelect.value);
       const threshA = parseFloat(thresholdA.value);
       const threshB = parseFloat(thresholdB.value);
       
       if (isNaN(threshA) || isNaN(threshB)) return;
       
-      const currentWaterA = sensorData[selectedNode].waterlvA;
-      const currentWaterB = sensorData[selectedNode].waterlvB;
+      // Cek semua node (1 sampai 4)
+      let allNodesMet = true;
       
-      let conditionMet = false;
-      
-      if (condition.value === 'both') {
-        // AND: kedua threshold harus terpenuhi
-        conditionMet = (currentWaterA >= threshA) && (currentWaterB >= threshB);
-      } else {
-        // OR: salah satu threshold terpenuhi
-        conditionMet = (currentWaterA >= threshA) || (currentWaterB >= threshB);
+      for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+        const currentWaterA = sensorData[nodeNum].waterlvA;
+        const currentWaterB = sensorData[nodeNum].waterlvB;
+        
+        let nodeConditionMet = false;
+        
+        if (condition.value === 'both') {
+          // AND: kedua level di node ini harus memenuhi threshold
+          nodeConditionMet = (currentWaterA >= threshA) && (currentWaterB >= threshB);
+        } else {
+          // OR: salah satu level di node ini memenuhi threshold
+          nodeConditionMet = (currentWaterA >= threshA) || (currentWaterB >= threshB);
+        }
+        
+        // Jika salah satu node tidak memenuhi, maka allNodesMet = false
+        if (!nodeConditionMet) {
+          allNodesMet = false;
+          break;
+        }
       }
       
-      const newState = conditionMet ? (action.value === 'on' ? 1 : 0) : (action.value === 'on' ? 0 : 1);
+      // Tentukan state baru berdasarkan apakah semua node memenuhi kondisi
+      const newState = allNodesMet ? (action.value === 'on' ? 1 : 0) : (action.value === 'on' ? 0 : 1);
       
       // Hanya publish jika state berubah
       if (newState !== solenoidState[solenoidNum].currentState) {
@@ -490,7 +478,7 @@ if ($fallbackQuery) {
           : { solenoidDua: newState };
         
         client.publish("SmIr/control", JSON.stringify(controlData), { qos: 1, retain: true });
-        console.log(`Auto control Solenoid ${solenoidNum}:`, controlData);
+        console.log(`Auto control Solenoid ${solenoidNum}:`, controlData, `(All nodes met: ${allNodesMet})`);
       }
     }
   </script>
