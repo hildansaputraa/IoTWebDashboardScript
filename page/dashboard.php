@@ -194,8 +194,13 @@ if ($fallbackQuery) {
                         <option value="off">Matikan Solenoid (OFF)</option>
                       </select>
                     </div>
-                    <div class="alert alert-warning">
-                      <strong>Cara kerja:</strong> Isi threshold untuk setiap node (total 8 input). Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN Water Level B) yang ditentukan.
+                    <div class="text-center mt-3">
+                      <button type="button" class="btn btn-primary btn-lg" onclick="saveAutoSettings(1)">
+                        <i class="fas fa-save"></i> Simpan Pengaturan Otomatis
+                      </button>
+                    </div>
+                    <div class="alert alert-warning mt-3">
+                      <strong>Cara kerja:</strong> Isi threshold untuk setiap node (total 8 input). Klik tombol "Simpan Pengaturan Otomatis" untuk mengirim konfigurasi ke sistem. Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN Water Level B) yang ditentukan.
                     </div>
                   </div>
                 </div>
@@ -323,8 +328,13 @@ if ($fallbackQuery) {
                         <option value="off">Matikan Solenoid (OFF)</option>
                       </select>
                     </div>
-                    <div class="alert alert-warning">
-                      <strong>Cara kerja:</strong> Isi threshold untuk setiap node (total 8 input). Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN Water Level B) yang ditentukan.
+                    <div class="text-center mt-3">
+                      <button type="button" class="btn btn-primary btn-lg" onclick="saveAutoSettings(2)">
+                        <i class="fas fa-save"></i> Simpan Pengaturan Otomatis
+                      </button>
+                    </div>
+                    <div class="alert alert-warning mt-3">
+                      <strong>Cara kerja:</strong> Isi threshold untuk setiap node (total 8 input). Klik tombol "Simpan Pengaturan Otomatis" untuk mengirim konfigurasi ke sistem. Solenoid akan berubah status hanya jika SEMUA node memenuhi kedua threshold (Water Level A DAN Water Level B) yang ditentukan.
                     </div>
                   </div>
                 </div>
@@ -540,15 +550,169 @@ if ($fallbackQuery) {
     function publishSolenoid(solenoidNum, state) {
       if (solenoidState[solenoidNum].mode !== 'manual') return;
       
-      const controlData = solenoidNum === 1 
-        ? { solenoidSatu: state }
-        : { solenoidDua: state };
+      const controlData = {
+        mode: 1
+      };
+      
+      if (solenoidNum === 1) {
+        controlData.solenoidSatu = state;
+      } else {
+        controlData.solenoidDua = state;
+      }
       
       solenoidState[solenoidNum].currentState = state;
       
-      client.publish("SmIr/control", JSON.stringify(controlData), { qos: 1, retain: true });
-      console.log("Published control:", controlData);
+      client.publish("SmIr/kontrol", JSON.stringify(controlData), { qos: 1, retain: true });
+      console.log("Published manual control:", controlData);
+      
+      // Simpan ke database via AJAX
+      saveToDatabase('manual', solenoidNum, controlData);
     }
+
+    // Fungsi untuk menyimpan pengaturan otomatis
+    function saveAutoSettings(solenoidNum) {
+      const autoSettings = {
+        mode: 2
+      };
+      
+      // Ambil threshold untuk setiap node
+      for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+        const thresholdA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid${solenoidNum}`);
+        const thresholdB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid${solenoidNum}`);
+        
+        if (thresholdA && thresholdB) {
+          const valA = parseFloat(thresholdA.value);
+          const valB = parseFloat(thresholdB.value);
+          
+          if (!isNaN(valA)) {
+            autoSettings[`waterlvA${nodeNum}`] = valA;
+          }
+          if (!isNaN(valB)) {
+            autoSettings[`waterlvB${nodeNum}`] = valB;
+          }
+        }
+      }
+      
+      // Tambahkan informasi solenoid mana yang dikontrol
+      if (solenoidNum === 1) {
+        autoSettings.solenoid = 1;
+      } else {
+        autoSettings.solenoid = 2;
+      }
+      
+      // Tambahkan aksi
+      const action = document.getElementById(`action-solenoid${solenoidNum}`);
+      if (action) {
+        autoSettings.action = action.value;
+      }
+      
+      // Publish ke MQTT
+      client.publish("SmIr/kontrol", JSON.stringify(autoSettings), { qos: 1, retain: true });
+      console.log(`Published auto settings Solenoid ${solenoidNum}:`, autoSettings);
+      
+      // Simpan ke database via AJAX
+      saveToDatabase('auto', solenoidNum, autoSettings);
+      
+      // Tampilkan notifikasi
+      alert(`Pengaturan otomatis Solenoid ${solenoidNum} berhasil disimpan!`);
+    }
+
+    // Fungsi untuk menyimpan ke database
+    function saveToDatabase(type, solenoidNum, data) {
+      fetch('save_actuator.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: type,
+          solenoid: solenoidNum,
+          data: data
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log('Saved to database:', result);
+      })
+      .catch(error => {
+        console.error('Error saving to database:', error);
+      });
+    }
+
+    // Fungsi untuk load settings dari database saat halaman dimuat
+    function loadSavedSettings() {
+      fetch('get_actuator_settings.php')
+        .then(response => response.json())
+        .then(settings => {
+          if (settings.success) {
+            // Load manual state untuk solenoid 1
+            if (settings.solenoid1_manual !== undefined) {
+              const state = parseInt(settings.solenoid1_manual);
+              if (state === 1) {
+                document.getElementById('solenoid1on').checked = true;
+                document.getElementById('label-solenoid1-on').classList.add('active');
+                document.getElementById('label-solenoid1-off').classList.remove('active');
+              }
+              solenoidState[1].currentState = state;
+            }
+            
+            // Load manual state untuk solenoid 2
+            if (settings.solenoid2_manual !== undefined) {
+              const state = parseInt(settings.solenoid2_manual);
+              if (state === 1) {
+                document.getElementById('solenoid2on').checked = true;
+                document.getElementById('label-solenoid2-on').classList.add('active');
+                document.getElementById('label-solenoid2-off').classList.remove('active');
+              }
+              solenoidState[2].currentState = state;
+            }
+            
+            // Load auto settings untuk solenoid 1
+            if (settings.solenoid1_auto) {
+              const autoSettings = settings.solenoid1_auto;
+              for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+                if (autoSettings[`waterlvA${nodeNum}`] !== undefined) {
+                  const inputA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid1`);
+                  if (inputA) inputA.value = autoSettings[`waterlvA${nodeNum}`];
+                }
+                if (autoSettings[`waterlvB${nodeNum}`] !== undefined) {
+                  const inputB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid1`);
+                  if (inputB) inputB.value = autoSettings[`waterlvB${nodeNum}`];
+                }
+              }
+              if (autoSettings.action) {
+                const actionSelect = document.getElementById('action-solenoid1');
+                if (actionSelect) actionSelect.value = autoSettings.action;
+              }
+            }
+            
+            // Load auto settings untuk solenoid 2
+            if (settings.solenoid2_auto) {
+              const autoSettings = settings.solenoid2_auto;
+              for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+                if (autoSettings[`waterlvA${nodeNum}`] !== undefined) {
+                  const inputA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid2`);
+                  if (inputA) inputA.value = autoSettings[`waterlvA${nodeNum}`];
+                }
+                if (autoSettings[`waterlvB${nodeNum}`] !== undefined) {
+                  const inputB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid2`);
+                  if (inputB) inputB.value = autoSettings[`waterlvB${nodeNum}`];
+                }
+              }
+              if (autoSettings.action) {
+                const actionSelect = document.getElementById('action-solenoid2');
+                if (actionSelect) actionSelect.value = autoSettings.action;
+              }
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error loading settings:', error);
+        });
+    }
+
+    // Load settings saat halaman dimuat
+    window.addEventListener('DOMContentLoaded', loadSavedSettings);
 
     // Fungsi untuk check dan execute automatic control
     function checkAutoControl(solenoidNum) {
