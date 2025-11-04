@@ -617,158 +617,20 @@ if ($fallbackQuery) {
       alert(`Pengaturan otomatis Solenoid ${solenoidNum} berhasil disimpan!`);
     }
 
-    // Fungsi untuk menyimpan ke database
-    function saveToDatabase(type, solenoidNum, data) {
-      fetch('save_actuator.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: type,
-          solenoid: solenoidNum,
-          data: data
+      // Fungsi untuk menyimpan ke database
+      function saveToDatabase(type, solenoidNum, data) {
+        fetch('save_actuator.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type,
+            solenoidNum,
+            data
+          })
         })
-      })
-      .then(response => response.json())
-      .then(result => {
-        console.log('Saved to database:', result);
-      })
-      .catch(error => {
-        console.error('Error saving to database:', error);
-      });
-    }
-
-    // Fungsi untuk load settings dari database saat halaman dimuat
-    function loadSavedSettings() {
-      fetch('get_actuator_settings.php')
-        .then(response => response.json())
-        .then(settings => {
-          if (settings.success) {
-            // Load manual state untuk solenoid 1
-            if (settings.solenoid1_manual !== undefined) {
-              const state = parseInt(settings.solenoid1_manual);
-              if (state === 1) {
-                document.getElementById('solenoid1on').checked = true;
-                document.getElementById('label-solenoid1-on').classList.add('active');
-                document.getElementById('label-solenoid1-off').classList.remove('active');
-              }
-              solenoidState[1].currentState = state;
-            }
-            
-            // Load manual state untuk solenoid 2
-            if (settings.solenoid2_manual !== undefined) {
-              const state = parseInt(settings.solenoid2_manual);
-              if (state === 1) {
-                document.getElementById('solenoid2on').checked = true;
-                document.getElementById('label-solenoid2-on').classList.add('active');
-                document.getElementById('label-solenoid2-off').classList.remove('active');
-              }
-              solenoidState[2].currentState = state;
-            }
-            
-            // Load auto settings untuk solenoid 1
-            if (settings.solenoid1_auto) {
-              const autoSettings = settings.solenoid1_auto;
-              for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
-                if (autoSettings[`waterlvA${nodeNum}`] !== undefined) {
-                  const inputA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid1`);
-                  if (inputA) inputA.value = autoSettings[`waterlvA${nodeNum}`];
-                }
-                if (autoSettings[`waterlvB${nodeNum}`] !== undefined) {
-                  const inputB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid1`);
-                  if (inputB) inputB.value = autoSettings[`waterlvB${nodeNum}`];
-                }
-              }
-              if (autoSettings.action) {
-                const actionSelect = document.getElementById('action-solenoid1');
-                if (actionSelect) actionSelect.value = autoSettings.action;
-              }
-            }
-            
-            // Load auto settings untuk solenoid 2
-            if (settings.solenoid2_auto) {
-              const autoSettings = settings.solenoid2_auto;
-              for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
-                if (autoSettings[`waterlvA${nodeNum}`] !== undefined) {
-                  const inputA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid2`);
-                  if (inputA) inputA.value = autoSettings[`waterlvA${nodeNum}`];
-                }
-                if (autoSettings[`waterlvB${nodeNum}`] !== undefined) {
-                  const inputB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid2`);
-                  if (inputB) inputB.value = autoSettings[`waterlvB${nodeNum}`];
-                }
-              }
-              if (autoSettings.action) {
-                const actionSelect = document.getElementById('action-solenoid2');
-                if (actionSelect) actionSelect.value = autoSettings.action;
-              }
-            }
-          }
-        })
-        .catch(error => {
-          console.error('Error loading settings:', error);
-        });
-    }
-
-    // Load settings saat halaman dimuat
-    window.addEventListener('DOMContentLoaded', loadSavedSettings);
-
-    // Fungsi untuk check dan execute automatic control
-    function checkAutoControl(solenoidNum) {
-      if (solenoidState[solenoidNum].mode !== 'auto') return;
-      
-      const action = document.getElementById(`action-solenoid${solenoidNum}`);
-      if (!action) return;
-      
-      // Cek semua node (1 sampai 4)
-      let allNodesMet = true;
-      
-      for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
-        const thresholdA = document.getElementById(`threshold-node${nodeNum}-waterlvA-solenoid${solenoidNum}`);
-        const thresholdB = document.getElementById(`threshold-node${nodeNum}-waterlvB-solenoid${solenoidNum}`);
-        
-        if (!thresholdA || !thresholdB) {
-          allNodesMet = false;
-          break;
-        }
-        
-        const threshA = parseFloat(thresholdA.value);
-        const threshB = parseFloat(thresholdB.value);
-        
-        // Jika threshold tidak diisi, anggap node ini tidak memenuhi
-        if (isNaN(threshA) || isNaN(threshB)) {
-          allNodesMet = false;
-          break;
-        }
-        
-        const currentWaterA = sensorData[nodeNum].waterlvA;
-        const currentWaterB = sensorData[nodeNum].waterlvB;
-        
-        // Node harus memenuhi KEDUA threshold (Water Level A DAN B)
-        const nodeConditionMet = (currentWaterA >= threshA) && (currentWaterB >= threshB);
-        
-        // Jika node ini tidak memenuhi, maka allNodesMet = false
-        if (!nodeConditionMet) {
-          allNodesMet = false;
-          break;
-        }
+        .then(response => response.text())
+        .then(result => console.log("Database save result:", result))
+        .catch(error => console.error("Error saving to DB:", error));
       }
-      
-      // Tentukan state baru berdasarkan apakah semua node memenuhi kondisi
-      const newState = allNodesMet ? (action.value === 'on' ? 1 : 0) : (action.value === 'on' ? 0 : 1);
-      
-      // Hanya publish jika state berubah
-      if (newState !== solenoidState[solenoidNum].currentState) {
-        solenoidState[solenoidNum].currentState = newState;
-        
-        const controlData = solenoidNum === 1 
-          ? { solenoidSatu: newState }
-          : { solenoidDua: newState };
-        
-        client.publish("SmIr/control", JSON.stringify(controlData), { qos: 1, retain: true });
-        console.log(`Auto control Solenoid ${solenoidNum}:`, controlData, `(All nodes met: ${allNodesMet})`);
-      }
-    }
-  </script>
-</body>

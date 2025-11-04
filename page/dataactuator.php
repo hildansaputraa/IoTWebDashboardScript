@@ -1,75 +1,188 @@
 <?php
-$sql = "SELECT * FROM data WHERE sensor_actuator = 'actuator'";
-$result = mysqli_query($connection,$sql);
+// Query untuk mengambil history actuator
+$sql = "SELECT * FROM actuator_history ORDER BY created_at DESC LIMIT 1000";
+$result = mysqli_query($connection, $sql);
 ?>
 
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">Data Actuator</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="?page=dashboard">Home</a></li>
-              <li class="breadcrumb-item active">Data Actuator</li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
-
-    <!-- Main content -->
-    <div class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">Data Actuator History</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
-                  <thead>
-                    <tr>
-                      <th>Id</th>
-                      <th>Node</th>
-                      <th>Sensor Name</th>
-                      <th>Value</th>
-                      <th>Topic</th>
-                      <th>Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    
-                    <?php 
-                    while($row = mysqli_fetch_assoc($result)){ ?>
-                      <tr>
-                      <td><?php echo $row['id'] ?> </td>
-                      <td><?php echo $row['serial_number'] ?> </td>
-                      <td><?php echo $row['name'] ?> </td>
-                      <td><?php echo $row['value']?></td>
-                      <td><?php echo $row['mqtt_topic']?></td>
-                      <td><?php echo $row['time']?></td>
-                    <?php } ?>
-                    
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col-md-6 -->
-          <!-- /.col-md-6 -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Data Actuator</h1>
         </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="?page=dashboard">Home</a></li>
+            <li class="breadcrumb-item active">Data Actuator</li>
+          </ol>
+        </div>
+      </div>
     </div>
-    <!-- /.content -->
   </div>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Actuator Control History</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-sm btn-info" onclick="location.reload()">
+                  <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Solenoid</th>
+                    <th>Mode</th>
+                    <th>Command</th>
+                    <th>Details</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php 
+                  if (mysqli_num_rows($result) > 0) {
+                    while($row = mysqli_fetch_assoc($result)) { 
+                      // Format waktu
+                      setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'Indonesian_indonesia.1252');
+                      $timestamp = strtotime($row['created_at']);
+                      $formattedTime = strftime('%d %B %Y %H:%M:%S', $timestamp);
+                      
+                      // Tentukan badge untuk mode
+                      $modeBadge = $row['mode'] === 'manual' 
+                        ? '<span class="badge badge-primary">Manual</span>' 
+                        : '<span class="badge badge-success">Otomatis</span>';
+                      
+                      // Tentukan command
+                      $command = '';
+                      if ($row['mode'] === 'manual') {
+                        $state = $row['state'];
+                        $command = $state == 1 
+                          ? '<span class="badge badge-success">ON</span>' 
+                          : '<span class="badge badge-danger">OFF</span>';
+                      } else {
+                        $command = '<span class="badge badge-info">Settings Update</span>';
+                      }
+                      
+                      // Details
+                      $details = '';
+                      if ($row['mode'] === 'auto' && !empty($row['threshold_data'])) {
+                        $thresholdData = json_decode($row['threshold_data'], true);
+                        $details = '<small>';
+                        $details .= 'Action: <strong>' . strtoupper($row['action']) . '</strong><br>';
+                        for ($i = 1; $i <= 4; $i++) {
+                          if (isset($thresholdData["waterlvA{$i}"]) && isset($thresholdData["waterlvB{$i}"])) {
+                            $details .= "Node {$i}: A={$thresholdData["waterlvA{$i}"]}cm, B={$thresholdData["waterlvB{$i}"]}cm<br>";
+                          }
+                        }
+                        $details .= '</small>';
+                      } else if ($row['mode'] === 'manual') {
+                        $details = '<small>Direct control command</small>';
+                      }
+                      ?>
+                      <tr>
+                        <td><?php echo $row['id']; ?></td>
+                        <td>
+                          <span class="badge badge-<?php echo $row['solenoid_num'] == 1 ? 'info' : 'warning'; ?>">
+                            Solenoid <?php echo $row['solenoid_num']; ?>
+                          </span>
+                        </td>
+                        <td><?php echo $modeBadge; ?></td>
+                        <td><?php echo $command; ?></td>
+                        <td><?php echo $details; ?></td>
+                        <td><?php echo $formattedTime; ?></td>
+                      </tr>
+                    <?php 
+                    }
+                  } else { ?>
+                    <tr>
+                      <td colspan="6" class="text-center">Belum ada history actuator</td>
+                    </tr>
+                  <?php } ?>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
+          <!-- Summary Cards -->
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Solenoid 1 - Last Activity</h3>
+                </div>
+                <div class="card-body">
+                  <?php
+                  $sql1 = "SELECT * FROM actuator_history WHERE solenoid_num = 1 ORDER BY created_at DESC LIMIT 1";
+                  $result1 = mysqli_query($connection, $sql1);
+                  if ($row1 = mysqli_fetch_assoc($result1)) {
+                    $timestamp1 = strtotime($row1['created_at']);
+                    $time1 = strftime('%d %B %Y %H:%M:%S', $timestamp1);
+                    echo "<p><strong>Mode:</strong> " . ucfirst($row1['mode']) . "</p>";
+                    if ($row1['mode'] === 'manual') {
+                      echo "<p><strong>State:</strong> " . ($row1['state'] == 1 ? 'ON' : 'OFF') . "</p>";
+                    }
+                    echo "<p><strong>Time:</strong> {$time1}</p>";
+                  } else {
+                    echo "<p>No activity yet</p>";
+                  }
+                  ?>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="card card-warning">
+                <div class="card-header">
+                  <h3 class="card-title">Solenoid 2 - Last Activity</h3>
+                </div>
+                <div class="card-body">
+                  <?php
+                  $sql2 = "SELECT * FROM actuator_history WHERE solenoid_num = 2 ORDER BY created_at DESC LIMIT 1";
+                  $result2 = mysqli_query($connection, $sql2);
+                  if ($row2 = mysqli_fetch_assoc($result2)) {
+                    $timestamp2 = strtotime($row2['created_at']);
+                    $time2 = strftime('%d %B %Y %H:%M:%S', $timestamp2);
+                    echo "<p><strong>Mode:</strong> " . ucfirst($row2['mode']) . "</p>";
+                    if ($row2['mode'] === 'manual') {
+                      echo "<p><strong>State:</strong> " . ($row2['state'] == 1 ? 'ON' : 'OFF') . "</p>";
+                    }
+                    echo "<p><strong>Time:</strong> {$time2}</p>";
+                  } else {
+                    echo "<p>No activity yet</p>";
+                  }
+                  ?>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true,
+      "lengthChange": true,
+      "autoWidth": false,
+      "order": [[0, "desc"]],
+      "buttons": ["copy", "csv", "excel", "pdf", "print"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
