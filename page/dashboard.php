@@ -68,33 +68,6 @@ if ($fallbackQuery) {
             <div class="icon"><i class="fas fa-water"></i></div>
           </div>
         </div>
-        <div class="col-lg-4">
-          <div class="small-box bg-gray">
-            <div class="inner">
-              <h3><span id="humidity"><?php echo $fallback['12345678']['humidity'] ?? '-' ?></span>%</h3>
-              <p>Humidity</p>
-            </div>
-            <div class="icon"><i class="fas fa-water"></i></div>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="small-box bg-gray">
-            <div class="inner">
-              <h3><span id="humidity"><?php echo $fallback['12345678']['humidity'] ?? '-' ?></span>%</h3>
-              <p>Humidity</p>
-            </div>
-            <div class="icon"><i class="fas fa-water"></i></div>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="small-box bg-gray">
-            <div class="inner">
-              <h3><span id="humidity"><?php echo $fallback['12345678']['humidity'] ?? '-' ?></span>%</h3>
-              <p>Humidity</p>
-            </div>
-            <div class="icon"><i class="fas fa-water"></i></div>
-          </div>
-        </div>
       </div>
 
       <!-- Solenoid Control dengan Mode -->
