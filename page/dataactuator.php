@@ -28,14 +28,15 @@ $result = mysqli_query($connection, $sql);
       <div class="row">
         <div class="col-lg-12">
           <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Actuator Control History</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-sm btn-info" onclick="location.reload()">
-                  <i class="fas fa-sync-alt"></i> Refresh
+            <div class="card-header position-relative">
+              <form method="POST" onsubmit="return confirm('Yakin ingin menghapus semua data sensor?')"
+                    style="position: absolute; right: 1rem; top: 0.5rem;">
+                <button type="submit" name="reset_data" class="btn btn-danger btn-sm">
+                  <i class="fas fa-trash-alt"></i> Reset Data
                 </button>
-              </div>
+              </form>
             </div>
+
             <!-- /.card-header -->
             <div class="card-body">
               <table id="example1" class="table table-bordered table-striped">
