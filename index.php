@@ -64,19 +64,3 @@ include "inc/footer.php";
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
   });
 </script>
-
-<script>
-  $(function() {
-    /* ION SLIDER */
-    $('#servo').ionRangeSlider({
-      min: 0,
-      max: 180,
-      from: 0,
-      type: 'single',
-      step: 1,
-      postfix: '°',
-      prettify: false,
-      hasGrid: true
-    })
-  })
-</script>

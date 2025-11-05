@@ -9,7 +9,7 @@
   <link rel="icon" type="image/jpg" href="../dist/img/unesa.jpg">
   <link rel="shortcut icon" type="image/jpg" href="../dist/img/unesa.jpg">
 
-  <title>IoT Agrowisata Banjarsari</title>
+  <title>IoT Agrowisata Banjarsari - Monitoring & Control System</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -27,26 +27,6 @@
   <link rel="stylesheet" href="plugins/bootstrap-slider/css/bootstrap-slider.min.css">
 
   <!-- Script untuk judul tab berjalan -->
-  <script>
-    // Fungsi untuk membuat judul berjalan di tab browser
-    window.addEventListener('load', function() {
-      const originalTitle = "IoT Agrowisata Banjarsari - Monitoring & Control System";
-      let titleIndex = 0;
-
-      function scrollTitle() {
-        // Buat efek scrolling dengan memotong dan menggabungkan string
-        document.title = originalTitle.substring(titleIndex) + " | " + originalTitle.substring(0, titleIndex);
-        
-        titleIndex++;
-        if (titleIndex > originalTitle.length) {
-          titleIndex = 0;
-        }
-      }
-
-      // Jalankan animasi setiap 300ms (ubah angka untuk mengatur kecepatan)
-      setInterval(scrollTitle, 300);
-    });
-  </script>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">

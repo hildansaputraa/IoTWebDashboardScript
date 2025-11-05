@@ -162,7 +162,7 @@ if (isset($_POST['username']) && !isset($locked)) {
     <link rel="icon" type="image/jpg" href="../dist/img/unesa.jpg">
     <link rel="shortcut icon" type="image/jpg" href="../dist/img/unesa.jpg">
 
-    <title>IoT Agrowisata Banjarsari</title>
+    <title>IoT Agrowisata Banjarsari - Monitoring & Control System</title>
 
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';">
@@ -338,24 +338,6 @@ if (isset($_POST['username']) && !isset($locked)) {
             if (usernameField && !usernameField.disabled) {
                 usernameField.focus();
             }
-        });
-        // Fungsi untuk membuat judul berjalan di tab browser
-        window.addEventListener('load', function() {
-        const originalTitle = "IoT Agrowisata Banjarsari - Monitoring & Control System";
-        let titleIndex = 0;
-
-        function scrollTitle() {
-            // Buat efek scrolling dengan memotong dan menggabungkan string
-            document.title = originalTitle.substring(titleIndex) + " | " + originalTitle.substring(0, titleIndex);
-            
-            titleIndex++;
-            if (titleIndex > originalTitle.length) {
-            titleIndex = 0;
-            }
-        }
-
-        // Jalankan animasi setiap 300ms (ubah angka untuk mengatur kecepatan)
-        setInterval(scrollTitle, 300);
         });
     </script>
 </body>
