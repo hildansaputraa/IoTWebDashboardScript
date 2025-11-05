@@ -191,7 +191,7 @@ if (isset($_POST['username']) && !isset($locked)) {
             transition: all 0.3s;
         }
         body.login-page {
-    background-image: url('dist/img/unesa.jpg');
+    background-image: url('dist/img/background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
