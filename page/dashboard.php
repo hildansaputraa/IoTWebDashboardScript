@@ -49,7 +49,7 @@ if ($fallbackQuery) {
               $flow4 = isset($fallback[4]['flowrate']) ? floatval($fallback[4]['flowrate']) : 0;
               $avgFlow = ($flow3 + $flow4) / 2;
               ?>
-              <h3 id="flowrate"><?php echo $avgFlow ? number_format($avgFlow, 2) : '-' ?></h3>
+              <h3 id="flowrate"><?php echo $avgFlow ? number_format($avgFlow, 2) : '0' ?>L/min</h3>
               <p>FlowRate</p>
             </div>
             <div class="icon"><i class="fas fa-tachometer-alt"></i></div>
