@@ -196,7 +196,7 @@ if (isset($_POST['username']) && !isset($locked)) {
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a><b>AGRO WISATA BANJARSARI JOMBANG</b> LOGIN</a>
+            <a><b>Smart Irrigation</b> LOGIN</a>
         </div>
         <!-- /.login-logo -->
         <div class="card">
