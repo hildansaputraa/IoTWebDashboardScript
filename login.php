@@ -190,6 +190,36 @@ if (isset($_POST['username']) && !isset($locked)) {
             border-radius: 3px;
             transition: all 0.3s;
         }
+        body.login-page {
+    background-image: url('dist/img/unesa.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: relative;
+    }    
+    /* Overlay gelap agar form lebih terbaca */
+    body.login-page::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Overlay hitam semi-transparan */
+        z-index: -1;
+    }
+
+    .login-box {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Buat card sedikit transparan dengan efek blur */
+    .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+    }
     </style>
 </head>
 
