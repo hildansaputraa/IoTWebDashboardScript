@@ -189,8 +189,8 @@ if ($fallbackQuery) {
                 <div class="form-group">
                   <label>Aksi saat SEMUA node memenuhi threshold:</label>
                   <select class="form-control" id="action-solenoid1">
-                    <option value="on">Nyalakan Solenoid (ON)</option>
-                    <option value="off">Matikan Solenoid (OFF)</option>
+                    <option value="1">Nyalakan Solenoid (ON)</option>
+                    <option value="0">Matikan Solenoid (OFF)</option>
                   </select>
                 </div>
                 <div class="text-center mt-3">
@@ -323,8 +323,8 @@ if ($fallbackQuery) {
                 <div class="form-group">
                   <label>Aksi saat SEMUA node memenuhi threshold:</label>
                   <select class="form-control" id="action-solenoid2">
-                    <option value="on">Nyalakan Solenoid (ON)</option>
-                    <option value="off">Matikan Solenoid (OFF)</option>
+                    <option value="1">Nyalakan Solenoid (ON)</option>
+                    <option value="0">Matikan Solenoid (OFF)</option>
                   </select>
                 </div>
 
