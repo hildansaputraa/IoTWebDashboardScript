@@ -158,7 +158,11 @@ if (isset($_POST['username']) && !isset($locked)) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="noindex, nofollow">
-    <title>System IoT | Log in</title>
+    <!-- Favicon / Logo di Tab Browser -->
+    <link rel="icon" type="image/jpg" href="../dist/img/unesa.jpg">
+    <link rel="shortcut icon" type="image/jpg" href="../dist/img/unesa.jpg">
+
+    <title>IoT Agrowisata Banjarsari</title>
 
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';">
@@ -192,7 +196,7 @@ if (isset($_POST['username']) && !isset($locked)) {
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a><b>SYSTEM IOT</b> LOGIN</a>
+            <a><b>AGRO WISATA BANJARSARI JOMBANG</b> LOGIN</a>
         </div>
         <!-- /.login-logo -->
         <div class="card">
@@ -251,7 +255,7 @@ if (isset($_POST['username']) && !isset($locked)) {
                 
                 <p class="mt-3 mb-1 text-center">
                     <small class="text-muted">
-                        <i class="fas fa-shield-alt"></i> Secure Connection
+                        <i class="fas fa-shield-alt"></i> Microprocessor Laboratory Unesa
                     </small>
                 </p>
             </div>
@@ -295,6 +299,24 @@ if (isset($_POST['username']) && !isset($locked)) {
             if (usernameField && !usernameField.disabled) {
                 usernameField.focus();
             }
+        });
+        // Fungsi untuk membuat judul berjalan di tab browser
+        window.addEventListener('load', function() {
+        const originalTitle = "IoT Agrowisata Banjarsari - Monitoring & Control System";
+        let titleIndex = 0;
+
+        function scrollTitle() {
+            // Buat efek scrolling dengan memotong dan menggabungkan string
+            document.title = originalTitle.substring(titleIndex) + " | " + originalTitle.substring(0, titleIndex);
+            
+            titleIndex++;
+            if (titleIndex > originalTitle.length) {
+            titleIndex = 0;
+            }
+        }
+
+        // Jalankan animasi setiap 300ms (ubah angka untuk mengatur kecepatan)
+        setInterval(scrollTitle, 300);
         });
     </script>
 </body>
