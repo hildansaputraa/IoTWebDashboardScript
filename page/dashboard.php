@@ -41,16 +41,21 @@ if ($fallbackQuery) {
 
       <!-- Sensor dasar -->
       <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-12">
           <div class="small-box bg-warning">
             <div class="inner">
-              <h3 id="potentiometer"><?php echo $fallback['12345678']['potentiometer'] ?? '-' ?></h3>
-              <p>Potentiometer</p>
+              <?php
+              $flow3 = isset($fallback[3]['flowrate']) ? floatval($fallback[3]['flowrate']) : 0;
+              $flow4 = isset($fallback[4]['flowrate']) ? floatval($fallback[4]['flowrate']) : 0;
+              $avgFlow = ($flow3 + $flow4) / 2;
+              ?>
+              <h3 id="flowrate"><?php echo $avgFlow ? number_format($avgFlow, 2) : '-' ?></h3>
+              <p>FlowRate</p>
             </div>
             <div class="icon"><i class="fas fa-tachometer-alt"></i></div>
           </div>
         </div>
-        <div class="col-lg-4">
+        <!-- <div class="col-lg-">
           <div class="small-box bg-danger">
             <div class="inner">
               <h3 id="temperature"><?php echo $fallback['12345678']['temperature'] ?? '-' ?></h3>
@@ -58,8 +63,8 @@ if ($fallbackQuery) {
             </div>
             <div class="icon"><i class="fas fa-temperature-high"></i></div>
           </div>
-        </div>
-        <div class="col-lg-4">
+        </div> -->
+        <div class="col-lg-12">
           <div class="small-box bg-gray">
             <div class="inner">
               <h3><span id="humidity"><?php echo $fallback['12345678']['humidity'] ?? '-' ?></span>%</h3>
@@ -486,7 +491,6 @@ if ($fallbackQuery) {
       statusEl.style.color = "green";
     }
 
-    client.subscribe("kelasiottt/#", { qos: 1 });
     client.subscribe("SmIr/data", { qos: 1 });
     client.subscribe("SmIr/status/#", { qos: 1 });
   });
