@@ -41,7 +41,7 @@ if ($fallbackQuery) {
 
       <!-- Sensor dasar -->
       <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
           <div class="small-box bg-warning">
             <div class="inner">
               <?php
@@ -64,7 +64,7 @@ if ($fallbackQuery) {
             <div class="icon"><i class="fas fa-temperature-high"></i></div>
           </div>
         </div> -->
-        <div class="col-lg-12">
+        <div class="col-lg-6">
           <div class="small-box bg-gray">
             <div class="inner">
               <h3><span id="humidity"><?php echo $fallback['12345678']['humidity'] ?? '-' ?></span>%</h3>
