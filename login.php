@@ -224,7 +224,6 @@ if (isset($_POST['username']) && !isset($locked)) {
         .login-logo a {
             color: #ffffff !important;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            font-weight: bold;
         }
         
         .login-logo a b {
