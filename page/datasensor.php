@@ -55,7 +55,7 @@ $result = mysqli_query($connection, $sql);
                         <?php 
                           switch($row['name']){
                             case 'tegangan': echo 'Tegangan (V)'; break;
-                            case 'arus': echo 'Arus (A)'; break;
+                            case 'arus': echo 'Arus (mA)'; break;
                             case 'waterlvA': echo 'Water Level A'; break;
                             case 'waterlvB': echo 'Water Level B'; break;
                             case 'flowrate': echo 'Flow Rate'; break;
