@@ -1,11 +1,14 @@
 <?php
-// Query untuk mengambil history actuator
+if (isset($_POST['reset_data'])) {
+  mysqli_query($connection, "DELETE FROM actuator_history");
+  echo "<script>alert('Semua data actuator berhasil direset!'); location.href='?page=dataactuator';</script>";
+}
+
 $sql = "SELECT * FROM actuator_history ORDER BY created_at DESC LIMIT 1000";
 $result = mysqli_query($connection, $sql);
 ?>
 
 <div class="content-wrapper">
-  <!-- Content Header (Page header) -->
   <div class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
@@ -22,22 +25,21 @@ $result = mysqli_query($connection, $sql);
     </div>
   </div>
 
-  <!-- Main content -->
   <div class="content">
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-12">
           <div class="card">
             <div class="card-header position-relative">
-              <form method="POST" onsubmit="return confirm('Yakin ingin menghapus semua data sensor?')"
+              <h3 class="card-title">Actuator Control History</h3>
+              <form method="POST" onsubmit="return confirm('Yakin ingin menghapus semua data actuator?')"
                     style="position: absolute; right: 1rem; top: 0.5rem;">
                 <button type="submit" name="reset_data" class="btn btn-danger btn-sm">
-                  <i class="fas fa-trash-alt"></i> Reset Data
+                  <i class="fas fa-trash-alt"></i> Reset
                 </button>
               </form>
             </div>
 
-            <!-- /.card-header -->
             <div class="card-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
@@ -54,17 +56,14 @@ $result = mysqli_query($connection, $sql);
                   <?php 
                   if (mysqli_num_rows($result) > 0) {
                     while($row = mysqli_fetch_assoc($result)) { 
-                      // Format waktu
                       setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'Indonesian_indonesia.1252');
                       $timestamp = strtotime($row['created_at']);
                       $formattedTime = strftime('%d %B %Y %H:%M:%S', $timestamp);
                       
-                      // Tentukan badge untuk mode
                       $modeBadge = $row['mode'] === 'manual' 
                         ? '<span class="badge badge-primary">Manual</span>' 
                         : '<span class="badge badge-success">Otomatis</span>';
                       
-                      // Tentukan command
                       $command = '';
                       if ($row['mode'] === 'manual') {
                         $state = $row['state'];
@@ -75,7 +74,6 @@ $result = mysqli_query($connection, $sql);
                         $command = '<span class="badge badge-info">Settings Update</span>';
                       }
                       
-                      // Details
                       $details = '';
                       if ($row['mode'] === 'auto' && !empty($row['threshold_data'])) {
                         $thresholdData = json_decode($row['threshold_data'], true);
@@ -113,9 +111,7 @@ $result = mysqli_query($connection, $sql);
                 </tbody>
               </table>
             </div>
-            <!-- /.card-body -->
           </div>
-          <!-- /.card -->
 
           <!-- Summary Cards -->
           <div class="row">
