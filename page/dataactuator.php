@@ -1,6 +1,6 @@
 <?php
 if (isset($_POST['reset_data'])) {
-  mysqli_query($connection, "TRUNCATE FROM actuator_history");
+  mysqli_query($connection, "TRUNCATE TABLE actuator_history");
   echo "<script>alert('Semua data actuator berhasil direset!'); location.href='?page=dataactuator';</script>";
 }
 

@@ -1,6 +1,6 @@
 <?php
 if (isset($_POST['reset_data'])) {
-  mysqli_query($connection, "TRUNCATE FROM data WHERE sensor_actuator = 'sensor'");
+  mysqli_query($connection, "TRUNCATE TABLE data");
   echo "<script>alert('Semua data sensor berhasil direset!'); location.href='?page=datasensor';</script>";
 }
 
