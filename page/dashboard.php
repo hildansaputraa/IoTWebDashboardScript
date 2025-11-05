@@ -67,8 +67,13 @@ if ($fallbackQuery) {
         <div class="col-lg-6">
           <div class="small-box bg-gray">
             <div class="inner">
-              <h3><span id="humidity"><?php echo $fallback['12345678']['humidity'] ?? '-' ?></span>%</h3>
-              <p>Humidity</p>
+            <?php
+            $total3 = isset($fallback[3]['totalwater']) ? floatval($fallback[3]['totalwater']) : 0;
+            $total4 = isset($fallback[4]['totalwater']) ? floatval($fallback[4]['totalwater']) : 0;
+            $totalWaterSum = $total3 + $total4;
+            ?>
+            <h3><span id="totalwater"><?php echo number_format($totalWaterSum, 2) ?></span> L</h3>
+            <p>Total Water</p>
             </div>
             <div class="icon"><i class="fas fa-water"></i></div>
           </div>
