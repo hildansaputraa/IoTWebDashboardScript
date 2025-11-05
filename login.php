@@ -235,7 +235,7 @@ if (isset($_POST['username']) && !isset($locked)) {
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a><b>IoT Smart Irrigation</b> LOGIN</a>
+            <a><b>System IoT</b> LOGIN</a>
         </div>
         <!-- /.login-logo -->
         <div class="card">
