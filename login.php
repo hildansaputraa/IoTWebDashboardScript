@@ -228,7 +228,7 @@ if (isset($_POST['username']) && !isset($locked)) {
                                id="password"
                                placeholder="Password" 
                                required
-                               minlength="6"
+                               minlength="3"
                                autocomplete="off"
                                <?php echo isset($locked) ? 'disabled' : ''; ?>>
                         <div class="input-group-append">
