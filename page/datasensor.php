@@ -1,37 +1,44 @@
 <?php
+if (isset($_POST['reset_data'])) {
+  mysqli_query($connection, "DELETE FROM data WHERE sensor_actuator = 'sensor'");
+  echo "<script>alert('Semua data sensor berhasil direset!'); location.href='?page=datasensor';</script>";
+}
+
 $sql = "SELECT * FROM data WHERE sensor_actuator = 'sensor' ORDER BY created_at DESC";
 $result = mysqli_query($connection, $sql);
 ?>
 
 <div class="content-wrapper">
-  <!-- Content Header (Page header) -->
   <div class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
           <h1 class="m-0">Data Sensor</h1>
-        </div><!-- /.col -->
+        </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="?page=dashboard">Home</a></li>
             <li class="breadcrumb-item active">Data Sensor</li>
           </ol>
-        </div><!-- /.col -->
-      </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
+        </div>
+      </div>
+    </div>
   </div>
-  <!-- /.content-header -->
 
-  <!-- Main content -->
   <div class="content">
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-12">
           <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
               <h3 class="card-title">Sensor Data History</h3>
+              <form method="POST" onsubmit="return confirm('Yakin ingin menghapus semua data sensor?')">
+                <button type="submit" name="reset_data" class="btn btn-danger btn-sm">
+                  <i class="fas fa-trash-alt"></i> Reset Data
+                </button>
+              </form>
             </div>
-            <!-- /.card-header -->
+
             <div class="card-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
@@ -46,8 +53,7 @@ $result = mysqli_query($connection, $sql);
                   </tr>
                 </thead>
                 <tbody>
-                  <?php 
-                  while($row = mysqli_fetch_assoc($result)){ ?>
+                  <?php while($row = mysqli_fetch_assoc($result)){ ?>
                     <tr>
                       <td><?php echo htmlspecialchars($row['id']); ?></td>
                       <td><?php echo htmlspecialchars($row['node']); ?></td>
@@ -74,13 +80,9 @@ $result = mysqli_query($connection, $sql);
                 </tbody>
               </table>
             </div>
-            <!-- /.card-body -->
           </div>
-          <!-- /.card -->
         </div>
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
+    </div>
   </div>
-  <!-- /.content -->
 </div>
