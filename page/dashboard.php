@@ -606,6 +606,14 @@ if ($fallbackQuery) {
           sensorData[node].waterlvB = parseFloat(data.waterlvB) || 0;
         }
 
+        // 1. Update waktu terakhir  
+        const now = new Date().toLocaleString('id-ID', {
+          day: 'numeric', month: 'long', year: 'numeric',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+        const timeEl = document.getElementById(`node${node}-time`);
+        if (timeEl) timeEl.innerText = now;
+
         // Check automatic control untuk kedua solenoid
         // checkAutoControl(1);
         // checkAutoControl(2);
