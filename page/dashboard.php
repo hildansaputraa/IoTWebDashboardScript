@@ -43,6 +43,37 @@ if ($fallbackQuery) {
       <div class="row">
         <div class="col-lg-6">
           <div class="small-box bg-warning">
+            <!-- <div class="col-lg-">
+              <div class="small-box bg-danger">
+                <div class="inner">
+                  <h3 id="temperature"><?php echo $fallback['12345678']['temperature'] ?? '-' ?></h3>
+                  <p>Temperature</p>
+                </div>
+                <div class="icon"><i class="fas fa-temperature-high"></i></div>
+              </div>
+            </div> -->
+
+            <!-- Solenoid Status -->
+            <div class="row mt-3">
+              <div class="col-lg-6">
+                <div class="small-box" id="box-solenoid-satu">
+                  <div class="inner">
+                    <h3 id="solenoidSatuStat">-</h3>
+                    <p>Solenoid 1 Status</p>
+                  </div>
+                  <div class="icon"><i class="fas fa-toggle-on"></i></div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="small-box" id="box-solenoid-dua">
+                  <div class="inner">
+                    <h3 id="solenoidDuaStat">-</h3>
+                    <p>Solenoid 2 Status</p>
+                  </div>
+                  <div class="icon"><i class="fas fa-toggle-on"></i></div>
+                </div>
+              </div>
+            </div>
             <div class="inner">
               <?php
               $flow3 = isset($fallback[3]['flowrate']) ? floatval($fallback[3]['flowrate']) : 0;
@@ -55,15 +86,6 @@ if ($fallbackQuery) {
             <div class="icon"><i class="fas fa-tachometer-alt"></i></div>
           </div>
         </div>
-        <!-- <div class="col-lg-">
-          <div class="small-box bg-danger">
-            <div class="inner">
-              <h3 id="temperature"><?php echo $fallback['12345678']['temperature'] ?? '-' ?></h3>
-              <p>Temperature</p>
-            </div>
-            <div class="icon"><i class="fas fa-temperature-high"></i></div>
-          </div>
-        </div> -->
         <div class="col-lg-6">
           <div class="small-box bg-gray">
             <div class="inner">
@@ -80,44 +102,7 @@ if ($fallbackQuery) {
         </div>
       </div>
 
-      <!-- ✅ STATUS SOLENOID REAL-TIME DARI HARDWARE -->
-      <div class="row">
-        <div class="col-lg-6">
-          <div class="card card-outline card-info">
-            <div class="card-header">
-              <h3 class="card-title"><i class="fas fa-bolt"></i> <strong>Status Solenoid 1</strong></h3>
-            </div>
-            <div class="card-body text-center" style="padding: 30px;">
-              <h2>
-                <span id="status-solenoid1" class="badge badge-secondary" style="font-size: 1.8em; padding: 20px 40px; border-radius: 10px;">
-                  <i class="fas fa-circle-notch fa-spin"></i> Menunggu Data...
-                </span>
-              </h2>
-              <p class="text-muted mt-3" style="font-size: 0.95em;">
-                <i class="fas fa-info-circle"></i> Status langsung dari hardware ESP32
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="card card-outline card-info">
-            <div class="card-header">
-              <h3 class="card-title"><i class="fas fa-bolt"></i> <strong>Status Solenoid 2</strong></h3>
-            </div>
-            <div class="card-body text-center" style="padding: 30px;">
-              <h2>
-                <span id="status-solenoid2" class="badge badge-secondary" style="font-size: 1.8em; padding: 20px 40px; border-radius: 10px;">
-                  <i class="fas fa-circle-notch fa-spin"></i> Menunggu Data...
-                </span>
-              </h2>
-              <p class="text-muted mt-3" style="font-size: 0.95em;">
-                <i class="fas fa-info-circle"></i> Status langsung dari hardware ESP32
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      
       <!-- Solenoid Control dengan Mode -->
       <div class="row">
         <!-- Solenoid 1 -->
@@ -549,6 +534,49 @@ if ($fallbackQuery) {
     //   document.getElementById("potentiometer").innerHTML = payload;
 
     // Update status perangkat
+    if (topic === "SmIr/status") {
+      try {
+        const stat = JSON.parse(payload);
+        console.log("Status diterima:", stat);
+
+        // Update Solenoid 1
+        const sol1 = stat.solenoidSatuStat;
+        const sol1Text = (sol1 === true || sol1 === 1 || sol1 === "1") ? "ON" : "OFF";
+        document.getElementById("solenoidSatuStat").innerText = sol1Text;
+
+        const box1 = document.getElementById("box-solenoid-satu");
+        box1.classList.remove("bg-warning", "bg-success", "bg-danger");
+        box1.classList.add(sol1 ? "bg-success" : "bg-danger");
+
+        // Update Solenoid 2
+        const sol2 = stat.solenoidDuaStat;
+        const sol2Text = (sol2 === true || sol2 === 1 || sol2 === "1") ? "ON" : "OFF";
+        document.getElementById("solenoidDuaStat").innerText = sol2Text;
+
+        const box2 = document.getElementById("box-solenoid-dua");
+        box2.classList.remove("bg-warning", "bg-success", "bg-danger");
+        box2.classList.add(sol2 ? "bg-success" : "bg-danger");
+
+        // Update UI tombol manual jika sedang di mode manual
+        ['1', '2'].forEach(num => {
+          const state = num === '1' ? sol1 : sol2;
+          const onLabel = document.getElementById(`label-solenoid${num}-on`);
+          const offLabel = document.getElementById(`label-solenoid${num}-off`);
+          if (onLabel && offLabel) {
+            if (state) {
+              onLabel.classList.add('active');
+              offLabel.classList.remove('active');
+            } else {
+              offLabel.classList.add('active');
+              onLabel.classList.remove('active');
+            }
+          }
+        });
+
+      } catch (e) {
+        console.error("Gagal parse SmIr/status:", e);
+      }
+    }
     if (topic.startsWith("SmIr/status/")) {
       const el = document.getElementById(topic);
       if (el) {
