@@ -668,13 +668,29 @@ if ($fallbackQuery) {
       });
   }
   function forceOffAll() {
-    if (!confirm("Yakin matikan SEMUA solenoid?")) return;
+      if (!confirm("Yakin matikan SEMUA solenoid?")) return;
 
-    const payload = { mode: 0 };
-    client.publish("SmIr/control", JSON.stringify(payload), { qos: 1, retain: true });
-    console.log("Semua solenoid dimatikan!");
+      const payload = { mode: 0 };
+      
+      // Ganti topic ke SmIr/control agar konsisten
+      client.publish("SmIr/control", JSON.stringify(payload), { qos: 1, retain: true });
+      console.log("Semua solenoid dimatikan! Payload:", payload);
 
-    // GUNAKAN type: 'reset', solenoid: 0
-    saveToDatabase('reset', 0, payload);
+      // Simpan ke database dengan type 'manual' atau buat handler baru untuk 'reset'
+      saveToDatabase('manual', 0, payload);
+      
+      // Optional: Reset UI solenoid ke OFF
+      ['1', '2'].forEach(num => {
+          const offLabel = document.getElementById(`label-solenoid${num}-off`);
+          const offRadio = document.getElementById(`solenoid${num}off`);
+          if (offLabel && offRadio) {
+              offLabel.classList.add('active');
+              offRadio.checked = true;
+          }
+          const onLabel = document.getElementById(`label-solenoid${num}-on`);
+          if (onLabel) onLabel.classList.remove('active');
+          
+          solenoidState[num].currentState = 0;
+      });
   }
 </script>
