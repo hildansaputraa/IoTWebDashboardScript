@@ -38,7 +38,31 @@ if ($fallbackQuery) {
   <!-- Main content -->
   <div class="content">
     <div class="container-fluid">
-
+      <div class="row">
+        <!-- Solenoid Status Row-->
+        <div class="col-lg-6">
+          <div class="small-box" id="box-solenoid-satu" style="background-color: #17a2b8; color: white;">
+            <div class="inner">
+              <h3 id="solenoidSatuStat">-</h3>
+              <p>Solenoid 1 Status</p>
+            </div>
+            <div class="icon">
+              <i class="fas fa-toggle-on"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="small-box" id="box-solenoid-dua" style="background-color: #28a745; color: white;">
+            <div class="inner">
+              <h3 id="solenoidDuaStat">-</h3>
+              <p>Solenoid 2 Status</p>
+            </div>
+            <div class="icon">
+              <i class="fas fa-toggle-on"></i>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- Sensor dasar -->
       <div class="row">
         <div class="col-lg-6">
@@ -52,28 +76,6 @@ if ($fallbackQuery) {
                 <div class="icon"><i class="fas fa-temperature-high"></i></div>
               </div>
             </div> -->
-
-            <!-- Solenoid Status -->
-            <div class="row mt-3">
-              <div class="col-lg-6">
-                <div class="small-box" id="box-solenoid-satu">
-                  <div class="inner">
-                    <h3 id="solenoidSatuStat">-</h3>
-                    <p>Solenoid 1 Status</p>
-                  </div>
-                  <div class="icon"><i class="fas fa-toggle-on"></i></div>
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="small-box" id="box-solenoid-dua">
-                  <div class="inner">
-                    <h3 id="solenoidDuaStat">-</h3>
-                    <p>Solenoid 2 Status</p>
-                  </div>
-                  <div class="icon"><i class="fas fa-toggle-on"></i></div>
-                </div>
-              </div>
-            </div>
             <div class="inner">
               <?php
               $flow3 = isset($fallback[3]['flowrate']) ? floatval($fallback[3]['flowrate']) : 0;
