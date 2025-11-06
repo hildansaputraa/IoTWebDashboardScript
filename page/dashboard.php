@@ -80,6 +80,44 @@ if ($fallbackQuery) {
         </div>
       </div>
 
+      <!-- ✅ STATUS SOLENOID REAL-TIME DARI HARDWARE -->
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card card-outline card-info">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-bolt"></i> <strong>Status Solenoid 1</strong></h3>
+            </div>
+            <div class="card-body text-center" style="padding: 30px;">
+              <h2>
+                <span id="status-solenoid1" class="badge badge-secondary" style="font-size: 1.8em; padding: 20px 40px; border-radius: 10px;">
+                  <i class="fas fa-circle-notch fa-spin"></i> Menunggu Data...
+                </span>
+              </h2>
+              <p class="text-muted mt-3" style="font-size: 0.95em;">
+                <i class="fas fa-info-circle"></i> Status langsung dari hardware ESP32
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card card-outline card-info">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-bolt"></i> <strong>Status Solenoid 2</strong></h3>
+            </div>
+            <div class="card-body text-center" style="padding: 30px;">
+              <h2>
+                <span id="status-solenoid2" class="badge badge-secondary" style="font-size: 1.8em; padding: 20px 40px; border-radius: 10px;">
+                  <i class="fas fa-circle-notch fa-spin"></i> Menunggu Data...
+                </span>
+              </h2>
+              <p class="text-muted mt-3" style="font-size: 0.95em;">
+                <i class="fas fa-info-circle"></i> Status langsung dari hardware ESP32
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Solenoid Control dengan Mode -->
       <div class="row">
         <!-- Solenoid 1 -->
@@ -503,12 +541,12 @@ if ($fallbackQuery) {
   client.on("message", function(topic, payload) {
     payload = payload.toString();
 
-    if (topic === "kelasiottt/12345678/temperature")
-      document.getElementById("temperature").innerHTML = payload;
-    else if (topic === "kelasiottt/12345678/humidity")
-      document.getElementById("humidity").innerHTML = payload;
-    else if (topic === "kelasiottt/12345678/potentiometer")
-      document.getElementById("potentiometer").innerHTML = payload;
+    // if (topic === "kelasiottt/12345678/temperature")
+    //   document.getElementById("temperature").innerHTML = payload;
+    // else if (topic === "kelasiottt/12345678/humidity")
+    //   document.getElementById("humidity").innerHTML = payload;
+    // else if (topic === "kelasiottt/12345678/potentiometer")
+    //   document.getElementById("potentiometer").innerHTML = payload;
 
     // Update status perangkat
     if (topic.startsWith("SmIr/status/")) {
