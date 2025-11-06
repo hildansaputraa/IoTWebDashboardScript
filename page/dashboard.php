@@ -671,7 +671,7 @@ if ($fallbackQuery) {
     if (!confirm("Yakin matikan SEMUA solenoid?")) return;
 
     const payload = { mode: 0 };
-    client.publish("SmIr/kontrol", JSON.stringify(payload), { qos: 1, retain: true });
+    client.publish("SmIr/control", JSON.stringify(payload), { qos: 1, retain: true });
     console.log("Semua solenoid dimatikan!");
 
     // GUNAKAN type: 'reset', solenoid: 0
