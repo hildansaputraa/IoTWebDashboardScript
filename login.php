@@ -16,6 +16,7 @@ if (isset($_SESSION['username'])) {
 include "config/database.php";
 
 $message = "Insert Username and Password!";
+$message_type = "info"; // info, success, error, warning
 $login_attempts_key = 'login_attempts_' . $_SERVER['REMOTE_ADDR'];
 $lockout_time = 900; // 15 menit lockout
 $max_attempts = 5;
@@ -42,7 +43,8 @@ if (isset($_SESSION[$login_attempts_key])) {
         
         if ($time_passed < $lockout_time) {
             $remaining = ceil(($lockout_time - $time_passed) / 60);
-            $message = "<b style='color:red;'>Too many failed attempts. Please try again in $remaining minutes.</b>";
+            $message = "Too many failed attempts. Please try again in $remaining minutes.";
+            $message_type = "error";
             $locked = true;
         } else {
             // Reset setelah lockout time habis
@@ -56,7 +58,8 @@ if (isset($_POST['username']) && !isset($locked)) {
     
     // Validasi CSRF Token
     if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-        $message = "<b style='color:red;'>Invalid security token. Please refresh the page.</b>";
+        $message = "Invalid security token. Please refresh the page.";
+        $message_type = "error";
         logActivity('UNKNOWN', 'CSRF_FAILED', $_SERVER['REMOTE_ADDR']);
     } else {
         $username = trim($_POST['username']);
@@ -64,7 +67,8 @@ if (isset($_POST['username']) && !isset($locked)) {
         
         // Validasi input
         if (empty($username) || empty($password)) {
-            $message = "<b style='color:red;'>Username and Password are required.</b>";
+            $message = "Username and Password are required.";
+            $message_type = "error";
         } else {
             // Prepared statement untuk mencegah SQL injection
             $sql = "SELECT * FROM user WHERE username = ? LIMIT 1";
@@ -105,13 +109,15 @@ if (isset($_POST['username']) && !isset($locked)) {
                         exit();
                     } else {
                         // Password salah
-                        $message = "<b style='color:red;'>Username or Password is Wrong</b>";
+                        $message = "Username or Password is Wrong";
+                        $message_type = "error";
                         logActivity($username, 'FAILED_PASSWORD', $_SERVER['REMOTE_ADDR']);
                         $login_failed = true;
                     }
                 } else {
                     // Username tidak ditemukan
-                    $message = "<b style='color:red;'>Username or Password is Wrong</b>";
+                    $message = "Username or Password is Wrong";
+                    $message_type = "error";
                     logActivity($username, 'FAILED_USERNAME', $_SERVER['REMOTE_ADDR']);
                     $login_failed = true;
                 }
@@ -119,7 +125,8 @@ if (isset($_POST['username']) && !isset($locked)) {
                 mysqli_stmt_close($stmt);
             } else {
                 // Jangan tampilkan detail error database
-                $message = "<b style='color:red;'>System error. Please try again later.</b>";
+                $message = "System error. Please try again later.";
+                $message_type = "error";
                 logActivity($username, 'DB_ERROR', $_SERVER['REMOTE_ADDR']);
                 error_log("Database prepare failed: " . mysqli_error($connection));
             }
@@ -138,7 +145,7 @@ if (isset($_POST['username']) && !isset($locked)) {
                 
                 $remaining_attempts = $max_attempts - $_SESSION[$login_attempts_key]['count'];
                 if ($remaining_attempts > 0 && $remaining_attempts <= 3) {
-                    $message .= "<br><small>Warning: $remaining_attempts attempts remaining before lockout.</small>";
+                    $message .= "<br><small class='text-warning'>Warning: $remaining_attempts attempts remaining before lockout.</small>";
                 }
             }
         }
@@ -191,12 +198,12 @@ if (isset($_POST['username']) && !isset($locked)) {
             transition: all 0.3s;
         }
         body.login-page {
-        background-image: url('dist/img/background.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        position: relative;
+            background-image: url('dist/img/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            position: relative;
         }    
         /* Overlay gelap agar form lebih terbaca */
         body.login-page::before {
@@ -229,6 +236,38 @@ if (isset($_POST['username']) && !isset($locked)) {
         .login-logo a b {
             color: #ffffff !important;
         }
+        
+        /* Message Styling */
+        .message-box {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .message-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
     </style>
 </head>
 
@@ -240,7 +279,11 @@ if (isset($_POST['username']) && !isset($locked)) {
         <!-- /.login-logo -->
         <div class="card">
             <div class="card-body login-card-body">
-                <p class="login-box-msg"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
+                <?php if (!empty($message)): ?>
+                    <div class="message-box message-<?php echo htmlspecialchars($message_type, ENT_QUOTES, 'UTF-8'); ?>">
+                        <?php echo $message; ?>
+                    </div>
+                <?php endif; ?>
 
                 <form action="" method="post" autocomplete="off">
                     <!-- CSRF Token -->
