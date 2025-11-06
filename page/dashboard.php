@@ -613,16 +613,32 @@ if ($fallbackQuery) {
           return;
       }
 
+      // Ambil aksi dari dropdown
       const actionSelect = document.getElementById(`action-solenoid${solenoidNum}`);
-      autoSettings.action = actionSelect?.value || 'off';
+      const actionValue = actionSelect?.value || '0';
+      
+      // Tentukan suffix berdasarkan aksi
+      const suffix = actionValue === '1' ? 'on' : 'off';
+      
+      // Buat object baru dengan format wla/wlb + nodeNum + on/off
+      const finalSettings = { mode: 2 };
+      
+      for (let nodeNum = 1; nodeNum <= 4; nodeNum++) {
+          if (autoSettings[`waterlvA${nodeNum}`] !== undefined) {
+              finalSettings[`wla${nodeNum}${suffix}`] = autoSettings[`waterlvA${nodeNum}`];
+          }
+          if (autoSettings[`waterlvB${nodeNum}`] !== undefined) {
+              finalSettings[`wlb${nodeNum}${suffix}`] = autoSettings[`waterlvB${nodeNum}`];
+          }
+      }
 
       // Kirim solenoid number
-      autoSettings.solenoid = solenoidNum;
+      finalSettings.solenoid = solenoidNum;
 
-      client.publish("SmIr/control", JSON.stringify(autoSettings), { qos: 1, retain: true });
-      console.log("Published auto settings:", autoSettings);
+      client.publish("SmIr/control", JSON.stringify(finalSettings), { qos: 1, retain: true });
+      console.log("Published auto settings:", finalSettings);
 
-      saveToDatabase('auto', solenoidNum, autoSettings);
+      saveToDatabase('auto', solenoidNum, finalSettings);
   }
       // Fungsi untuk menyimpan ke database
   function saveToDatabase(type, solenoidNum, data) {
